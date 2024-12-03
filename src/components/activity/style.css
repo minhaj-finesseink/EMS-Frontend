@@ -1,0 +1,23 @@
+.activity-card {
+    background-color: #135CCA;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.activity-btn {
+    width: 100px;
+    border-radius: 25px;
+}
+
+.activity-content {
+    background-color: rgba(238, 244, 254, 0.28);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.activity-card-text {
+    font-size: 13px;
+    font-weight: 800;
+    margin: 20px 0 10px 5px;
+    color: #FFFFFF;
+}

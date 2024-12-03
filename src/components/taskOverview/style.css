@@ -1,0 +1,37 @@
+.task-container {
+    border-radius: 12px;
+    margin: 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    background-color: #135CCA;
+}
+
+.custom-date-picker .ant-picker-input input::placeholder {
+    color: #FFFFFF !important;
+}
+
+.task-card1 {
+    width: 130px;
+    height: 90px;
+    background-color: rgba(175, 255, 182, 1);
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.task-card2 {
+    width: 130px;
+    height: 90px;
+    background-color: rgba(248, 216, 171, 1);
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.task-card3 {
+    width: 130px;
+    height: 90px;
+    background-color: rgba(173, 207, 255, 1);
+    border-radius: 12px;
+    padding: 10px;
+}

@@ -1,0 +1,34 @@
+.main-container {
+    border: 1px solid #d9d9d9;
+    border-radius: 16px;
+    margin: 0 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.main-container span {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.attendance-card {
+    /* width: 50%; */
+    background-color: #F3EEFE;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.attendance-card2 {
+    /* width: 50%; */
+    background-color: #EEF4FE;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}

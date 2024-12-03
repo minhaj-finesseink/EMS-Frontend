@@ -1,0 +1,72 @@
+/* Remove the line and adjust step item */
+.custom-step-item {
+    background-color: #135CCA !important;
+    border-radius: 12px;
+    padding: 20px; /* Increase padding for better spacing */
+    color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center; /* Center align all text */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Hover effect for the step item */
+.custom-step-item:hover {
+    background-color: #0F4BA0 !important; /* Slightly darker blue */
+    transform: scale(1.005); /* Slight zoom-in effect */
+    cursor: pointer; /* Change cursor to pointer */
+}
+
+/* Style the step number (icon) */
+.custom-step-item .ant-steps-item-icon {
+    background-color: white !important; /* Ensure a white circle */
+    color: #135CCA !important; /* Keep the number color consistent (blue) */
+    border: none; /* Remove default border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+    margin-left: 10px; /* Add spacing between the number and text */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth hover effect */
+}
+
+/* Ensure step number (1, 2, 3) remains blue */
+.custom-step-item .ant-steps-item-icon > .ant-steps-icon {
+    color: #135CCA !important; /* Force blue color for the number */
+}
+
+/* Hide the connecting line */
+.ant-steps-item-tail {
+    display: none !important;
+}
+
+/* Style the step title */
+.custom-step-item .ant-steps-item-title {
+    color: white !important;
+    font-weight: bold;
+    margin: 0;
+    display: flex;
+    transition: color 0.3s ease;
+}
+
+/* Hover effect for step title */
+.custom-step-item:hover .ant-steps-item-title {
+    color: #E5EFFF !important; /* Lighter white shade on hover */
+}
+
+/* Style the description text */
+.custom-step-item .ant-steps-item-description {
+    color: white !important;
+    margin-top: 4px;
+    font-size: 14px;
+    display: flex;
+    transition: color 0.3s ease;
+}
+
+/* Hover effect for description text */
+.custom-step-item:hover .ant-steps-item-description {
+    color: #E5EFFF !important; /* Lighter white shade on hover */
+}

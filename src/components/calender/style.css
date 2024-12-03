@@ -1,0 +1,7 @@
+.calender-container {
+    border: 1px solid rgb(217, 217, 217);
+    margin: 20px 0px;
+    border-radius: 16px;
+    padding: 16px;
+    max-width: 400px;
+}

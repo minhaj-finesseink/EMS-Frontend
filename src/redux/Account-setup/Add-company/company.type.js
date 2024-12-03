@@ -1,0 +1,2 @@
+export const ADD_COMPANY = "ADD_COMPANY"
+export const ADD_COMPANY_RES = "ADD_COMPANY_RES"

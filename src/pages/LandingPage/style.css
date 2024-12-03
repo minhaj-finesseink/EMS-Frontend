@@ -1,0 +1,64 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.landing-page {
+    height: 100vh;
+}
+
+/* Header */
+.landing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #001529;
+    padding: 0 20px;
+    color: #fff;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.landing-header .ant-btn-link {
+    color: #fff;
+}
+
+.landing-header .ant-btn-primary {
+    margin-left: 10px;
+}
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 100px 20px;
+    background: linear-gradient(135deg, #1890ff, #e6f7ff);
+    color: #fff;
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.button-group .ant-btn {
+    margin: 0 10px;
+}
+
+/* Footer */
+.footer-section {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #001529;
+    color: #fff;
+}
