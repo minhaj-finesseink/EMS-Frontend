@@ -29,7 +29,7 @@ const headerStyle = {
 const contentStyle = { backgroundColor: "#FFFFFF" };
 
 function Dashboard(props) {
-  const [accountSetup, setAccountSetup] = useState(true);
+  const [accountSetup, setAccountSetup] = useState(null);
 
   useEffect(() => {
     if (props.loginData.loginResponse) {
@@ -41,7 +41,12 @@ function Dashboard(props) {
       let data = props.employeeData.addEmployeeResponse;
       setAccountSetup(data.account.isSetupComplete);
     }
-  }, [props.loginData, props.employeeData]);
+
+    if (props.registerData?.registerResponse) {
+      let data = props.registerData.registerResponse;
+      setAccountSetup(data.user.isSetupComplete);
+    }
+  }, [props.loginData, props.employeeData, props.registerData]);
 
   return (
     <Layout style={layoutStyle}>
@@ -92,7 +97,7 @@ function Dashboard(props) {
 
               {/* Export Button */}
               <Button
-                type="primary"
+                type="primary" 
                 style={styles.exportButton}
                 icon={<DownloadOutlined />}
                 // onClick={onExport}
@@ -157,6 +162,7 @@ const styles = {
 const mapStateToProps = (state) => ({
   loginData: state.login,
   employeeData: state.addEmployee,
+  registerData: state.register,
 });
 
 const mapDispatchToProps = (dispatch) => ({
