@@ -10,10 +10,10 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />}></Route>
-        {/* <Route path="/sign-in" element={<SignIn />}></Route>
+        <Route path="/sign-in" element={<SignIn />}></Route>
         <Route path="/sign-up" element={<SignUp />}></Route>
         <Route path="/setup-password/:token" element={<EmployeeCreatePass />}></Route>
-        <Route path="/admin-dashboard" element={<Dashboard />}></Route> */}
+        <Route path="/admin-dashboard" element={<Dashboard />}></Route>
       </Routes>
     </BrowserRouter>
   );
