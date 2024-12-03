@@ -11,6 +11,7 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import "./style.css";
+import { useNavigate } from "react-router-dom";
 
 const { Sider } = Layout;
 
@@ -105,6 +106,25 @@ const items = [
 ];
 
 function Sidebar() {
+  const navigate = useNavigate();
+
+  const handleMenuClick = (menuItem) => {
+    const { key } = menuItem;
+    const routeMap = {
+      dashboard: "/admin-dashboard",
+      employee: "/employee",
+      attendance: "/attendance",
+      performance: "/performance",
+      payroll: "/payroll",
+      tasks: "/tasks",
+      permissions: "/permissions",
+      reports: "/reports",
+      logout: "/", // Define your logout route
+    };
+    const route = routeMap[key];
+    if (route) navigate(route);
+  };
+
   return (
     <Sider
       width={300}
@@ -131,41 +151,42 @@ function Sidebar() {
         mode="inline"
         style={{
           borderRight: 0,
-          borderRadius: 0, // Remove border-radius
+          borderRadius: 0,
         }}
         items={items}
         defaultSelectedKeys={["dashboard"]}
         theme="light"
+        onClick={handleMenuClick}
       />
       <style jsx>{`
         .ant-menu-item {
-          color: #7f8fa6 !important; /* Set text color for unselected items */
+          color: #7f8fa6 !important;
         }
         .ant-menu-item::before {
           content: "";
           position: absolute;
-          left: 0; /* Align the left bar at the edge */
+          left: 0;
           top: 0;
           bottom: 0;
-          width: 0; /* Initially no blue bar */
+          width: 0;
           background-color: #0984e3;
           display: block;
         }
 
         .ant-menu-item-selected::before {
-          width: 5px; /* Set width for the selected item */
+          width: 5px;
         }
 
         .ant-menu-item-selected {
-          background-color: transparent !important; /* Remove default background */
-          color: #0984e3 !important; /* Change text color to red for selected item */
+          background-color: transparent !important;
+          color: #0984e3 !important;
         }
 
         .ant-menu-item:hover {
-          color: #0984e3; /* Change text color to blue on hover */
+          color: #0984e3;
         }
         .ant-menu-item-selected .anticon {
-          color: #0984e3 !important; /* Change icon color for selected item */
+          color: #0984e3 !important;
         }
       `}</style>
       <div className="card">

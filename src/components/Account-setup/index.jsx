@@ -1,111 +1,3 @@
-// import React, { useState } from "react";
-// import { Modal, Steps, message } from "antd";
-// import AddCompany from "../AddCompany";
-// import AddDepartment from "../AddDeparment";
-// import AddEmployee from "../AddEmployee";
-// import './style.css'
-
-// const App = () => {
-//   const [current, setCurrent] = useState(0); // Current active step
-//   const [completedSteps, setCompletedSteps] = useState([true, false, false]); // Flags for completed steps
-//   const [isModalVisible, setIsModalVisible] = useState(false); // State to manage modal visibility
-//   const [modalContent, setModalContent] = useState(null); // Content to display in the modal
-//   const [modalTitle, setModalTitle] = useState(""); // Title for the modal
-
-//   const onChange = (value) => {
-//     if (value <= current || completedSteps[current]) {
-//       setCurrent(value); // Allow moving to the clicked step
-//       console.log("current value", value);
-
-//       if (!completedSteps[current]) {
-//         // Automatically mark the step as completed
-//         const updatedSteps = [...completedSteps];
-//         updatedSteps[current] = true;
-//         setCompletedSteps(updatedSteps);
-//         // message.success(`Step ${current + 1} completed!`);
-//       }
-
-//       // Set the modal title and content based on the clicked step
-//       if (value === 0) {
-//         setModalTitle("Setup Your Company Account"); // Set title for Account Setup
-//         setModalContent(<AddCompany />);
-//       } else if (value === 1) {
-//         setModalTitle("Add Department"); // Set title for Add Department
-//         setModalContent(<AddDepartment />);
-//       } else if (value === 2) {
-//         setModalTitle("Add Employees"); // Set title for Add/Invite Employees
-//         setModalContent(<AddEmployee />);
-//       }
-
-//       // Show the modal
-//       setIsModalVisible(true);
-//     } else {
-//       message.warning(
-//         "Please complete the current step before moving forward."
-//       );
-//     }
-//   };
-
-//   // Close the modal
-//   const handleCancel = () => {
-//     setIsModalVisible(false);
-//   };
-
-//   return (
-//     <div
-//       style={{
-//         display: "flex",
-//         justifyContent: "center",
-//         alignItems: "center",
-//         flexDirection: "column",
-//         padding: "20px",
-//       }}
-//     >
-//       <Steps
-//         style={{ width: "100%", gap: "10px" }}
-//         current={current}
-//         onChange={onChange}
-//         direction="vertical"
-//         items={[
-//           {
-//             title: " Step 1",
-//             description: "Setup your Account",
-//             className: "custom-step-item",
-//           },
-//           {
-//             title: "Step 2",
-//             description: "Add Department",
-//             className: "custom-step-item",
-//           },
-//           {
-//             title: "Step 3",
-//             description: "Add/Invite Employees",
-//             className: "custom-step-item",
-//           },
-//         ]}
-//       />
-
-//       {/* Modal for each step */}
-//       <Modal
-//         title={modalTitle}
-//         visible={isModalVisible}
-//         onCancel={handleCancel}
-//         footer={null}
-//         width={600}
-//         bodyStyle={{
-//           maxHeight: "70vh",
-//           overflowY: "auto",
-//           overflowX: "hidden",
-//         }}
-//       >
-//         {modalContent}
-//       </Modal>
-//     </div>
-//   );
-// };
-
-// export default App;
-
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
@@ -136,7 +28,6 @@ const App = (props) => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
   const [modalContent, setModalContent] = useState(""); // Content to display in the modal
   const [completedSteps, setCompletedSteps] = useState([false, false, false]); // Track completion of steps (Step 1, 2, 3)
-  const [stepData, setStepData] = useState({ step1: "", step2: "", step3: "" }); // Store data for each step
 
   const [accountId, setAccountId] = useState(null);
   const [formValues, setFormValues] = useState({
@@ -242,13 +133,7 @@ const App = (props) => {
   };
 
   // Handle Step 1 form submission
-  const handleStep1Submit = (values) => {
-    // console.log("values1", values);
-    // setStepData((prev) => ({ ...prev, step1: values.step1 }));
-    // setCompletedSteps([true, completedSteps[1], completedSteps[2]]); // Mark Step 1 as complete
-    // setIsModalVisible(false);
-    // setCurrent(1); // Move to Step 2
-    //api call
+  const handleStep1Submit = () => {
     props.addCompany({
       accountId: accountId,
       companyName: formValues.companyName,
@@ -267,7 +152,6 @@ const App = (props) => {
   useEffect(() => {
     if (props.companyData?.addCompanyResponse) {
       let data = props.companyData.addCompanyResponse;
-      console.log("com data", data);
       if (data.success) {
         // setStepData((prev) => ({ ...prev, step1: values.step1 }));
         setCompletedSteps([true, completedSteps[1], completedSteps[2]]); // Mark Step 1 as complete
@@ -280,13 +164,7 @@ const App = (props) => {
   }, [props.companyData]);
 
   // Handle Step 2 form submission
-  const handleStep2Submit = (values) => {
-    // console.log("values2", values);
-    // setStepData((prev) => ({ ...prev, step2: values.step2 }));
-    // setCompletedSteps([completedSteps[0], true, completedSteps[2]]); // Mark Step 2 as complete
-    // setIsModalVisible(false);
-    // setCurrent(2); // Move to Step 3
-    //api call
+  const handleStep2Submit = () => {
     props.addDepartment({
       accountId: accountId,
       departmentName: departmentName,
@@ -294,10 +172,12 @@ const App = (props) => {
     });
   };
 
+  console.log('isModalVisible', isModalVisible);
+  
+
   useEffect(() => {
     if (props.departmentData?.addDepartmentResponse) {
       let data = props.departmentData.addDepartmentResponse;
-      console.log("com data", data);
       if (data.success) {
         // setStepData((prev) => ({ ...prev, step2: values.step2 }));
         setCompletedSteps([completedSteps[0], true, completedSteps[2]]); // Mark Step 2 as complete
@@ -310,12 +190,7 @@ const App = (props) => {
   }, [props.departmentData]);
 
   // Handle Step 3 form submission
-  const handleStep3Submit = (values) => {
-    // console.log("values3", values);
-    // setStepData((prev) => ({ ...prev, step3: values.step3 }));
-    // setCompletedSteps([completedSteps[0], completedSteps[1], true]); // Mark Step 3 as complete
-    // setIsModalVisible(false);
-    // message.success("All steps completed!"); // Show success message
+  const handleStep3Submit = () => {
     props.addEmployee({
       accountId: accountId,
       firstName: empFormValues.firstName,
@@ -330,7 +205,6 @@ const App = (props) => {
   useEffect(() => {
     if (props.employeeData?.addEmployeeResponse) {
       let data = props.employeeData.addEmployeeResponse;
-      console.log("emp data", data);
       if (data.success) {
         // setStepData((prev) => ({ ...prev, step3: values.step3 }));
         setCompletedSteps([completedSteps[0], completedSteps[1], true]); // Mark Step 3 as complete
@@ -369,31 +243,10 @@ const App = (props) => {
     switch (modalContent) {
       case "Setup your Account":
         return (
-          // <Form
-          //   onFinish={handleStep1Submit}
-          //   initialValues={{ step1: stepData.step1 }} // Pre-fill with data if present
-          // >
-          //   <Form.Item
-          //     label="Step 1"
-          //     name="step1"
-          //     rules={[
-          //       {
-          //         required: true,
-          //         message: "Please enter something for Step 1!",
-          //       },
-          //     ]}
-          //   >
-          //     <Input placeholder="Enter data for Step 1" />
-          //   </Form.Item>
-          //   <Button type="primary" htmlType="submit">
-          //     Complete Step 1
-          //   </Button>
-          // </Form>
           <Form
             layout="vertical"
             // onFinish={handleSubmit}
             onFinish={handleStep1Submit}
-            initialValues={{ step1: stepData.step1 }} // Pre-fill with data if present
             style={{
               maxWidth: "600px",
               margin: "auto",
@@ -577,30 +430,9 @@ const App = (props) => {
         );
       case "Add Department":
         return (
-          // <Form
-          //   onFinish={handleStep2Submit}
-          //   initialValues={{ step2: stepData.step2 }} // Pre-fill with data if present
-          // >
-          //   <Form.Item
-          //     label="Step 2"
-          //     name="step2"
-          //     rules={[
-          //       {
-          //         required: true,
-          //         message: "Please enter something for Step 2!",
-          //       },
-          //     ]}
-          //   >
-          //     <Input placeholder="Enter data for Step 2" />
-          //   </Form.Item>
-          //   <Button type="primary" htmlType="submit">
-          //     Complete Step 2
-          //   </Button>
-          // </Form>
           <Form
             layout="vertical"
             onFinish={handleStep2Submit}
-            initialValues={{ step2: stepData.step2 }} // Pre-fill with data if present
             style={{
               maxWidth: "600px",
               margin: "auto",
@@ -671,30 +503,9 @@ const App = (props) => {
         );
       case "Add/Invite Employees":
         return (
-          // <Form
-          //   onFinish={handleStep3Submit}
-          //   initialValues={{ step3: stepData.step3 }} // Pre-fill with data if present
-          // >
-          //   <Form.Item
-          //     label="Step 3"
-          //     name="step3"
-          //     rules={[
-          //       {
-          //         required: true,
-          //         message: "Please enter something for Step 3!",
-          //       },
-          //     ]}
-          //   >
-          //     <Input placeholder="Enter data for Step 3" />
-          //   </Form.Item>
-          //   <Button type="primary" htmlType="submit">
-          //     Complete Step 3
-          //   </Button>
-          // </Form>
           <Form
             layout="vertical"
             onFinish={handleStep3Submit}
-            initialValues={{ step3: stepData.step3 }} // Pre-fill with data if present
             style={{
               maxWidth: "600px",
               margin: "auto",
