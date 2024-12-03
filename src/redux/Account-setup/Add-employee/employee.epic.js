@@ -6,7 +6,7 @@ import { ADD_EMPLOYEE, EMPLOYEE_PASS } from './employee.types';
 import { addEmployeeResponse, employeePassResponse } from './employee.action';
 
 // const BaseUrl = 'http://localhost:5000/api';
-const BaseUrl = 'https://ems-backend-1-7tqg.onrender.com/api';
+const BaseUrl = 'https://ems-backend-c517.onrender.com/api';
 
 const AddEmployeeEpic = {};
 

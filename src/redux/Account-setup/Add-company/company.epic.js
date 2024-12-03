@@ -6,7 +6,7 @@ import { addCompanyResponse } from './company.action';
 import { ADD_COMPANY } from './company.type';
 
 // const BaseUrl = 'http://localhost:5000/api';
-const BaseUrl = 'https://ems-backend-1-7tqg.onrender.com/api';
+const BaseUrl = 'https://ems-backend-c517.onrender.com/api';
 
 const AddCompanyEpic = {};
 
