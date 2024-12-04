@@ -28,6 +28,7 @@ const SignUpPage = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -41,6 +42,7 @@ const SignUpPage = (props) => {
   };
 
   const handleSubmit = () => {
+    setLoading(true);
     props.register({
       name: name,
       companyName: company,
@@ -59,8 +61,10 @@ const SignUpPage = (props) => {
       let data = props.registerData.registerResponse;
       if (data.responseCode !== "REGISTER_SUCCESS") {
         setError(data.message);
+        setLoading(false);
       } else {
         navigate("/admin-dashboard");
+        setLoading(true);
       }
     }
   }, [props.registerData, navigate]);
@@ -206,8 +210,10 @@ const SignUpPage = (props) => {
               htmlType="submit"
               className="login-button"
               block
+              loading={loading}
+              disabled={loading}
             >
-              Sign Up
+              {loading ? "Signing Up..." : "Sign Up"}
             </Button>
           </Form.Item>
         </Form>

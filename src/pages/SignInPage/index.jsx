@@ -18,6 +18,7 @@ const LoginPage = (props) => {
     hasSymbol: false,
   });
 
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -39,6 +40,7 @@ const LoginPage = (props) => {
   };
 
   const handleSubmit = () => {
+    setLoading(true);
     props.login({
       email: email,
       password: password,
@@ -62,16 +64,18 @@ const LoginPage = (props) => {
   useEffect(() => {
     if (props.loginData.loginResponse) {
       const data = props.loginData.loginResponse;
-  
+
       // Check if there's an error message
       if (data.error) {
         setMessage(data.error); // Display the error message if available
+        setLoading(false);
       } else {
         setMessage(data.message); // Display the success message if no error
-  
+
         if (data.responseCode === "LOGIN_SUCCESS") {
-          localStorage.setItem("token", data.token);  // Store token in localStorage
-          navigate("/admin-dashboard");  // Redirect to dashboard after successful login
+          localStorage.setItem("token", data.token); // Store token in localStorage
+          navigate("/admin-dashboard"); // Redirect to dashboard after successful login
+          setLoading(true);
         }
       }
     }
@@ -196,8 +200,10 @@ const LoginPage = (props) => {
               htmlType="submit"
               className="login-button"
               block
+              loading={loading}
+              disabled={loading}
             >
-              Login
+              {loading ? "Login..." : "Login"}
             </Button>
           </Form.Item>
         </Form>

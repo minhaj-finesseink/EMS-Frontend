@@ -11,7 +11,9 @@ const rootEpic = combineEpics(
   AddCompanyEpic.addCompany,
   AddDepartmentEpic.addDepartment,
   AddEmployeeEpic.addEmployee,
-  AddEmployeeEpic.employeePass
+  AddEmployeeEpic.employeePass,
+  LoginEpic.forgotPassword,
+  LoginEpic.resetPassword
 );
 
 export default rootEpic;

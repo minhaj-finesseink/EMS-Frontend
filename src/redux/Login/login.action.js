@@ -1,24 +1,3 @@
-// // src/redux/Login/login.actions.js
-// import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE } from './login.types';
-
-// // Action for login request
-// export const loginRequest = (credentials) => ({
-//   type: LOGIN_REQUEST,
-//   payload: credentials,
-// });
-
-// // Action for successful login
-// export const loginSuccess = (user) => ({
-//   type: LOGIN_SUCCESS,
-//   payload: user,
-// });
-
-// // Action for login failure
-// export const loginFailure = (error) => ({
-//   type: LOGIN_FAILURE,
-//   payload: error,
-// });
-
 /**
  * @fileOverview Manages the action w.r.t types in the redux
  * @author Muhammed Minhaj <minhaj@finesseink.com>com>
@@ -32,8 +11,7 @@
 })
  */
 
-import { LOGIN, LOGIN_RES } from "./login.types";
-
+import { FORGOT_PASSWORD, FORGOT_PASSWORD_RES, LOGIN, LOGIN_RES, RESET_PASSWORD, RESET_PASSWORD_RES } from "./login.types";
 
 export const login = (data) => ({
   type: LOGIN,
@@ -42,5 +20,25 @@ export const login = (data) => ({
 
 export const loginResponse = (res) => ({
   type: LOGIN_RES,
+  payload: res,
+});
+
+export const forgotPassword = (data) => ({
+  type: FORGOT_PASSWORD,
+  payload: data,
+});
+
+export const forgotPasswordResponse = (res) => ({
+  type: FORGOT_PASSWORD_RES,
+  payload: res,
+});
+
+export const resetPassword = (data) => ({
+  type: RESET_PASSWORD,
+  payload: data,
+});
+
+export const resetPasswordResponse = (res) => ({
+  type: RESET_PASSWORD_RES,
   payload: res,
 });

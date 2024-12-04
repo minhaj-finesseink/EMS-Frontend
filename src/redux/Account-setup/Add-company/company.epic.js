@@ -4,9 +4,9 @@ import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
 import { addCompanyResponse } from './company.action';
 import { ADD_COMPANY } from './company.type';
+import { baseUrl } from '../../../environments/environment.dev';
 
-// const BaseUrl = 'http://localhost:5000/api';
-const BaseUrl = 'https://ems-backend-c517.onrender.com/api';
+const BaseUrl = baseUrl
 
 const AddCompanyEpic = {};
 

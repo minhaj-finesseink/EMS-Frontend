@@ -5,8 +5,8 @@ import { LockOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import "./style.css";
 import { employeePass } from "../../redux/Account-setup/Add-employee/employee.action";
+import "./style.css";
 
 const { Title } = Typography;
 

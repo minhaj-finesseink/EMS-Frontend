@@ -1,39 +1,3 @@
-// // src/redux/Login/login.reducer.js
-// import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE } from './login.types';
-
-// const initialState = {
-//   isLoading: false,
-//   user: null,
-//   error: null,
-// };
-
-// const loginReducer = (state = initialState, action) => {
-//   switch (action.type) {
-//     case LOGIN_REQUEST:
-//       return {
-//         ...state,
-//         isLoading: true,
-//       };
-//     case LOGIN_SUCCESS:
-//       return {
-//         ...state,
-//         isLoading: false,
-//         user: action.payload,
-//         error: null,
-//       };
-//     case LOGIN_FAILURE:
-//       return {
-//         ...state,
-//         isLoading: false,
-//         error: action.payload,
-//       };
-//     default:
-//       return state;
-//   }
-// };
-
-// export default loginReducer;
-
 /**
  * @fileOverview Manages the response of action
  * @author Muhammed Minhaj <minhaj@finesseink.com>
@@ -47,10 +11,12 @@
     }
  */
 
-import { LOGIN_RES } from "./login.types"
+import { FORGOT_PASSWORD_RES, LOGIN_RES, RESET_PASSWORD_RES } from "./login.types"
 
 const INITIAL_STATE = {
   loginResponse: null,
+  forgotPassword: null,
+  resetPassword: null
 }
 
 /**
@@ -65,8 +31,15 @@ const loginReducer = (state = INITIAL_STATE, action) => {
     case LOGIN_RES: {
       return { ...state, ...{ loginResponse: action.payload } };
     }
+    case FORGOT_PASSWORD_RES: {
+      return { ...state, ...{ forgotPassword: action.payload } }
+    }
+    case RESET_PASSWORD_RES: {
+      return { ...state, ...{ resetPassword: action.payload } }
+    }
     default:
       return state;
   }
 };
+
 export default loginReducer;

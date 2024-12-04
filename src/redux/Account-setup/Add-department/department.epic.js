@@ -4,9 +4,9 @@ import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
 import { ADD_DEPARTMENT } from './department.types';
 import { addDepartmentResponse } from './department.action';
+import { baseUrl } from '../../../environments/environment.dev';
 
-// const BaseUrl = 'http://localhost:5000/api';
-const BaseUrl = 'https://ems-backend-c517.onrender.com/api';
+const BaseUrl = baseUrl
 
 const AddDepartmentEpic = {};
 

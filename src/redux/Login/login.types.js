@@ -1,8 +1,3 @@
-// // src/redux/Login/login.types.js
-// export const LOGIN_REQUEST = 'LOGIN_REQUEST';
-// export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-// export const LOGIN_FAILURE = 'LOGIN_FAILURE';
-
 /**
  * @fileOverview Manages types of the particular action in the redux
  * @author Muhammed Minhaj <minhaj@finesseink.com>
@@ -11,5 +6,12 @@
 /**
  * @type {string}
  */
+
 export const LOGIN = "LOGIN";
 export const LOGIN_RES = "LOGIN_RES";
+
+export const FORGOT_PASSWORD="FORGOT_PASSWORD"
+export const FORGOT_PASSWORD_RES="FORGOT_PASSWORD_RES"
+
+export const RESET_PASSWORD="RESET_PASSWORD"
+export const RESET_PASSWORD_RES="RESET_PASSWORD_RES"

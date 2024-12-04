@@ -3,11 +3,11 @@ import { ofType } from 'redux-observable';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
-import { LOGIN } from './login.types';
-import { loginResponse } from './login.action';
+import { FORGOT_PASSWORD, LOGIN, RESET_PASSWORD } from './login.types';
+import { forgotPasswordResponse, loginResponse, resetPasswordResponse } from './login.action';
+import { baseUrl } from '../../environments/environment.dev';
 
-// const BaseUrl = 'http://localhost:5000/api';
-const BaseUrl = 'https://ems-backend-c517.onrender.com/api';
+const BaseUrl = baseUrl
 
 const LoginEpic = {};
 
@@ -30,5 +30,46 @@ LoginEpic.login = (action$) =>
         }))
     )
   );
+
+LoginEpic.forgotPassword = (action$) =>
+  action$.pipe(
+    ofType(FORGOT_PASSWORD), // Listen for the LOGIN action type
+    switchMap((action) =>
+      ajax({
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        url: `${BaseUrl}/auth/forgot-password`,
+        method: 'POST',
+        body: action.payload, // Directly use action.payload, no need to stringify
+      }).pipe(
+        map((response) => forgotPasswordResponse(response.response)), // Extract and pass response data
+        catchError((error) => {
+          // Log the error and pass it in the action payload for error handling in the reducer
+          return of(forgotPasswordResponse({ error: error.response ? error.response.message : error.message }));
+        }))
+    )
+  );
+
+LoginEpic.resetPassword = (action$) =>
+  action$.pipe(
+    ofType(RESET_PASSWORD), // Listen for the LOGIN action type
+    switchMap((action) =>
+      ajax({
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        url: `${BaseUrl}/auth/reset-password`,
+        method: 'POST',
+        body: action.payload, // Directly use action.payload, no need to stringify
+      }).pipe(
+        map((response) => resetPasswordResponse(response.response)), // Extract and pass response data
+        catchError((error) => {
+          // Log the error and pass it in the action payload for error handling in the reducer
+          return of(resetPasswordResponse({ error: error.response ? error.response.message : error.message }));
+        }))
+    )
+  );
+
 
 export default LoginEpic;
