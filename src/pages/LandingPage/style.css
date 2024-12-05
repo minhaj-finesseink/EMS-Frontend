@@ -1,64 +1,155 @@
 /* General Styles */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-}
-
 .landing-page {
+    background-color: #6738ED;
     height: 100vh;
 }
 
-/* Header */
-.landing-header {
+/* Navigation Bar */
+.navigation-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #001529;
-    padding: 0 20px;
-    color: #fff;
+    padding: 10px 50px;
 }
 
 .logo {
+    width: 250px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-button {
+    background-color: #FFFFFF;
+    color: black;
+    border-radius: 35px;
+    height: 48px;
+    padding: 0 20px;
+    width: 120px;
+}
+
+/* Main Content */
+.main-content {
+    margin: 150px 0 0 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.content-title {
+    color: #FFF;
+    font-family: Rubik, sans-serif;
+    font-size: 92px;
+    font-weight: 500;
+    line-height: 100%;
+    letter-spacing: -2.76px;
+}
+
+.content-desc {
+    color: #FFF;
+    font-family: Outfit, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: -0.48px;
+}
+
+.content-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.content-btn {
+    height: 48px;
+    background-color: #FFF;
+    color: black;
+    border-radius: 30px;
+    font-size: 16px;
+    width: 210px;
+}
+
+/* Large Screen Styles */
+.large-screen {
+    display: flex;
+}
+
+.small-screen {
+    display: none;
+}
+
+.hamburger-menu {
     font-size: 24px;
-    font-weight: bold;
-    color: #fff;
+    color: white;
+    cursor: pointer;
 }
 
-.landing-header .ant-btn-link {
-    color: #fff;
+/* Responsive Styles for Tablet and Mobile */
+@media (max-width: 1024px) {
+    .main-content {
+        margin: 100px 20px 0;
+        text-align: center;
+    }
+
+    .content-title {
+        font-size: 57px;
+    }
+
+    .content-desc {
+        font-size: 14px;
+    }
+
+    .content-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content-btn {
+        width: 50%;
+    }
 }
 
-.landing-header .ant-btn-primary {
-    margin-left: 10px;
-}
+@media (max-width: 990px) {
 
-/* Hero Section */
-.hero-section {
-    text-align: center;
-    padding: 100px 20px;
-    background: linear-gradient(135deg, #1890ff, #e6f7ff);
-    color: #fff;
-}
+    /* Navigation */
+    .large-screen {
+        display: none;
+    }
 
-.hero-section h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
+    .small-screen {
+        display: block;
+    }
 
-.hero-section p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-}
+    /* Drawer Styles */
+    .small-screen-drawer .links {
+        margin: 10px 0;
+        color: black;
+        font-size: 16px;
+        cursor: pointer;
+    }
 
-.button-group .ant-btn {
-    margin: 0 10px;
-}
+    .small-screen-drawer .drawer-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
 
-/* Footer */
-.footer-section {
-    text-align: center;
-    padding: 20px 0;
-    background-color: #001529;
-    color: #fff;
+    .small-screen-drawer .nav-button {
+        width: 100%;
+    }
+
+    .navigation-bar {
+        padding: 10px 30px;
+    }
 }

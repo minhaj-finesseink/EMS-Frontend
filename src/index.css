@@ -1,3 +1,8 @@
-body, .ant-typography, .ant-btn, .ant-menu-item {
+body,
+.ant-typography,
+.ant-btn,
+.ant-menu-item {
   font-family: 'Rubik', sans-serif !important;
+  margin: 0;
+  padding: 0;
 }

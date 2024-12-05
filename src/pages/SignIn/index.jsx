@@ -68,7 +68,11 @@ function SignIn(props) {
       </div>
       <div className="login-form-container">
         <div style={{ width: "100%" }}>
-          <img className="login-company-logo" src={companyLogo} alt="company logo" />
+          <img
+            className="login-company-logo"
+            src={companyLogo}
+            alt="company logo"
+          />
         </div>
         <div>
           <div className="login-heading">SIGN IN</div>
@@ -182,20 +186,30 @@ function SignIn(props) {
               </div>
 
               {/* Remember Me and Login Button */}
-          <Form.Item>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Checkbox>Remember me</Checkbox>
-              <a href="/forgot-password" style={{ marginLeft: "auto" }}>
-                Forgot Password?
-              </a>
-            </div>
-          </Form.Item>
+              <Form.Item>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Checkbox>
+                    <span style={{ color: "rgba(164, 157, 157, 0.87)" }}>
+                      Remember me
+                    </span>
+                  </Checkbox>
+                  <div
+                    style={{
+                      color: "rgba(164, 157, 157, 0.87)",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => navigate("/forgot-password")}
+                  >
+                    Forgot password?
+                  </div>
+                </div>
+              </Form.Item>
 
               {/* Sign Up Button */}
               <Form.Item>
