@@ -67,7 +67,7 @@
 /* For tablets (768px to 1024px) */
 @media (max-width:1024px) {
     .login-container {
-        flex-direction: column;
+        flex-direction: column-reverse;
         height: auto;
         padding: 20px;
         gap: 20px;
@@ -97,7 +97,7 @@
 /* For mobile phones (up to 767px) */
 @media (max-width: 767px) {
     .login-container {
-        flex-direction: column;
+        flex-direction: column-reverse;
         height: auto;
         padding: 10px;
         gap: 20px;
