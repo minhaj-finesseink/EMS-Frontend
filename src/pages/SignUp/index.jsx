@@ -105,7 +105,7 @@ function SignUpPage(props) {
                   >
                     <Input
                       placeholder="Enter your name"
-                      className="login-input"
+                      className="sign-up-input"
                       //   prefix={<IdcardOutlined />}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -128,7 +128,7 @@ function SignUpPage(props) {
                   >
                     <Input
                       placeholder="Enter your company name"
-                      className="login-input"
+                      className="sign-up-input"
                       //   prefix={<BankOutlined />}
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
@@ -144,7 +144,7 @@ function SignUpPage(props) {
                     ]}
                   >
                     <Input
-                      className="login-input"
+                      className="sign-up-input"
                       //   prefix={<MailOutlined />}
                       placeholder="Enter your email"
                       value={email}
@@ -162,8 +162,10 @@ function SignUpPage(props) {
                       },
                       {
                         validator: (_, value) => {
+                          if (!value) {
+                            return Promise.resolve(); // Skip validation if the field is empty
+                          }
                           if (
-                            value &&
                             passwordStrength.hasMinLength &&
                             passwordStrength.hasUppercase &&
                             passwordStrength.hasNumber &&
@@ -181,7 +183,7 @@ function SignUpPage(props) {
                     <Input.Password
                       //   prefix={<KeyOutlined />}
                       placeholder="Enter your password"
-                      className="login-input"
+                      className="sign-up-input"
                       value={password}
                       onChange={(e) => {
                         validatePassword(e.target.value);
@@ -191,51 +193,51 @@ function SignUpPage(props) {
                   </Form.Item>
 
                   {/* Password Strength Indicators */}
-                  {/* <div className="password-requirements">
-                <span
-                  className={
-                    passwordStrength.hasMinLength
-                      ? "requirement met"
-                      : "requirement"
-                  }
-                >
-                  8 Characters
-                </span>
-                <span
-                  className={
-                    passwordStrength.hasUppercase
-                      ? "requirement met"
-                      : "requirement"
-                  }
-                >
-                  1 Uppercase
-                </span>
-                <span
-                  className={
-                    passwordStrength.hasNumber
-                      ? "requirement met"
-                      : "requirement"
-                  }
-                >
-                  1 Numeric
-                </span>
-                <span
-                  className={
-                    passwordStrength.hasSymbol
-                      ? "requirement met"
-                      : "requirement"
-                  }
-                >
-                  1 Symbol
-                </span>
-              </div> */}
+                  <div className="password-requirements">
+                    <span
+                      className={
+                        passwordStrength.hasMinLength
+                          ? "requirement met"
+                          : "requirement"
+                      }
+                    >
+                      8 Characters
+                    </span>
+                    <span
+                      className={
+                        passwordStrength.hasUppercase
+                          ? "requirement met"
+                          : "requirement"
+                      }
+                    >
+                      1 Uppercase
+                    </span>
+                    <span
+                      className={
+                        passwordStrength.hasNumber
+                          ? "requirement met"
+                          : "requirement"
+                      }
+                    >
+                      1 Numeric
+                    </span>
+                    <span
+                      className={
+                        passwordStrength.hasSymbol
+                          ? "requirement met"
+                          : "requirement"
+                      }
+                    >
+                      1 Symbol
+                    </span>
+                  </div>
 
                   {/* Sign Up Button */}
                   <Form.Item>
                     <Button
                       type="primary"
                       htmlType="submit"
-                      className="login-button"
+                      className="sign-up-button"
                       block
                       loading={loading}
                       disabled={loading}
@@ -274,7 +276,7 @@ function SignUpPage(props) {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="login-button"
+                className="sign-up-button"
                 block
                 onClick={handleClick}
               >

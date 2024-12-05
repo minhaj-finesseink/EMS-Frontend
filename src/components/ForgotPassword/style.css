@@ -1,4 +1,4 @@
-.forgot-password-container {
+/* .forgot-password-container {
     max-width: 500px;
     margin: 50px auto;
     padding: 20px;
@@ -67,4 +67,16 @@
 
 .forgot-password-container .message.error {
     color: #dc3545;
+} */
+
+.back-login {
+    color: rgba(164, 157, 157, 0.87);
+    font-family: Rubik;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 160%;
+    letter-spacing: 0.15px;
+    text-align: center;
+    display: flex;
+    cursor: pointer;
 }

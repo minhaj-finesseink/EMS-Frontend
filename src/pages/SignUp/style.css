@@ -44,16 +44,16 @@
     letter-spacing: 0.15px;
 }
 
-.login-input {
+.sign-up-input {
     border-radius: 28px;
     height: 56px;
 }
 
 .form-items {
-    margin: 33px 0;
+    margin: 15px 0;
 }
 
-.login-button {
+.sign-up-button {
     border-radius: 25px;
     background: #0057FF;
     height: 56px;
@@ -160,12 +160,12 @@
         font-size: 16px;
     }
 
-    .login-input {
+    .sign-up-input {
         height: 48px;
         font-size: 14px;
     }
 
-    .login-button {
+    .sign-up-button {
         height: 50px;
         font-size: 16px;
     }
@@ -187,12 +187,12 @@
         border-radius: 40px;
     }
 
-    .login-input {
+    .sign-up-input {
         height: 60px;
         font-size: 18px;
     }
 
-    .login-button {
+    .sign-up-button {
         height: 60px;
         font-size: 18px;
     }
