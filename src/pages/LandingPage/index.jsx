@@ -183,10 +183,18 @@ function LandingPage() {
           <div className="links">FAQ</div>
         </div>
         <div className="drawer-buttons">
-          <Button type="primary" className="nav-button">
+          <Button
+            type="primary"
+            className="nav-button"
+            onClick={() => navigate("/sign-in")}
+          >
             Sign In
           </Button>
-          <Button type="primary" className="nav-button">
+          <Button
+            type="primary"
+            className="nav-button"
+            onClick={() => navigate("/sign-up")}
+          >
             Sign Up
           </Button>
         </div>
