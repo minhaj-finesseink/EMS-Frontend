@@ -4,7 +4,7 @@ import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
 import { ADD_DEPARTMENT } from './department.types';
 import { addDepartmentResponse } from './department.action';
-import { baseUrl } from '../../../environments/environment.dev';
+import { baseUrl } from '../../environments/environment.dev';
 
 const BaseUrl = baseUrl
 

@@ -2,7 +2,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Select } from "antd";
-import { addDepartment } from "../../redux/Account-setup/Add-department/department.action";
+import { addDepartment } from "../../redux/Add-department/department.action";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import "./style.css";

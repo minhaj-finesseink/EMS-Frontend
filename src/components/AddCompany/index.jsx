@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Row, Select } from "antd";
 import { industryTypes } from "../../utils/industryType";
-import { addcompany } from "../../redux/Account-setup/Add-company/company.action";
+import { addcompany } from "../../redux/Add-company/company.action";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import "./style.css";

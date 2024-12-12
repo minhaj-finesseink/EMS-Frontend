@@ -18,23 +18,23 @@
 * @returns {{loginResponse: {}, login: boolean, status: boolean}|{loginResponse: *, login: boolean, status: boolean}|{loginResponse: {}, login: boolean, status: *}}
 */
 
-import { ADD_EMPLOYEE_RES, EMPLOYEE_PASS_RES } from "./employee.types";
+import { ADD_EDUCATION_RES, GET_EDUCATION_RES } from "./education.type";
 
 const INITIAL_STATE = {
-  addEmployeeResponse: null,
-  employeePass: null
+  addEducationResponse: null,
+  getEducationResponse: null
 }
 
-const addEmployeeReducer = (state = INITIAL_STATE, action) => {
+const educationReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case ADD_EMPLOYEE_RES: {
-      return { ...state, ...{ addEmployeeResponse: action.payload } };
+    case ADD_EDUCATION_RES: {
+      return { ...state, ...{ addEducationResponse: action.payload } };
     }
-    case EMPLOYEE_PASS_RES: {
-      return { ...state, ...{ employeePass: action.payload } }
+    case GET_EDUCATION_RES: {
+      return { ...state, ...{ getEducationResponse: action.payload } }
     }
     default:
       return state;
   }
 };
-export default addEmployeeReducer;
+export default educationReducer;

@@ -12,7 +12,6 @@ import "./style.css";
 
 function SignIn(props) {
   const navigate = useNavigate(); // Use useNavigate hook
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");

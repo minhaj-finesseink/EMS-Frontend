@@ -1,15 +1,18 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Select } from "antd";
+import { Button, DatePicker, Form, Input, Select } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { addEmployee } from "../../redux/Add-employee/employee.action";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./style.css";
-import { addEmployee } from "../../redux/Account-setup/Add-employee/employee.action";
 
 const { Option } = Select;
 
 function AddEmployee(props) {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [formValues, setFormValues] = useState({
     firstName: "",
     lastName: "",
@@ -17,14 +20,23 @@ function AddEmployee(props) {
     employeeType: "",
     email: "",
     phoneNumber: "",
+    employementStartDate: "",
+    idNumber: "",
   });
-  const [accountId, setAccountId] = useState(null);
+  // const [accountId, setAccountId] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({
       ...formValues,
       [name]: value,
+    });
+  };
+
+  const handleDateChange = (date, dateString) => {
+    setFormValues({
+      ...formValues,
+      employementStartDate: dateString,
     });
   };
 
@@ -43,32 +55,72 @@ function AddEmployee(props) {
   //   }
   // }, [props.loginData]);
 
-  useEffect(() => {
-    if (props.loginData?.loginResponse) {
-      const loginData = props.loginData.loginResponse;
-      setAccountId(loginData.user.accountId); // Set accountId from loginData
-    }
+  // useEffect(() => {
+  //   if (props.loginData?.loginResponse) {
+  //     const loginData = props.loginData.loginResponse;
+  //     setAccountId(loginData.user.accountId); // Set accountId from loginData
+  //   }
 
-    if (props.registerData?.registerResponse) {
-      const registerData = props.registerData.registerResponse;
-      setAccountId(registerData.user.accountId); // Set accountId from registerData
-    }
-  }, [props.loginData, props.registerData]);
+  //   if (props.registerData?.registerResponse) {
+  //     const registerData = props.registerData.registerResponse;
+  //     setAccountId(registerData.user.accountId); // Set accountId from registerData
+  //   }
+  // }, [props.loginData, props.registerData]);
 
   const handleSubmit = () => {
     props.addEmployee({
-      accountId: accountId,
+      accountId: userInfo.accountId,
       firstName: formValues.firstName,
       lastName: formValues.lastName,
       departmentName: formValues.department,
       employeeType: formValues.employeeType,
       email: formValues.email,
       phoneNumber: formValues.phoneNumber,
+      employementStartDate: formValues.employementStartDate,
+      idNumber: formValues.idNumber,
+      homeEmail: "",
     });
   };
 
+  useEffect(() => {
+    if (props.employeeData.addEmployeeResponse) {
+      const response = props.employeeData.addEmployeeResponse;
+
+      if (response.success) {
+        // Show success message
+        toast.success("Employee added successfully!");
+
+        // Close the modal after 3 seconds
+        setTimeout(() => {
+          props.onClose();
+        }, 3000);
+      } else {
+        // Handle error response
+        toast.error(response.message || "Failed to add employee!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+
+      // Reset the response to prevent duplicate notifications
+      props.employeeData.addEmployeeResponse = null;
+    }
+  }, [props.employeeData.addEmployeeResponse, props.onClose]);
+
   return (
     <div>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Form
         layout="vertical"
         onFinish={handleSubmit}
@@ -166,6 +218,34 @@ function AddEmployee(props) {
             onChange={handleChange}
           />
         </Form.Item>
+        <Form.Item
+          label="Employement Start Date"
+          name="employementStartDate"
+          rules={[
+            { required: true, message: "Please enter employement start date!" },
+          ]}
+        >
+          <DatePicker
+            name="employementStartDate"
+            value={formValues.employementStartDate}
+            onChange={handleDateChange}
+            placeholder="Select start date"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+        <Form.Item
+          label="ID number"
+          name="idNumber"
+          rules={[
+            { required: true, message: "Please enter employee ID number!" },
+          ]}
+        >
+          <Input
+            name="idNumber"
+            value={formValues.idNumber}
+            onChange={handleChange}
+          />
+        </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
             Add
@@ -177,7 +257,7 @@ function AddEmployee(props) {
 }
 
 const mapStateToProps = (state) => ({
-  employeeData: state.AddEmployee,
+  employeeData: state.addEmployee,
   loginData: state.login,
   registerData: state.register,
 });
@@ -187,8 +267,10 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 AddEmployee.propTypes = {
-  login: PropTypes.func,
   addEmployee: PropTypes.func,
+  employeeData: PropTypes.object,
+  loginData: PropTypes.object,
+  registerData: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddEmployee);

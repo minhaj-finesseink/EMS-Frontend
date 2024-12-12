@@ -1,3 +1,66 @@
 .ant-layout-sider {
     width: 300px;
 }
+
+.button-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* Three buttons per row */
+    gap: 20px;
+    /* Space between buttons */
+}
+
+.custom-button {
+    background-color: #007bff;
+    /* Blue background */
+    color: white;
+    /* White text */
+    border: none;
+    /* Remove default border */
+    border-radius: 20px;
+    /* Rounded edges */
+    padding: 10px 20px;
+    /* Padding for a larger button */
+    font-size: 16px;
+    /* Font size for text */
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Optional shadow */
+    height: 100px;
+}
+
+.custom-button:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+.custom-button:focus {
+    outline: none;
+    /* Remove focus outline */
+    box-shadow: 0 0 5px #0056b3;
+    /* Optional focus shadow */
+}
+
+.employee-card {
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .employee-card:hover {
+    transform: translateY(-5px); /* Lift on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+  }
+  
+  .employee-card img {
+    border-radius: 5px; /* Rounded image */
+  }
+  
+  .employee-card .ant-typography-link {
+    font-size: 14px; /* Smaller text for link */
+    display: inline-block;
+    margin-top: 5px;
+  }
+  

@@ -1,23 +1,47 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import { Layout, Space, DatePicker, Button } from "antd";
-import SideBar from "../../components/sideBar";
-import HeaderBar from "../../components/header";
-import AttendanceAndPayroll from "../../components/attendanceAndPayroll";
+import {
+  Layout,
+  Space,
+  DatePicker,
+  Button,
+  Card,
+  Row,
+  Col,
+  Typography,
+  Modal,
+  Tabs,
+} from "antd";
 import {
   CalendarOutlined,
   DownloadOutlined,
   DownOutlined,
+  RightOutlined,
 } from "@ant-design/icons";
+import SideBar from "../../components/sideBar";
+import HeaderBar from "../../components/header";
+import AttendanceAndPayroll from "../../components/attendanceAndPayroll";
 import EmployeeList from "../../components/employeeList";
 import TaskOverview from "../../components/taskOverview";
 import Activity from "../../components/activity";
 import Calender from "../../components/calender";
 import AccountSetup from "../../components/Account-setup";
-const { Header, Sider, Content } = Layout;
+import AddEmployee from "../../components/AddEmployee";
+import AddLeavePolicy from "../../components/AddLeavePolicy";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import "./style.css";
+import AddExistingEmployee from "../../components/AddExistingEmployee";
+import TabPane from "antd/es/tabs/TabPane";
+import PeronalDetails from "../../components/PeronalDetails";
+import ContactDetails from "../../components/ContactDetails";
+import AddressDetails from "../../components/AddressDetails";
+import EducationDetails from "../../components/EducationDetails";
+import VisaDetails from "../../components/VisaDetails";
+
+const { Header, Sider, Content } = Layout;
+const { Title, Text, Link } = Typography;
 
 const layoutStyle = { backgroundColor: "#FFFFFF" };
 const siderStyle = { backgroundColor: "#FFFFFF" };
@@ -30,11 +54,24 @@ const contentStyle = { backgroundColor: "#FFFFFF" };
 
 function Dashboard(props) {
   const [accountSetup, setAccountSetup] = useState(null);
+  const [visible, setVisible] = useState(false); // Modal visibility state
+  const [modalContent, setModalContent] = useState(null); // Content to show in the modal
+  const [showAddEmployees, setShowAddEmployees] = useState(false); // State to show/hide "Add Employees"
+  const [leavePolicy, setLeavePolicy] = useState(false);
+  const [role, setRole] = useState("");
+  const [activeTab, setActiveTab] = useState("1"); // Track active tab
 
   useEffect(() => {
     if (props.loginData.loginResponse) {
       let data = props.loginData.loginResponse;
       setAccountSetup(data.user.isSetupComplete);
+      // Store user information in local storage
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
+      // if (data.user.role === "employee") {
+      //   setRole("employee");
+      // } else {
+      //   setRole("admin");
+      // }
     }
 
     if (props.employeeData?.addEmployeeResponse) {
@@ -45,15 +82,66 @@ function Dashboard(props) {
     if (props.registerData?.registerResponse) {
       let data = props.registerData.registerResponse;
       setAccountSetup(data.user.isSetupComplete);
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
     }
   }, [props.loginData, props.employeeData, props.registerData]);
+
+  const employeeData = [
+    {
+      value: 1,
+      title: "Add New Employee",
+      description: "An employee is a hired individual who works for a company.",
+      link: "Find out more",
+      imgSrc: "https://via.placeholder.com/50", // Replace with actual icon URL
+    },
+    {
+      value: 2,
+      title: "Add Existing Employee",
+      description: "Independent service provider with a written contract.",
+      link: "Find out more",
+      imgSrc: "https://via.placeholder.com/50", // Replace with actual icon URL
+    },
+    {
+      value: 3,
+      title: "Add Contractor",
+      description: "Independent service provider with a written contract.",
+      link: "Find out more",
+      imgSrc: "https://via.placeholder.com/50", // Replace with actual icon URL
+    },
+  ];
+
+  const handleCardClick = (cardInfo) => {
+    setModalContent(cardInfo); // Set the content for the modal
+    setVisible(true); // Show the modal
+  };
+
+  // Close the modal
+  const handleCloseModal = () => {
+    setVisible(false);
+    setModalContent(null);
+  };
+
+  const handleTabChange = (key) => {
+    setActiveTab(key); // Update the active tab key
+  };
+
+  // New useEffect to fetch user info from localStorage
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+
+    if (userInfo) {
+      if (userInfo.role === "employee") {
+        setRole("employee");
+      } else {
+        setRole("admin");
+      }
+    }
+  }, []);
 
   return (
     <Layout style={layoutStyle}>
       <Sider style={siderStyle} width={300}>
-        <>
-          <SideBar />
-        </>
+        <SideBar />
       </Sider>
       <Layout>
         <Header style={headerStyle}>
@@ -63,7 +151,6 @@ function Dashboard(props) {
           <div style={styles.contentTitle}>
             <h1>Dashboard</h1>
             <div style={styles.container}>
-              {/* Date Picker */}
               <Button
                 style={{
                   display: "flex",
@@ -76,8 +163,6 @@ function Dashboard(props) {
                 <Space size={0}>
                   <DatePicker
                     style={{ width: 87, padding: 0 }}
-                    // value={dates && dates[0]}
-                    // onChange={(date) => handleDateChange([date, dates?.[1]])}
                     bordered={false}
                     placeholder="Start Date"
                     suffixIcon={null}
@@ -85,8 +170,6 @@ function Dashboard(props) {
                   <span style={{ margin: "0 4px" }}>-</span>
                   <DatePicker
                     style={{ width: 87, padding: 0 }}
-                    // value={dates && dates[1]}
-                    // onChange={(date) => handleDateChange([dates?.[0], date])}
                     bordered={false}
                     placeholder="End Date"
                     suffixIcon={null}
@@ -94,33 +177,209 @@ function Dashboard(props) {
                 </Space>
                 <DownOutlined />
               </Button>
-
-              {/* Export Button */}
               <Button
-                type="primary" 
+                type="primary"
                 style={styles.exportButton}
                 icon={<DownloadOutlined />}
-                // onClick={onExport}
               >
                 Export to CSV
               </Button>
             </div>
           </div>
-          {/* Main content */}
           <div style={{ width: "100%", display: "flex" }}>
             <div style={{ width: "70%" }}>
-              {/* Conditional Rendering for Account Setup or Main Components */}
-              {accountSetup ? (
-                <>
-                  <AttendanceAndPayroll />
-                  <EmployeeList />
-                  <TaskOverview />
-                </>
+              {role === "employee" ? (
+                <Tabs
+                  style={{ padding: "20px" }}
+                  activeKey={activeTab}
+                  onChange={handleTabChange}
+                >
+                  <TabPane tab="Personal Details" key="1">
+                    <PeronalDetails
+                      handleTabChange={handleTabChange}
+                      tabKey={activeTab}
+                    />
+                  </TabPane>
+                  <TabPane tab="Contact Details" key="2">
+                    <ContactDetails
+                      handleTabChange={handleTabChange}
+                      tabKey={activeTab}
+                    />
+                  </TabPane>
+                  <TabPane tab="Address Details" key="3">
+                    <AddressDetails
+                      handleTabChange={handleTabChange}
+                      tabKey={activeTab}
+                    />
+                  </TabPane>
+                  <TabPane tab="Education Details" key="4">
+                    <EducationDetails
+                      handleTabChange={handleTabChange}
+                      tabKey={activeTab}
+                    />
+                  </TabPane>
+                  <TabPane tab="Visa Details" key="5" tabKey={activeTab}>
+                    <VisaDetails />
+                  </TabPane>
+                </Tabs>
               ) : (
-                <AccountSetup />
+                <>
+                  {accountSetup ? (
+                    <>
+                      <AttendanceAndPayroll />
+                      <EmployeeList />
+                      <TaskOverview />
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ padding: "20px" }}>
+                        {showAddEmployees ? (
+                          <div
+                            style={{
+                              padding: "20px",
+                              maxWidth: "800px",
+                              margin: "0 auto",
+                            }}
+                          >
+                            <Title
+                              level={2}
+                              style={{
+                                textAlign: "center",
+                                marginBottom: "30px",
+                              }}
+                            >
+                              Add Employees
+                            </Title>
+                            <Row gutter={[16, 16]}>
+                              {employeeData.map((item, index) => (
+                                <Col span={24} key={index}>
+                                  <Card
+                                    className="employee-card"
+                                    onClick={() => handleCardClick(item)}
+                                  >
+                                    <Row align="middle" gutter={[16, 16]}>
+                                      <Col flex="auto">
+                                        <Title level={4}>{item.title}</Title>
+                                        <Text>{item.description}</Text>
+                                        <div>
+                                          <Link
+                                            href="#"
+                                            style={{ color: "#1890ff" }}
+                                          >
+                                            {item.link}
+                                          </Link>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <RightOutlined
+                                          style={{
+                                            fontSize: "18px",
+                                            color: "#1890ff",
+                                          }}
+                                        />
+                                      </Col>
+                                    </Row>
+                                  </Card>
+                                </Col>
+                              ))}
+                            </Row>
+                            <Modal
+                              title={modalContent?.title}
+                              visible={visible}
+                              onCancel={handleCloseModal}
+                              footer={null}
+                              bodyStyle={{
+                                maxHeight: "70vh",
+                                overflowY: "auto",
+                                overflowX: "hidden",
+                              }}
+                            >
+                              <div>
+                                {modalContent?.value == 1 ? (
+                                  <AddEmployee onClose={handleCloseModal} />
+                                ) : modalContent?.value == 2 ? (
+                                  <AddExistingEmployee />
+                                ) : (
+                                  "Hello 3"
+                                )}
+                              </div>
+                            </Modal>
+                            {/* Back Button */}
+                            <Button
+                              type="primary"
+                              onClick={() => setShowAddEmployees(false)}
+                              style={{
+                                backgroundColor: "#1890ff",
+                                borderColor: "#1890ff",
+                                color: "#fff",
+                                width: "100px",
+                                marginTop: "20px",
+                              }}
+                            >
+                              Back
+                            </Button>
+                          </div>
+                        ) : leavePolicy ? (
+                          <>
+                            <AddLeavePolicy />
+                            <div>
+                              <Button
+                                type="primary"
+                                onClick={() => setLeavePolicy(false)}
+                                style={{
+                                  backgroundColor: "#1890ff",
+                                  borderColor: "#1890ff",
+                                  color: "#fff",
+                                  width: "100px",
+                                  marginTop: "20px",
+                                  marginLeft: "20px",
+                                }}
+                              >
+                                Back
+                              </Button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <AccountSetup />
+                            <h2>Overview</h2>
+                            <div className="button-container">
+                              <Button
+                                className="custom-button"
+                                onClick={() => setShowAddEmployees(true)}
+                              >
+                                Add User
+                              </Button>
+                              <Button
+                                className="custom-button"
+                                onClick={() => setLeavePolicy(true)}
+                              >
+                                Setup Leave Policy
+                              </Button>
+                              <Button className="custom-button">
+                                Add a Project
+                              </Button>
+                              <Button className="custom-button">
+                                Add an Event
+                              </Button>
+                              <Button className="custom-button">
+                                Add Payroll
+                              </Button>
+                              <Button className="custom-button">
+                                Setup Learning
+                              </Button>
+                              <Button className="custom-button">
+                                Send Offer Letter
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </>
               )}
             </div>
-            {/* Right panel */}
             <div style={{ width: "30%", marginRight: "20px" }}>
               <Activity />
               <Calender />
@@ -138,15 +397,8 @@ const styles = {
     alignItems: "center",
     gap: "5px",
   },
-  datePickerContainer: {
-    flex: 1,
-    width: "220px",
-  },
-  datePicker: {
-    borderRadius: "8px",
-  },
   exportButton: {
-    backgroundColor: "#28a745", // Green color
+    backgroundColor: "#28a745",
     borderColor: "#28a745",
     borderRadius: "8px",
     color: "#fff",
@@ -165,12 +417,10 @@ const mapStateToProps = (state) => ({
   registerData: state.register,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  // login: (values) => dispatch(login(values)),
-});
-
 Dashboard.propTypes = {
-  login: PropTypes.func,
+  loginData: PropTypes.object,
+  employeeData: PropTypes.object,
+  registerData: PropTypes.object,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps)(Dashboard);
