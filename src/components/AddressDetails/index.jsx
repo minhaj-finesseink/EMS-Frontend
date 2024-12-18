@@ -5,7 +5,7 @@ import { Button, Form, Input } from "antd";
 import "./style.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { userUpdate } from "../../redux/Add-employee/employee.action";
+import { userUpdate } from "../../redux/User/user.action";
 
 function AddressDetails(props) {
   const [form] = Form.useForm();
@@ -143,7 +143,7 @@ function AddressDetails(props) {
 }
 
 const mapStateToProps = (state) => ({
-  userData: state.addEmployee,
+  userData: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({

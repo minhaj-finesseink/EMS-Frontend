@@ -1,20 +1,42 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import { Form, Input, DatePicker, Radio, Button, Tabs, Select } from "antd";
-import { addEmployee } from "../../redux/Add-employee/employee.action";
+import {
+  Form,
+  Input,
+  DatePicker,
+  Radio,
+  Button,
+  Tabs,
+  Select,
+  Layout,
+  Menu,
+  Typography,
+  Card,
+  Row,
+  Col,
+  Divider,
+  Switch,
+  Dropdown,
+  Space,
+} from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { addUser } from "../../redux/User/user.action";
+import { getDepartment } from "../../redux/Add-department/department.action";
+import { getGeneralTimeOff } from "../../redux/GeneralTimeOff/generalTimeOff.action";
+import GeneralTimeOff from "../GeneralTimeOff";
+import { DownOutlined, PlusOutlined } from "@ant-design/icons";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
+const { Sider, Content } = Layout;
+const { Title, Text } = Typography;
 
 const AddEmployee = (props) => {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [form] = Form.useForm();
-  // const [employmentType, setEmploymentType] = useState("Full-time");
   const [activeTab, setActiveTab] = useState("1"); // Track active tab
-  // const [payPeriod, setPayPeriod] = useState("");
-  const [suffix, setSuffix] = useState("");
   const [formValues, setFormValues] = useState({
     employementType: "",
     firstName: "",
@@ -33,25 +55,23 @@ const AddEmployee = (props) => {
     zip: "",
     country: "",
     department: "",
-
-    salary: "",
-    salaryPeriod: "",
-    timeOff: "",
-    carryForwardTimeOff: "",
   });
   const [accountId, setAccountId] = useState(null);
-
-  // const handleEmploymentTypeChange = (e) => {
-  //   setEmploymentType(e.target.value);
-  // };
+  const [changeTab, setChangeTab] = useState(false);
+  const [departmentList, setDepartmentList] = useState([]);
+  const [isTimeOffVisible, setIsTimeOffVisible] = useState(false); // State to control time off visibility
+  const [isModalOpen, setIsModalOpen] = useState(false); // Control modal visibility
+  const [carryForward, setCarryForward] = useState(false);
+  const [maxAccrual, setMaxAccrual] = useState(true);
+  const [cashOut, setCashOut] = useState(false);
+  const [selectedPolicy, setSelectedPolicy] = useState("Paid Time Off");
+  const [resetValue, setResetValue] = useState("");
+  const [timeOffList, setTimeOffList] = useState([]);
 
   const handleTabChange = (key) => {
-    setActiveTab(key); // Update the active tab key
-  };
-
-  const handleSubmit = (values) => {
-    // console.log("Form Submitted:", values);
-    setActiveTab("2"); // Navigate to Benefits tab on form submission
+    if (changeTab) {
+      setActiveTab(key); // Update the active tab key
+    }
   };
 
   const getHeadingContent = () => {
@@ -62,7 +82,6 @@ const AddEmployee = (props) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // console.log("name", name, "value", value);
     setFormValues({
       ...formValues,
       [name]: value,
@@ -77,45 +96,21 @@ const AddEmployee = (props) => {
   };
 
   const handleSelectChange = (value, fieldName) => {
-    // console.log("value - ", value, "fieldName - ", fieldName);
     setFormValues({
       ...formValues,
       [fieldName]: value,
     });
 
-    // setPayPeriod(value);
-
     switch (value) {
-      case "hourly":
-        setSuffix("/hr");
-        break;
-      case "weekly":
-        setSuffix("/week");
-        break;
-      case "biweekly":
-        setSuffix("/2 weeks");
-        break;
-      case "daily":
-        setSuffix("/day");
-        break;
       case "monthly":
-        setSuffix("/month");
+        setResetValue("On last day of month");
         break;
       case "yearly":
-        setSuffix("/year");
-        break;
-      case "semiMonthly":
-        setSuffix("/semi-monthly");
-        break;
-      case "projectBased":
-        setSuffix("/project");
+        setResetValue("On 31st on Dec");
         break;
       default:
-        setSuffix("");
     }
   };
-
-  // console.log("Test- ", formValues);
 
   useEffect(() => {
     if (props.loginData?.loginResponse) {
@@ -129,35 +124,124 @@ const AddEmployee = (props) => {
     }
   }, [props.loginData, props.registerData]);
 
-  const handleAddExistingUser = () => {
-    props.addEmployee({
-      accountId: accountId,
+  useEffect(() => {
+    props.getDepartment(userInfo._id);
+    props.getGeneralTimeOff(userInfo.companyId);
+  }, []);
+
+  useEffect(() => {
+    if (props.departmentData.getDepartmentResponse) {
+      let data = props.departmentData.getDepartmentResponse;
+      if (data.success) {
+        let department = data.department.department;
+        let departmentNames = department.map((dept) => {
+          let name = dept.departmentName.toLowerCase().split(" ");
+          name = name
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+          return name;
+        });
+        setDepartmentList(departmentNames);
+      }
+    }
+  }, [props.departmentData.getDepartmentResponse]);
+
+  const handleSubmit = (values) => {
+    const payload = {
+      companyId: userInfo.companyId,
+      companyName: userInfo.companyName,
       firstName: formValues.firstName,
       middleName: formValues.middleName,
       lastName: formValues.lastName,
+      employementType: formValues.employementType,
+      employmentStartDate: formValues.employmentStartDate,
+      employeeIdNumber: formValues.idNumber,
       departmentName: formValues.department,
-      employeeType: formValues.employementType,
-      email: formValues.email,
-      phoneNumber: formValues.phoneNumber,
-      employementStartDate: formValues.employmentStartDate,
       dob: formValues.dob,
-      sex: formValues.sex,
-      idNumber: formValues.idNumber,
+      gender: formValues.sex,
+      phone: formValues.phoneNumber,
+      email: formValues.email,
       address: {
-        address: formValues.address ? formValues.address : "",
-        street: formValues.street ? formValues.street : "",
-        state: formValues.state ? formValues.state : "",
-        city: formValues.city ? formValues.city : "",
-        zip: formValues.zip ? formValues.zip : "",
-        country: formValues.country ? formValues.country : "",
+        address: formValues.address,
+        street: formValues.street,
+        state: formValues.state,
+        city: formValues.city,
+        zip: formValues.zip,
+        country: formValues.country,
       },
-      salary: formValues.salary,
-      salaryPeriod: formValues.salaryPeriod,
-      timeOff: formValues.timeOff,
-      carryforwardTimeOff: formValues.carryForwardTimeOff,
-    });
+    };
+    props.addUser(payload);
   };
 
+  useEffect(() => {
+    if (props.userData.addUserResponse) {
+      let data = props.userData.addUserResponse;
+      // console.log("data", data);
+      if (data.success) {
+        setActiveTab("2"); // Navigate to Benefits tab on form submission
+        setChangeTab(true);
+      }
+    }
+  }, [props.userData.addUserResponse]);
+
+  useEffect(() => {
+    if (props.generalTimeOffData.getGeneralTimeOffResponse) {
+      let data = props.generalTimeOffData.getGeneralTimeOffResponse;
+      if (data.success) {
+        // Assuming the first item in the data array contains the time off policies
+        const policies = data.data[0]?.timeOff.map((policy) => ({
+          key: policy.policyCode, // Unique identifier for the policy
+          label: policy.policyName, // Name of the policy
+        }));
+        console.log("Extracted Policies:", policies);
+        setTimeOffList(policies);
+
+        setIsTimeOffVisible(data.success);
+      }
+    }
+  }, [props.generalTimeOffData.getGeneralTimeOffResponse]);
+
+  useEffect(() => {
+    if (props.generalTimeOffData.addGeneralTimeOffResponse) {
+      let data = props.generalTimeOffData.addGeneralTimeOffResponse;
+      if (data.success) {
+        props.getGeneralTimeOff(userInfo.companyId);
+      }
+    }
+  }, [props.generalTimeOffData.addGeneralTimeOffResponse]);
+
+  // Function to handle modal opening
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // Function to handle modal closing
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (props.generalTimeOffData.addGeneralTimeOffResponse) {
+      let data = props.generalTimeOffData.addGeneralTimeOffResponse;
+      if (data.success) {
+        handleCloseModal();
+      }
+    }
+    props.generalTimeOffData.addGeneralTimeOffResponse = null;
+  }, [props.generalTimeOffData.addGeneralTimeOffResponse]);
+
+  const handleMenuClick = (e) => {
+    const selected = timeOffList.find((policy) => policy.key === e.key);
+    setSelectedPolicy(selected.label);
+  };
+
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      {timeOffList.map((policy) => (
+        <Menu.Item key={policy.key}>{policy.label}</Menu.Item>
+      ))}
+    </Menu>
+  );
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       <h2>{getHeadingContent()}</h2>
@@ -262,12 +346,17 @@ const AddEmployee = (props) => {
                   },
                 ]}
               >
-                <Input
-                  name="department"
+                <Select
                   value={formValues.department}
-                  onChange={handleChange}
-                  placeholder="Enter last name"
-                />
+                  onChange={(value) => handleSelectChange(value, "department")}
+                  placeholder="Select department"
+                >
+                  {departmentList.map((dept, index) => (
+                    <Option key={index} value={dept}>
+                      {dept}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <Form.Item
@@ -304,7 +393,7 @@ const AddEmployee = (props) => {
 
               <Form.Item
                 name="sex"
-                label="Sex"
+                label="Gender"
                 rules={[
                   {
                     required: true,
@@ -324,7 +413,7 @@ const AddEmployee = (props) => {
 
               <Form.Item
                 name="idNumber"
-                label="ID Number"
+                label="Employee ID Number"
                 rules={[
                   {
                     required: true,
@@ -446,183 +535,170 @@ const AddEmployee = (props) => {
 
         {/* Benefits Tab */}
         <TabPane tab="Time Off" key="2">
-          <Form
-            form={form}
-            layout="vertical"
-            // onFinish={handleTimeOff}
-            style={{ marginTop: "20px" }}
-          >
+          {isTimeOffVisible ? (
+            <Layout style={{ background: "#fff", minHeight: "100vh" }}>
+              {/* Leave Policies Section */}
+              <Content style={{ padding: "20px" }}>
+                <Title level={4}>Leave Policies</Title>
 
-            {/* Time Off Section */}
-            <div
-              style={{
-                display: "grid",
-                gap: "20px",
-                gridTemplateColumns: "repeat(2, 1fr)",
-              }}
+                {/* Leave Policies Dropdown */}
+                <Dropdown overlay={menu} trigger={["click"]}>
+                  <Button style={{ marginBottom: "20px", width: "200px" }}>
+                    <Space>
+                      {selectedPolicy}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
+
+                {/* Paid Time Off Section */}
+                <Title level={4}>{selectedPolicy}</Title>
+                <Card bordered={false} style={{ background: "#f7f7f7" }}>
+                  <Form onFinish={handleSubmit} layout="horizontal">
+                    {/* Credit Hours */}
+                    <Form.Item label="Credit hours" name="creditHours">
+                      <Input placeholder="15" suffix="/month" />
+                    </Form.Item>
+
+                    <Divider />
+
+                    {/* Carryforward Toggle */}
+                    <Form.Item
+                      label="Carryforward Unused leave upto"
+                      name="carryForward"
+                      valuePropName="checked"
+                      initialValue={carryForward}
+                    >
+                      <Switch
+                        onChange={(checked) => setCarryForward(checked)}
+                      />
+                    </Form.Item>
+                    <Form.Item name="carryForwardLimit" noStyle>
+                      <Input
+                        placeholder="5"
+                        disabled={!carryForward}
+                        suffix="/hrs/year"
+                      />
+                    </Form.Item>
+
+                    <Divider />
+
+                    {/* Maximum Annual Accrual */}
+                    <Form.Item
+                      label="Maximum Annual Accrual limit"
+                      name="maxAccrual"
+                      valuePropName="checked"
+                      initialValue={maxAccrual}
+                    >
+                      <Switch onChange={(checked) => setMaxAccrual(checked)} />
+                    </Form.Item>
+                    <Form.Item name="maxAccrualLimit" noStyle>
+                      <Input
+                        placeholder="5"
+                        disabled={!maxAccrual}
+                        suffix="/hrs/year"
+                      />
+                    </Form.Item>
+
+                    <Divider />
+
+                    {/* Cashout Unused Time */}
+                    <Form.Item
+                      label="Cashout Unused Time limit"
+                      name="cashOut"
+                      valuePropName="checked"
+                      initialValue={cashOut}
+                    >
+                      <Switch onChange={(checked) => setCashOut(checked)} />
+                    </Form.Item>
+                    <Form.Item name="cashOutLimit" noStyle>
+                      <Input
+                        placeholder="5"
+                        disabled={!cashOut}
+                        suffix="unit"
+                      />
+                    </Form.Item>
+
+                    <Divider />
+
+                    {/* Reset */}
+                    <Form.Item label="Reset" name="reset">
+                      <Select
+                        style={{ width: "150px" }}
+                        onChange={(value) => handleSelectChange(value, "reset")}
+                        value={resetValue}
+                      >
+                        <Option value="monthly">Monthly</Option>
+                        <Option value="yearly">Yearly</Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item>
+                      <Text>{resetValue}</Text>
+                    </Form.Item>
+
+                    <Divider />
+
+                    {/* Submit Button */}
+                    <Form.Item>
+                      <Button
+                        style={{ width: "100px" }}
+                        type="primary"
+                        htmlType="submit"
+                      >
+                        Submit
+                      </Button>
+                    </Form.Item>
+                  </Form>
+                </Card>
+              </Content>
+            </Layout>
+          ) : (
+            <Button
+              type="primary"
+              style={{ width: "100px" }}
+              onClick={handleOpenModal}
             >
-              <Form.Item
-                label="Paid Time Off"
-                name="paidTimeOff"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the paid time off details!",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter Paid Time Off" />
-              </Form.Item>
-
-              <Form.Item
-                label="Carry forward unused leave unto"
-                name="carryForwardUnusedLeave"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the carry forward leave details!",
-                  },
-                ]}
-              >
-                <Input placeholder="Carry forward unused leave unto" />
-              </Form.Item>
-
-              <Form.Item
-                label="Maximum Accural"
-                name="maxArrual"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the Maximum Accural details!",
-                  },
-                ]}
-              >
-                <Input placeholder="Maximum Accural" />
-              </Form.Item>
-
-              <Form.Item name="reset" label="Reset">
-                <Select
-                  value={formValues.city}
-                  // onChange={(value) => handleSelectChange(value, "city")}
-                  placeholder="Reset"
-                >
-                  <Option value="monthly">Monthly</Option>
-                  <Option value="yearly">Yearly</Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                label="Encash unused leave upto"
-                name="encashedUnsedLeave"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the encashed unused leave details!",
-                  },
-                ]}
-              >
-                <Input placeholder="Encash unused leave upto" />
-              </Form.Item>
+              Add Time Off
+            </Button>
+          )}
+          {/* Render Modal */}
+          {isModalOpen && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <button className="close-modal" onClick={handleCloseModal}>
+                  Close
+                </button>
+                <GeneralTimeOff />
+                {}
+              </div>
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: "20px",
-              }}
-            >
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ width: "100px" }}
-                // onClick={handleAddExistingUser}
-              >
-                Finished
-              </Button>
-            </div>
-          </Form>
-          {/* <div>
-            <div
-              style={{
-                display: "grid",
-                gap: "20px",
-                gridTemplateColumns: "repeat(2, 1fr)",
-              }}
-            >
-              <Form.Item
-                name="paidTimeOff"
-                label="Paid Tim eOff"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter input!",
-                  },
-                ]}
-              >
-                <Input
-                  name="timeOff"
-                  value={formValues.timeOff}
-                  onChange={handleChange}
-                  placeholder={"15"}
-                  suffix={"Hrs"}
-                />
-              </Form.Item>
-              <Form.Item
-                name="carryForward"
-                label="Carry forward unused leave upto"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter input!",
-                  },
-                ]}
-              >
-                <Input
-                  name="carryForwardTimeOff"
-                  value={formValues.carryForwardTimeOff}
-                  onChange={handleChange}
-                  placeholder={"5"}
-                  suffix={"hrs/year"}
-                />
-              </Form.Item>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: "20px",
-              }}
-            >
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ width: "100px" }}
-                onClick={handleAddExistingUser}
-              >
-                Finished
-              </Button>
-            </div>
-          </div> */}
+          )}
         </TabPane>
       </Tabs>
     </div>
   );
 };
 
-// export default AddEmployee;
 const mapStateToProps = (state) => ({
-  employeeData: state.AddEmployee,
+  userData: state.user,
   loginData: state.login,
   registerData: state.register,
+  departmentData: state.department,
+  generalTimeOffData: state.generalTimeOff,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addEmployee: (values) => dispatch(addEmployee(values)),
+  addUser: (values) => dispatch(addUser(values)),
+  getDepartment: (values) => dispatch(getDepartment(values)),
+  getGeneralTimeOff: (values) => dispatch(getGeneralTimeOff(values)),
 });
 
 AddEmployee.propTypes = {
-  // login: PropTypes.func,
-  addEmployee: PropTypes.func,
+  addUser: PropTypes.func,
+  getDepartment: PropTypes.func,
+  getGeneralTimeOff: PropTypes.func,
+  departmentData: PropTypes.object,
+  userData: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddEmployee);

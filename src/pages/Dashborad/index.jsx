@@ -28,7 +28,7 @@ import Activity from "../../components/activity";
 import Calender from "../../components/calender";
 import AccountSetup from "../../components/Account-setup";
 import AddEmployee from "../../components/AddEmployee";
-import AddLeavePolicy from "../../components/AddLeavePolicy";
+import GeneralTimeOff from "../../components/GeneralTimeOff";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import "./style.css";
@@ -39,6 +39,7 @@ import ContactDetails from "../../components/ContactDetails";
 import AddressDetails from "../../components/AddressDetails";
 import EducationDetails from "../../components/EducationDetails";
 import VisaDetails from "../../components/VisaDetails";
+import ExistingEmployee from "../../components/ExistingEmployee";
 
 const { Header, Sider, Content } = Layout;
 const { Title, Text, Link } = Typography;
@@ -53,38 +54,27 @@ const headerStyle = {
 const contentStyle = { backgroundColor: "#FFFFFF" };
 
 function Dashboard(props) {
-  const [accountSetup, setAccountSetup] = useState(null);
+  // const [accountSetup, setAccountSetup] = useState(null);
   const [visible, setVisible] = useState(false); // Modal visibility state
   const [modalContent, setModalContent] = useState(null); // Content to show in the modal
   const [showAddEmployees, setShowAddEmployees] = useState(false); // State to show/hide "Add Employees"
   const [leavePolicy, setLeavePolicy] = useState(false);
   const [role, setRole] = useState("");
   const [activeTab, setActiveTab] = useState("1"); // Track active tab
+  const [accountSetupComplete, setAccountSetupComplete] = useState(null); // Track active tab
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
 
   useEffect(() => {
     if (props.loginData.loginResponse) {
       let data = props.loginData.loginResponse;
-      setAccountSetup(data.user.isSetupComplete);
-      // Store user information in local storage
       localStorage.setItem("userInfo", JSON.stringify(data.user));
-      // if (data.user.role === "employee") {
-      //   setRole("employee");
-      // } else {
-      //   setRole("admin");
-      // }
+      setAccountSetupComplete(data.user.isSetupComplete);
+    } else if (userInfo) {
+      setAccountSetupComplete(userInfo.isSetupComplete);
     }
-
-    if (props.employeeData?.addEmployeeResponse) {
-      let data = props.employeeData.addEmployeeResponse;
-      setAccountSetup(data.account.isSetupComplete);
-    }
-
-    if (props.registerData?.registerResponse) {
-      let data = props.registerData.registerResponse;
-      setAccountSetup(data.user.isSetupComplete);
-      localStorage.setItem("userInfo", JSON.stringify(data.user));
-    }
-  }, [props.loginData, props.employeeData, props.registerData]);
+    props.loginData.loginResponse = null;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.loginData.loginResponse, userInfo]);
 
   const employeeData = [
     {
@@ -128,10 +118,9 @@ function Dashboard(props) {
   // New useEffect to fetch user info from localStorage
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-
     if (userInfo) {
-      if (userInfo.role === "employee") {
-        setRole("employee");
+      if (userInfo.role === "user") {
+        setRole("user");
       } else {
         setRole("admin");
       }
@@ -188,7 +177,7 @@ function Dashboard(props) {
           </div>
           <div style={{ width: "100%", display: "flex" }}>
             <div style={{ width: "70%" }}>
-              {role === "employee" ? (
+              {role === "user" ? (
                 <Tabs
                   style={{ padding: "20px" }}
                   activeKey={activeTab}
@@ -222,162 +211,134 @@ function Dashboard(props) {
                     <VisaDetails />
                   </TabPane>
                 </Tabs>
-              ) : (
-                <>
-                  {accountSetup ? (
-                    <>
-                      <AttendanceAndPayroll />
-                      <EmployeeList />
-                      <TaskOverview />
-                    </>
-                  ) : (
-                    <>
-                      <div style={{ padding: "20px" }}>
-                        {showAddEmployees ? (
-                          <div
-                            style={{
-                              padding: "20px",
-                              maxWidth: "800px",
-                              margin: "0 auto",
-                            }}
-                          >
-                            <Title
-                              level={2}
-                              style={{
-                                textAlign: "center",
-                                marginBottom: "30px",
-                              }}
-                            >
-                              Add Employees
-                            </Title>
-                            <Row gutter={[16, 16]}>
-                              {employeeData.map((item, index) => (
-                                <Col span={24} key={index}>
-                                  <Card
-                                    className="employee-card"
-                                    onClick={() => handleCardClick(item)}
-                                  >
-                                    <Row align="middle" gutter={[16, 16]}>
-                                      <Col flex="auto">
-                                        <Title level={4}>{item.title}</Title>
-                                        <Text>{item.description}</Text>
-                                        <div>
-                                          <Link
-                                            href="#"
-                                            style={{ color: "#1890ff" }}
-                                          >
-                                            {item.link}
-                                          </Link>
-                                        </div>
-                                      </Col>
-                                      <Col>
-                                        <RightOutlined
-                                          style={{
-                                            fontSize: "18px",
-                                            color: "#1890ff",
-                                          }}
-                                        />
-                                      </Col>
-                                    </Row>
-                                  </Card>
-                                </Col>
-                              ))}
-                            </Row>
-                            <Modal
-                              title={modalContent?.title}
-                              visible={visible}
-                              onCancel={handleCloseModal}
-                              footer={null}
-                              bodyStyle={{
-                                maxHeight: "70vh",
-                                overflowY: "auto",
-                                overflowX: "hidden",
-                              }}
-                            >
+              ) : !accountSetupComplete ? (
+                <AccountSetup />
+              ) : showAddEmployees ? (
+                <div
+                  style={{
+                    padding: "20px",
+                    maxWidth: "800px",
+                    margin: "0 auto",
+                  }}
+                >
+                  <Title
+                    level={2}
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "30px",
+                    }}
+                  >
+                    Add Employees
+                  </Title>
+                  <Row gutter={[16, 16]}>
+                    {employeeData.map((item, index) => (
+                      <Col span={24} key={index}>
+                        <Card
+                          className="employee-card"
+                          onClick={() => handleCardClick(item)}
+                        >
+                          <Row align="middle" gutter={[16, 16]}>
+                            <Col flex="auto">
+                              <Title level={4}>{item.title}</Title>
+                              <Text>{item.description}</Text>
                               <div>
-                                {modalContent?.value == 1 ? (
-                                  <AddEmployee onClose={handleCloseModal} />
-                                ) : modalContent?.value == 2 ? (
-                                  <AddExistingEmployee />
-                                ) : (
-                                  "Hello 3"
-                                )}
+                                <Link href="#" style={{ color: "#1890ff" }}>
+                                  {item.link}
+                                </Link>
                               </div>
-                            </Modal>
-                            {/* Back Button */}
-                            <Button
-                              type="primary"
-                              onClick={() => setShowAddEmployees(false)}
-                              style={{
-                                backgroundColor: "#1890ff",
-                                borderColor: "#1890ff",
-                                color: "#fff",
-                                width: "100px",
-                                marginTop: "20px",
-                              }}
-                            >
-                              Back
-                            </Button>
-                          </div>
-                        ) : leavePolicy ? (
-                          <>
-                            <AddLeavePolicy />
-                            <div>
-                              <Button
-                                type="primary"
-                                onClick={() => setLeavePolicy(false)}
+                            </Col>
+                            <Col>
+                              <RightOutlined
                                 style={{
-                                  backgroundColor: "#1890ff",
-                                  borderColor: "#1890ff",
-                                  color: "#fff",
-                                  width: "100px",
-                                  marginTop: "20px",
-                                  marginLeft: "20px",
+                                  fontSize: "18px",
+                                  color: "#1890ff",
                                 }}
-                              >
-                                Back
-                              </Button>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <AccountSetup />
-                            <h2>Overview</h2>
-                            <div className="button-container">
-                              <Button
-                                className="custom-button"
-                                onClick={() => setShowAddEmployees(true)}
-                              >
-                                Add User
-                              </Button>
-                              <Button
-                                className="custom-button"
-                                onClick={() => setLeavePolicy(true)}
-                              >
-                                Setup Leave Policy
-                              </Button>
-                              <Button className="custom-button">
-                                Add a Project
-                              </Button>
-                              <Button className="custom-button">
-                                Add an Event
-                              </Button>
-                              <Button className="custom-button">
-                                Add Payroll
-                              </Button>
-                              <Button className="custom-button">
-                                Setup Learning
-                              </Button>
-                              <Button className="custom-button">
-                                Send Offer Letter
-                              </Button>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </>
+                              />
+                            </Col>
+                          </Row>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                  <Modal
+                    title={modalContent?.title}
+                    visible={visible}
+                    onCancel={handleCloseModal}
+                    width="50%"
+                    footer={null}
+                    bodyStyle={{
+                      maxHeight: "70vh",
+                      overflowY: "auto",
+                      overflowX: "hidden",
+                    }}
+                  >
+                    <div>
+                      {modalContent?.value == 1 ? (
+                        <AddEmployee onClose={handleCloseModal} />
+                      ) : modalContent?.value == 2 ? (
+                        <ExistingEmployee onClose={handleCloseModal} />
+                      ) : (
+                        "Hello 3"
+                      )}
+                    </div>
+                  </Modal>
+                  <Button
+                    type="primary"
+                    onClick={() => setShowAddEmployees(false)}
+                    style={{
+                      backgroundColor: "#1890ff",
+                      borderColor: "#1890ff",
+                      color: "#fff",
+                      width: "100px",
+                      marginTop: "20px",
+                    }}
+                  >
+                    Back
+                  </Button>
+                </div>
+              ) : leavePolicy ? (
+                <div style={{ padding: "20px" }}>
+                  <GeneralTimeOff />
+                  <div>
+                    <Button
+                      type="primary"
+                      onClick={() => setLeavePolicy(false)}
+                      style={{
+                        backgroundColor: "#1890ff",
+                        borderColor: "#1890ff",
+                        color: "#fff",
+                        width: "100px",
+                        marginTop: "20px",
+                        marginLeft: "20px",
+                      }}
+                    >
+                      Back
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ padding: "20px" }}>
+                  <h2>Overview</h2>
+                  <div className="button-container">
+                    <Button
+                      className="custom-button"
+                      onClick={() => setShowAddEmployees(true)}
+                    >
+                      Add User
+                    </Button>
+                    <Button
+                      className="custom-button"
+                      onClick={() => setLeavePolicy(true)}
+                    >
+                      Setup Leave Policy
+                    </Button>
+                    <Button className="custom-button">Add a Project</Button>
+                    <Button className="custom-button">Add an Event</Button>
+                    <Button className="custom-button">Add Payroll</Button>
+                    <Button className="custom-button">Setup Learning</Button>
+                    <Button className="custom-button">Send Offer Letter</Button>
+                  </div>
+                </div>
               )}
             </div>
             <div style={{ width: "30%", marginRight: "20px" }}>
@@ -413,8 +374,7 @@ const styles = {
 
 const mapStateToProps = (state) => ({
   loginData: state.login,
-  employeeData: state.addEmployee,
-  registerData: state.register,
+  userData: state.user,
 });
 
 Dashboard.propTypes = {

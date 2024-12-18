@@ -18,23 +18,19 @@
 * @returns {{loginResponse: {}, login: boolean, status: boolean}|{loginResponse: *, login: boolean, status: boolean}|{loginResponse: {}, login: boolean, status: *}}
 */
 
-import { ADD_DEPARTMENT_RES, GET_DEPARTMENT_RES } from "./department.types";
+import { ADD_USER_TIME_OFF_RES } from "./userTimeOff.types";
 
 const INITIAL_STATE = {
-  addDepartmentResponse: null,
-  getDepartmentResponse: null
+    addUserTimeOffResponse: null,
 }
 
-const addDepartmentReducer = (state = INITIAL_STATE, action) => {
-  switch (action.type) {
-    case ADD_DEPARTMENT_RES: {
-      return { ...state, ...{ addDepartmentResponse: action.payload } };
+const userTimeOffReducer = (state = INITIAL_STATE, action) => {
+    switch (action.type) {
+        case ADD_USER_TIME_OFF_RES: {
+            return { ...state, ...{ addUserTimeOffResponse: action.payload } };
+        }
+        default:
+            return state;
     }
-    case GET_DEPARTMENT_RES: {
-      return { ...state, ...{ getDepartmentResponse: action.payload } }
-    }
-    default:
-      return state;
-  }
 };
-export default addDepartmentReducer;
+export default userTimeOffReducer;

@@ -5,16 +5,16 @@ import { Input, Select, Radio, Button, Form } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import {
-  addLeavePolicy,
-  getLeavePolicy,
-} from "../../redux/LeavePolicy/leavePolicy.action";
-import "./style.css";
 import toast from "react-hot-toast";
+import {
+  addGeneralTimeOff,
+  getGeneralTimeOff,
+} from "../../redux/GeneralTimeOff/generalTimeOff.action";
+import "./style.css";
 
 const { Option } = Select;
 
-const AddLeavePolicy = (props) => {
+const GeneralTimeOff = (props) => {
   const [form] = Form.useForm();
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
 
@@ -77,8 +77,9 @@ const AddLeavePolicy = (props) => {
   // Handle form submission
   const handleSubmit = () => {
     const payload = {
-      accountId: userInfo.accountId,
-      policy: policyFields.map((field) => ({
+      userId: userInfo._id,
+      companyId: userInfo.companyId,
+      timeOff: policyFields.map((field) => ({
         policyName: field.policyName,
         policyCode: field.code,
         policyType: field.type,
@@ -86,12 +87,12 @@ const AddLeavePolicy = (props) => {
         per: field.per,
       })),
     };
-    props.addLeavePolicy(payload);
+    props.addGeneralTimeOff(payload);
   };
 
   useEffect(() => {
-    if (props.leavePolicyData.addLeavePolicyResponse) {
-      let data = props.leavePolicyData.addLeavePolicyResponse;
+    if (props.generalTimeOffData.addGeneralTimeOffResponse) {
+      let data = props.generalTimeOffData.addGeneralTimeOffResponse;
       if (data.success) {
         toast.success(data.message);
       }
@@ -99,11 +100,12 @@ const AddLeavePolicy = (props) => {
         toast.error(data.message);
       }
     }
-    props.leavePolicyData.addLeavePolicyResponse = null;
-  }, [props.leavePolicyData.addLeavePolicyResponse]);
+    props.generalTimeOffData.addGeneralTimeOffResponse = null;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.generalTimeOffData.addGeneralTimeOffResponse]);
 
   useEffect(() => {
-    props.getLeavePolicy({ accountId: userInfo.accountId });
+    props.getGeneralTimeOff(userInfo._id);
   }, []);
 
   // useEffect(() => {
@@ -136,12 +138,12 @@ const AddLeavePolicy = (props) => {
   // }, [props.leavePolicyData.getLeavePolicyResponse]);
 
   useEffect(() => {
-    if (props.leavePolicyData.getLeavePolicyResponse) {
-      const response = props.leavePolicyData.getLeavePolicyResponse;
+    if (props.generalTimeOffData.getGeneralTimeOffResponse) {
+      const response = props.generalTimeOffData.getGeneralTimeOffResponse;
 
       if (response.data && response.data.length > 0) {
-        let data = response.data[0].policy;
-        const leavePolicyData = data.map((item) => ({
+        let data = response.data[0].timeOff;
+        const generalTimeOffData = data.map((item) => ({
           id: item._id,
           policyName: item.policyName,
           code: item.policyCode,
@@ -150,10 +152,10 @@ const AddLeavePolicy = (props) => {
           per: item.per,
         }));
 
-        setPolicyFields(leavePolicyData);
+        setPolicyFields(generalTimeOffData);
 
         // Set the form fields values dynamically
-        const formValues = leavePolicyData.reduce((values, field) => {
+        const formValues = generalTimeOffData.reduce((values, field) => {
           values[`policyName_${field.id}`] = field.policyName;
           values[`code_${field.id}`] = field.code;
           values[`type_${field.id}`] = field.type;
@@ -166,12 +168,12 @@ const AddLeavePolicy = (props) => {
         form.setFieldsValue(formValues);
       } else {
         // Handle the case where no leave policies are found
-        console.warn(response.message || "No leave policies found.");
         setPolicyFields([]); // Clear any existing fields
         form.resetFields(); // Reset the form
       }
     }
-  }, [props.leavePolicyData.getLeavePolicyResponse]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.generalTimeOffData.getGeneralTimeOffResponse]);
 
   return (
     <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -362,18 +364,18 @@ const AddLeavePolicy = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  leavePolicyData: state.leavePolicy,
+  generalTimeOffData: state.generalTimeOff,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addLeavePolicy: (values) => dispatch(addLeavePolicy(values)),
-  getLeavePolicy: (values) => dispatch(getLeavePolicy(values)),
+  addGeneralTimeOff: (values) => dispatch(addGeneralTimeOff(values)),
+  getGeneralTimeOff: (values) => dispatch(getGeneralTimeOff(values)),
 });
 
-AddLeavePolicy.propTypes = {
-  addLeavePolicy: PropTypes.func,
-  getLeavePolicy: PropTypes.func,
-  leavePolicyData: PropTypes.object,
+GeneralTimeOff.propTypes = {
+  AddGeneralTimeOff: PropTypes.func,
+  getGeneralTimeOff: PropTypes.func,
+  generalTimeOffData: PropTypes.object,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddLeavePolicy);
+export default connect(mapStateToProps, mapDispatchToProps)(GeneralTimeOff);

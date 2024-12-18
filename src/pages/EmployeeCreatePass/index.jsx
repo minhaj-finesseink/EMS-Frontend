@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Typography } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { employeePass } from "../../redux/Add-employee/employee.action";
+import { userPassword } from "../../redux/User/user.action";
 import "./style.css";
 
 const { Title } = Typography;
@@ -55,7 +56,7 @@ const SetNewPasswordPage = (props) => {
       return;
     }
 
-    props.employeePass({
+    props.userPassword({
       token: token,
       newPassword: newPassword,
     });
@@ -69,7 +70,7 @@ const SetNewPasswordPage = (props) => {
   // useEffect(()=>{
   //   if(props){
   //     console.log("test new pass",props);
-      
+
   //   }
   // },[props])
 
@@ -181,15 +182,15 @@ const SetNewPasswordPage = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  newPassData: state.employeePass,
+  userData: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  employeePass: (values) => dispatch(employeePass(values)),
+  userPassword: (values) => dispatch(userPassword(values)),
 });
 
 SetNewPasswordPage.propTypes = {
-  employeePass: PropTypes.func,
+  userPassword: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SetNewPasswordPage);

@@ -9,8 +9,8 @@ import signUpImage from "../../assets/Sign-up-image.jpeg";
 import companyLogo from "../../assets/company-logo.png";
 import googleIcon from "../../assets/google-icon.svg";
 import linkdinIcon from "../../assets/linkdin-icon.png";
-import { register } from "../../redux/Register/register.action";
 import signUpAnimation from "../../assets/sign-up-animation.gif";
+import { addUser } from "../../redux/User/user.action";
 import "./style.css";
 
 function SignUpPage(props) {
@@ -21,7 +21,8 @@ function SignUpPage(props) {
     hasSymbol: false,
   });
 
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,11 +43,13 @@ function SignUpPage(props) {
 
   const handleSubmit = () => {
     setLoading(true);
-    props.register({
-      name: name,
-      companyName: company,
+    props.addUser({
+      firstName: firstName,
+      lastName: lastName,
       email: email,
       password: password,
+      companyName: company,
+      role: "admin",
     });
   };
 
@@ -56,9 +59,11 @@ function SignUpPage(props) {
   //   };
 
   useEffect(() => {
-    if (props.registerData.registerResponse) {
-      let data = props.registerData.registerResponse;
-      if (data.responseCode !== "REGISTER_SUCCESS") {
+    if (props.userData.addUserResponse) {
+      let data = props.userData.addUserResponse;
+      console.log("user data", data);
+
+      if (!data.success) {
         setError(data.message);
         setLoading(false);
       } else {
@@ -67,10 +72,10 @@ function SignUpPage(props) {
         setCreated(true);
       }
     }
-  }, [props.registerData, navigate]);
+  }, [props.userData.addUserResponse]);
 
   const handleClick = () => {
-    navigate("/admin-dashboard");
+    navigate("/sign-in");
     setCreated(false);
   };
 
@@ -97,18 +102,40 @@ function SignUpPage(props) {
                 >
                   {error ? <div className="error-message">{error}</div> : ""}
                   <Form.Item
-                    name="name"
+                    name="firstName"
                     rules={[
-                      { required: true, message: "Please enter your name!" },
+                      {
+                        required: true,
+                        message: "Please enter your first name!",
+                      },
                       { max: 50, message: "Name cannot exceed 50 characters!" },
                     ]}
                   >
                     <Input
-                      placeholder="Enter your name"
+                      placeholder="Enter your first name"
                       className="sign-up-input"
                       //   prefix={<IdcardOutlined />}
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="lastName"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter your last name!",
+                      },
+                      { max: 50, message: "Name cannot exceed 50 characters!" },
+                    ]}
+                  >
+                    <Input
+                      placeholder="Enter your last name"
+                      className="sign-up-input"
+                      //   prefix={<IdcardOutlined />}
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
                     />
                   </Form.Item>
 
@@ -246,6 +273,16 @@ function SignUpPage(props) {
                     </Button>
                   </Form.Item>
                 </Form>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  Have a account? <a href="/sign-in">Sign in</a>
+                </div>
               </div>
               <div className="sign-up-icon-container">
                 <div className="or-sign-up-div">OR SIGN UP USING</div>
@@ -291,15 +328,15 @@ function SignUpPage(props) {
 }
 
 const mapStateToProps = (state) => ({
-  registerData: state.register,
+  userData: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  register: (values) => dispatch(register(values)),
+  addUser: (values) => dispatch(addUser(values)),
 });
 
 SignUpPage.propTypes = {
-  register: PropTypes.func,
+  addUser: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUpPage);

@@ -224,6 +224,16 @@ function SignIn(props) {
                 </Button>
               </Form.Item>
             </Form>
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              Don't have an account? <a href="/sign-up">Sign up now</a>
+            </div>
           </div>
         </div>
       </div>

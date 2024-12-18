@@ -18,23 +18,23 @@
 * @returns {{loginResponse: {}, login: boolean, status: boolean}|{loginResponse: *, login: boolean, status: boolean}|{loginResponse: {}, login: boolean, status: *}}
 */
 
-import { ADD_LEAVE_POLICY_RES, GET_LEAVE_POLICY_RES } from "./leavePolicy.types";
+import { ADD_GENERAL_TIME_OFF_RES, GET_GENERAL_TIME_OFF_RES } from "./generalTimeOff.types";
 
 const INITIAL_STATE = {
-    addLeavePolicyResponse: null,
-    getLeavePolicyResponse: null
+    addGeneralTimeOffResponse: null,
+    getGeneralTimeOffResponse: null
 }
 
-const leavePolicyReducer = (state = INITIAL_STATE, action) => {
+const generalTimeOffReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
-        case ADD_LEAVE_POLICY_RES: {
-            return { ...state, ...{ addLeavePolicyResponse: action.payload } };
+        case ADD_GENERAL_TIME_OFF_RES: {
+            return { ...state, ...{ addGeneralTimeOffResponse: action.payload } };
         }
-        case GET_LEAVE_POLICY_RES: {
-            return { ...state, ...{ getLeavePolicyResponse: action.payload } }
+        case GET_GENERAL_TIME_OFF_RES: {
+            return { ...state, ...{ getGeneralTimeOffResponse: action.payload } }
         }
         default:
             return state;
     }
 };
-export default leavePolicyReducer;
+export default generalTimeOffReducer;

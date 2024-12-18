@@ -1,8 +1,0 @@
-export const ADD_EMPLOYEE = "ADD_EMPLOYEE"
-export const ADD_EMPLOYEE_RES = "ADD_EMPLOYEE_RES"
-export const EMPLOYEE_PASS = "EMPLOYEE_PASS"
-export const EMPLOYEE_PASS_RES = "EMPLOYEE_PASS_RES"
-export const GET_USER_BY_ID = "GET_USER_BY_ID"
-export const GET_USER_BY_ID_RES = "GET_USER_BY_ID_RES"
-export const USER_UPDATE = "USER_UPDATE"
-export const USER_UPDATE_RES = "USER_UPDATE_RES"

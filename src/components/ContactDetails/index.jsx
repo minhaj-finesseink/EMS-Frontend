@@ -4,10 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Select } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import {
-  getUserById,
-  userUpdate,
-} from "../../redux/Add-employee/employee.action";
+import { userUpdate } from "../../redux/User/user.action";
+
 
 const { Option } = Select;
 
@@ -236,7 +234,7 @@ function ContactDetails(props) {
 }
 
 const mapStateToProps = (state) => ({
-  userData: state.addEmployee,
+  userData: state.user,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -5,11 +5,9 @@ import { Form, Input, DatePicker, Radio, Select, Button } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import moment from "moment";
-import {
-  getUserById,
-  userUpdate,
-} from "../../redux/Add-employee/employee.action";
+
 import toast from "react-hot-toast";
+import { getUserById, userUpdate } from "../../redux/User/user.action";
 
 const { Option } = Select;
 
@@ -39,8 +37,8 @@ function PersonalDetails(props) {
   }, []);
 
   useEffect(() => {
-    if (props.userData) {
-      let data = props.userData.user;
+    if (props.userData.getUserByIdResponse) {
+      let data = props.userData.getUserByIdResponse.user;
       const updatedFormValue = {
         firstName: data.firstName || "",
         middleName: data.middleName || "",
@@ -63,7 +61,8 @@ function PersonalDetails(props) {
       setFormValue(updatedFormValue);
       form.setFieldsValue(updatedFormValue);
     }
-  }, [props.userData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.userData.getUserByIdResponse]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -122,8 +121,8 @@ function PersonalDetails(props) {
 
   // Setting all tab changes and success message in here.
   useEffect(() => {
-    if (props.userUpdateData.userUpdateResponse) {
-      let data = props.userUpdateData.userUpdateResponse;
+    if (props.userData.userUpdateResponse) {
+      let data = props.userData.userUpdateResponse;
       if (data.success) {
         if (props.tabKey === "1") {
           toast.success("Personal Details Updated Successfully!");
@@ -141,10 +140,11 @@ function PersonalDetails(props) {
           toast.success("Visa Details Updated Successfully!");
           // props.handleTabChange("5");
         }
-        props.userUpdateData.userUpdateResponse = null;
+        props.userData.userUpdateResponse = null;
       }
     }
-  }, [props.userUpdateData.userUpdateResponse]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.userData.userUpdateResponse]);
 
   // console.log("form value", formValue);
 
@@ -359,7 +359,7 @@ function PersonalDetails(props) {
 }
 
 const mapStateToProps = (state) => ({
-  userData: state.addEmployee.getUserByIdResponse,
+  userData: state.user,
   userUpdateData: state.addEmployee,
 });
 

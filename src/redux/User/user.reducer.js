@@ -18,22 +18,22 @@
 * @returns {{loginResponse: {}, login: boolean, status: boolean}|{loginResponse: *, login: boolean, status: boolean}|{loginResponse: {}, login: boolean, status: *}}
 */
 
-import { ADD_EMPLOYEE_RES, EMPLOYEE_PASS_RES, GET_USER_BY_ID_RES, USER_UPDATE_RES } from "./employee.types";
+import { ADD_USER_RES, USER_PASS_RES, GET_USER_BY_ID_RES, USER_UPDATE_RES } from "./user.types";
 
 const INITIAL_STATE = {
-  addEmployeeResponse: null,
-  employeePass: null,
+  addUserResponse: null,
+  userPasswordResponse: null,
   getUserByIdResponse: null,
   userUpdateResponse: null
 }
 
-const addEmployeeReducer = (state = INITIAL_STATE, action) => {
+const userReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case ADD_EMPLOYEE_RES: {
-      return { ...state, ...{ addEmployeeResponse: action.payload } };
+    case ADD_USER_RES: {
+      return { ...state, ...{ addUserResponse: action.payload } };
     }
-    case EMPLOYEE_PASS_RES: {
-      return { ...state, ...{ employeePass: action.payload } }
+    case USER_PASS_RES: {
+      return { ...state, ...{ userPasswordResponse: action.payload } }
     }
     case GET_USER_BY_ID_RES: {
       return { ...state, ...{ getUserByIdResponse: action.payload } }
@@ -45,4 +45,4 @@ const addEmployeeReducer = (state = INITIAL_STATE, action) => {
       return state;
   }
 };
-export default addEmployeeReducer;
+export default userReducer;

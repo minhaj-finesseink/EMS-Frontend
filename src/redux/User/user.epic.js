@@ -2,17 +2,17 @@ import { ofType } from 'redux-observable';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
-import { ADD_EMPLOYEE, EMPLOYEE_PASS, GET_USER_BY_ID, USER_UPDATE } from './employee.types';
-import { addEmployeeResponse, employeePassResponse, getUserByIdResponse, userUpdateResponse } from './employee.action';
 import { baseUrl } from '../../environments/environment.dev';
+import { ADD_USER, GET_USER_BY_ID, USER_PASS, USER_UPDATE } from './user.types';
+import { addUserResponse, getUserByIdResponse, userPasswordResponse, userUpdateResponse } from './user.action';
 
 const BaseUrl = baseUrl
 
-const AddEmployeeEpic = {};
+const UserEpic = {};
 
-AddEmployeeEpic.addEmployee = (action$) =>
+UserEpic.addUser = (action$) =>
     action$.pipe(
-        ofType(ADD_EMPLOYEE), // Listen for the LOGIN action type
+        ofType(ADD_USER), // Listen for the LOGIN action type
         switchMap((action) =>
             ajax({
                 headers: {
@@ -22,15 +22,15 @@ AddEmployeeEpic.addEmployee = (action$) =>
                 method: 'POST',
                 body: action.payload, // Directly use action.payload, no need to stringify
             }).pipe(
-                map((response) => addEmployeeResponse(response.response)), // Extract and pass response data
-                catchError((error) => of(addEmployeeResponse({ error: error.message }))) // Graceful error handling
+                map((response) => addUserResponse(response.response)), // Extract and pass response data
+                catchError((error) => of(addUserResponse({ error: error.message }))) // Graceful error handling
             )
         )
     );
 
-AddEmployeeEpic.employeePass = (action$) =>
+UserEpic.userPass = (action$) =>
     action$.pipe(
-        ofType(EMPLOYEE_PASS), // Listen for the LOGIN action type
+        ofType(USER_PASS), // Listen for the LOGIN action type
         switchMap((action) =>
             ajax({
                 headers: {
@@ -40,13 +40,13 @@ AddEmployeeEpic.employeePass = (action$) =>
                 method: 'POST',
                 body: action.payload, // Directly use action.payload, no need to stringify
             }).pipe(
-                map((response) => employeePassResponse(response.response)), // Extract and pass response data
-                catchError((error) => of(employeePassResponse({ error: error.message }))) // Graceful error handling
+                map((response) => userPasswordResponse(response.response)), // Extract and pass response data
+                catchError((error) => of(userPasswordResponse({ error: error.message }))) // Graceful error handling
             )
         )
     );
 
-AddEmployeeEpic.getUserById = (action$) =>
+UserEpic.getUserById = (action$) =>
     action$.pipe(
         ofType(GET_USER_BY_ID), // Listen for the LOGIN action type
         switchMap((action) =>
@@ -63,7 +63,7 @@ AddEmployeeEpic.getUserById = (action$) =>
         )
     );
 
-AddEmployeeEpic.userUpdate = (action$) =>
+UserEpic.userUpdate = (action$) =>
     action$.pipe(
         ofType(USER_UPDATE), // Listen for the LOGIN action type
         switchMap((action) =>
@@ -81,4 +81,4 @@ AddEmployeeEpic.userUpdate = (action$) =>
         )
     );
 
-export default AddEmployeeEpic;
+export default UserEpic;

@@ -11,27 +11,26 @@
 })
  */
 
-import { ADD_EMPLOYEE, ADD_EMPLOYEE_RES, EMPLOYEE_PASS, EMPLOYEE_PASS_RES, GET_USER_BY_ID, GET_USER_BY_ID_RES, USER_UPDATE, USER_UPDATE_RES } from "./employee.types"
+import { ADD_USER, ADD_USER_RES, GET_USER_BY_ID, GET_USER_BY_ID_RES, USER_PASS, USER_PASS_RES, USER_UPDATE, USER_UPDATE_RES } from "./user.types"
 
 
-
-export const addEmployee = (data) => ({
-    type: ADD_EMPLOYEE,
+export const addUser = (data) => ({
+    type: ADD_USER,
     payload: data
 })
 
-export const addEmployeeResponse = (data) => ({
-    type: ADD_EMPLOYEE_RES,
+export const addUserResponse = (data) => ({
+    type: ADD_USER_RES,
     payload: data
 })
 
-export const employeePass = (data) => ({
-    type: EMPLOYEE_PASS,
+export const userPassword = (data) => ({
+    type: USER_PASS,
     payload: data
 })
 
-export const employeePassResponse = (res) => ({
-    type: EMPLOYEE_PASS_RES,
+export const userPasswordResponse = (res) => ({
+    type: USER_PASS_RES,
     payload: res
 })
 
