@@ -1,10 +1,106 @@
-.card {
+/* Sidebar container */
+.sidebar-container {
+    width: 300px;
+    padding: 20px;
+    font-family: "Arial", sans-serif;
+    border-right: 1px solid #e6e6e6;
+    height: 100vh;
+}
+
+.sidebar_icon_container {
+    padding: 10px 0 10px 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.sidebar-logo {
+    width: 158px;
+    height: 33px;
+}
+
+.sidebar-section-container {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar_collapse_icon {
+    padding: 5px;
+    border-radius: 8px;
+    color: #a9a2a2;
+    font-size: 24px;
+}
+
+/* Section title */
+.section-title {
+    color: #7F8FA6;
+    font-family: Inter;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Menu item container */
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.menu-item:hover {
+    color: #007dc5;
+    transform: translateX(5px);
+}
+
+/* Selected item */
+.menu-item.selected {
+    color: #007dc5 !important;
+    /* Selected color */
+    font-weight: bold;
+    transform: translateX(5px);
+    /* Keep the hover effect even after selecting */
+}
+
+/* Icon in menu item */
+.menu-icon {
     font-size: 18px;
-    width: 260px;
-    background-color: #135CCA;
-    border-radius: 12px;
-    padding: 10px;
-    position: fixed;
-    bottom: 10px;
-    color: #FFFFFF;
+    margin-right: 10px;
+    color: #7F8FA6;
+}
+
+/* Menu text */
+.menu-text {
+    font-size: 18px;
+    color: #7F8FA6;
+}
+
+/* Make sure hover and selected colors are applied to both icon and text */
+.menu-item:hover .menu-icon,
+.menu-item:hover .menu-text {
+    color: #007dc5;
+}
+
+.menu-item.selected .menu-icon,
+.menu-item.selected .menu-text {
+    color: #007dc5 !important;
+    /* Selected icon and text color */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .sidebar-container {
+        width: 200px;
+    }
+
+    .menu-text {
+        font-size: 14px;
+    }
 }

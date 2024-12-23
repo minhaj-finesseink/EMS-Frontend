@@ -7,6 +7,7 @@ export default defineConfig({
     react(),
     webfontDownload([
       'https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap',
+      'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap', // Add Inter font
     ]),
   ],
   optimizeDeps: {

@@ -4,11 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Form, Button, Input } from "antd";
-import signUpImage from "../../assets/Sign-up-image.jpeg";
-import companyLogo from "../../assets/company-logo.png";
+import { Form, Button, Input, Row, Col, Select } from "antd";
+import signUpImage from "../../assets/signup-image.jpeg";
+import usitiveLogo from "../../assets/usitive-logo-with-text.png";
 import googleIcon from "../../assets/google-icon.svg";
 import linkdinIcon from "../../assets/linkdin-icon.png";
+import microsoftIcon from "../../assets/microsoft-icon.png";
 import signUpAnimation from "../../assets/sign-up-animation.gif";
 import { addUser } from "../../redux/User/user.action";
 import "./style.css";
@@ -53,16 +54,10 @@ function SignUpPage(props) {
     });
   };
 
-  //   const handleGoogleSignIn = () => {
-  //     console.log("Redirecting to Google Sign-In...");
-  //     // Add your Google OAuth logic here
-  //   };
-
   useEffect(() => {
     if (props.userData.addUserResponse) {
       let data = props.userData.addUserResponse;
-      console.log("user data", data);
-
+      // console.log("user data", data);
       if (!data.success) {
         setError(data.message);
         setLoading(false);
@@ -86,7 +81,7 @@ function SignUpPage(props) {
       </div>
       <div className="form-container">
         <div style={{ width: "100%" }}>
-          <img className="company-logo" src={companyLogo} alt="company logo" />
+          <img className="company-logo" src={usitiveLogo} alt="company logo" />
           {!created ? (
             <div>
               <div className="sign-up-desc">
@@ -101,45 +96,57 @@ function SignUpPage(props) {
                   initialValues={{ remember: true }}
                 >
                   {error ? <div className="error-message">{error}</div> : ""}
-                  <Form.Item
-                    name="firstName"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your first name!",
-                      },
-                      { max: 50, message: "Name cannot exceed 50 characters!" },
-                    ]}
-                  >
-                    <Input
-                      placeholder="Enter your first name"
-                      className="sign-up-input"
-                      //   prefix={<IdcardOutlined />}
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                    />
-                  </Form.Item>
+                  {/* First Name and Last Name in a Single Row */}
+                  <Row gutter={16}>
+                    {/* First Name */}
+                    <Col xs={24} sm={12}>
+                      <Form.Item
+                        name="firstName"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please enter your first name!",
+                          },
+                          {
+                            max: 50,
+                            message: "Name cannot exceed 50 characters!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          placeholder="First Name"
+                          className="sign-up-input"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                        />
+                      </Form.Item>
+                    </Col>
 
-                  <Form.Item
-                    name="lastName"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your last name!",
-                      },
-                      { max: 50, message: "Name cannot exceed 50 characters!" },
-                    ]}
-                  >
-                    <Input
-                      placeholder="Enter your last name"
-                      className="sign-up-input"
-                      //   prefix={<IdcardOutlined />}
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </Form.Item>
+                    {/* Last Name */}
+                    <Col xs={24} sm={12}>
+                      <Form.Item
+                        name="lastName"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please enter your last name!",
+                          },
+                          {
+                            max: 50,
+                            message: "Name cannot exceed 50 characters!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          placeholder="Last Name"
+                          className="sign-up-input"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
 
-                  {/* Company Name Field */}
                   <Form.Item
                     name="companyName"
                     rules={[
@@ -154,7 +161,7 @@ function SignUpPage(props) {
                     ]}
                   >
                     <Input
-                      placeholder="Enter your company name"
+                      placeholder="Name of the company"
                       className="sign-up-input"
                       //   prefix={<BankOutlined />}
                       value={company}
@@ -162,7 +169,31 @@ function SignUpPage(props) {
                     />
                   </Form.Item>
 
-                  {/* Email Field */}
+                  {/* Dropdown for "How did you hear about us?" */}
+                  <Form.Item
+                    name="referral"
+                    // label="How did you hear about us?"
+                    rules={[
+                      { required: true, message: "Please select an option!" },
+                    ]}
+                  >
+                    <Select
+                      placeholder="How did you hear about us?"
+                      className="sign-up-input"
+                      // onChange={(value) => setReferral(value)} // Update state or handle change
+                    >
+                      <Select.Option value="google">Google</Select.Option>
+                      <Select.Option value="socialMedia">
+                        Social Media
+                      </Select.Option>
+                      <Select.Option value="friend">Friend</Select.Option>
+                      <Select.Option value="advertisement">
+                        Advertisement
+                      </Select.Option>
+                      <Select.Option value="other">Other</Select.Option>
+                    </Select>
+                  </Form.Item>
+
                   <Form.Item
                     name="email"
                     rules={[
@@ -173,13 +204,12 @@ function SignUpPage(props) {
                     <Input
                       className="sign-up-input"
                       //   prefix={<MailOutlined />}
-                      placeholder="Enter your email"
+                      placeholder="Email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </Form.Item>
 
-                  {/* Password Field */}
                   <Form.Item
                     name="password"
                     rules={[
@@ -209,7 +239,7 @@ function SignUpPage(props) {
                   >
                     <Input.Password
                       //   prefix={<KeyOutlined />}
-                      placeholder="Enter your password"
+                      placeholder="Password"
                       className="sign-up-input"
                       value={password}
                       onChange={(e) => {
@@ -219,7 +249,6 @@ function SignUpPage(props) {
                     />
                   </Form.Item>
 
-                  {/* Password Strength Indicators */}
                   <div className="password-requirements">
                     <span
                       className={
@@ -273,29 +302,48 @@ function SignUpPage(props) {
                     </Button>
                   </Form.Item>
                 </Form>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  Have a account? <a href="/sign-in">Sign in</a>
+              </div>
+
+              <div className="sign-up-icon-main" style={{ display: "flex", justifyContent: "space-evenly" }}>
+                <div className="sign-up-icon-container">
+                  <div className="or-sign-up-div">OR SIGN UP USING</div>
+                  <img
+                    className="sign-up-icons"
+                    src={googleIcon}
+                    alt="google icon"
+                  />
+                  <img
+                    className="sign-up-icons"
+                    src={linkdinIcon}
+                    alt="linkdin icon"
+                  />
+                  <img
+                    className="sign-up-icons"
+                    src={microsoftIcon}
+                    alt="linkdin icon"
+                  />
+                </div>
+                <div style={{ borderLeft: "1px solid #949090" }}></div>
+                <div style={{}}>
+                  <span style={{ fontSize: "14px", color: "#949090" }}>
+                    Already have an Account?
+                  </span>{" "}
+                  <br />
+                  <a
+                    style={{
+                      fontSize: "16px",
+                      color: "#134590",
+                      textDecoration: "none",
+                    }}
+                    href="/sign-in"
+                  >
+                    Login here
+                  </a>
                 </div>
               </div>
-              <div className="sign-up-icon-container">
-                <div className="or-sign-up-div">OR SIGN UP USING</div>
-                <img
-                  className="sign-up-icons"
-                  src={googleIcon}
-                  alt="google icon"
-                />
-                <img
-                  className="sign-up-icons"
-                  src={linkdinIcon}
-                  alt="linkdin icon"
-                />
+              <div className="end-text">
+                By clicking “Sign Up”, you agree to Usitive Terms of Use and
+                Privacy Policy. Need help? Visit our Help Center.
               </div>
             </div>
           ) : (
