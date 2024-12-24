@@ -158,7 +158,7 @@ function SignIn(props) {
                   className="style-for-mobile"
                 >
                   <div className="remember">
-                    <Checkbox /> <span>Remmeber me</span>
+                    <Checkbox /> <span>Remember me</span>
                   </div>
                   <div
                     className="forgot-pass"

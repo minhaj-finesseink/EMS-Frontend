@@ -1,0 +1,13 @@
+.add_policy_button {
+    width: 170px;
+    height: 34px;
+    background-color: #009A4E;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: -0.14px;
+    border-radius: 28px;
+}

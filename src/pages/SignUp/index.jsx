@@ -29,7 +29,7 @@ function SignUpPage(props) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [created, setCreated] = useState(false);
+  // const [created, setCreated] = useState(false);
 
   const navigate = useNavigate();
 
@@ -62,17 +62,18 @@ function SignUpPage(props) {
         setError(data.message);
         setLoading(false);
       } else {
-        // navigate("/admin-dashboard");
+        navigate("/admin-dashboard");
         setLoading(true);
-        setCreated(true);
+        // setCreated(true);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.addUserResponse]);
 
-  const handleClick = () => {
-    navigate("/sign-in");
-    setCreated(false);
-  };
+  // const handleClick = () => {
+  //   navigate("/sign-in");
+  //   setCreated(false);
+  // };
 
   return (
     <div className="sign-up-container">
@@ -82,7 +83,7 @@ function SignUpPage(props) {
       <div className="form-container">
         <div style={{ width: "100%" }}>
           <img className="company-logo" src={usitiveLogo} alt="company logo" />
-          {!created ? (
+          {/* {!created ? ( */}
             <div>
               <div className="sign-up-desc">
                 Welcome! Start your Usitive account today and take the first
@@ -346,7 +347,7 @@ function SignUpPage(props) {
                 Privacy Policy. Need help? Visit our Help Center.
               </div>
             </div>
-          ) : (
+          {/* ) : (
             <div>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <img
@@ -368,7 +369,7 @@ function SignUpPage(props) {
                 Continue
               </Button>
             </div>
-          )}
+          )} */}
         </div>{" "}
       </div>
     </div>

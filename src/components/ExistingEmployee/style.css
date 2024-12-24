@@ -36,13 +36,32 @@
 }
 
 .existing-employee-tabs {
-    color: #F3686D;
+    /* color: #F3686D; */
     text-align: center;
-    font-family: Lato;
+    font-family: Inter;
     font-size: 15.127px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+}
+
+.existing_employee_tab_line {
+    width: 70px;
+    border-bottom: 1px solid #E0E5EB;
+    height: 0;
+    margin: 10px;
+}
+
+.existing_employee_tab_number {
+    height: 18px;
+    /* background-color: #F3686D; */
+    color: #FFFFFF;
+    border-radius: 50%;
+    width: 18px;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    font-size: 12px;
 }
 
 .form-checkbox-button {

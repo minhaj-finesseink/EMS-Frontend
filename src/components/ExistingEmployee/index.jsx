@@ -27,20 +27,22 @@ import { getGeneralTimeOff } from "../../redux/GeneralTimeOff/generalTimeOff.act
 import GeneralTimeOff from "../GeneralTimeOff";
 import { addUserTimeOff } from "../../redux/UserTimeOff/userTimeOff.action";
 import toast from "react-hot-toast";
+import countryStateMapping from "../../utils/countryStateMapping";
+import MailIcon from "../../assets/mail-open.svg";
 import "./style.css";
 
 const { Option } = Select;
 const { Sider, Content } = Layout;
 
-const countryStateMapping = {
-  "United States": ["California", "Texas", "Florida", "New York"],
-  "United Kingdom": ["England", "Scotland", "Wales", "Northern Ireland"],
-  "United Arab Emirates": ["Dubai", "Abu Dhabi", "Sharjah"],
-  Qatar: ["Doha", "Al Rayyan", "Al Wakrah"],
-  "Saudi Arabia": ["Riyadh", "Jeddah", "Mecca", "Dammam"],
-  Bahrain: ["Manama", "Riffa", "Muharraq"],
-  Kuwait: ["Hawalli", "Salmiya", "Farwaniya"],
-};
+// const countryStateMapping = {
+//   "United States": ["California", "Texas", "Florida", "New York"],
+//   "United Kingdom": ["England", "Scotland", "Wales", "Northern Ireland"],
+//   "United Arab Emirates": ["Dubai", "Abu Dhabi", "Sharjah"],
+//   Qatar: ["Doha", "Al Rayyan", "Al Wakrah"],
+//   "Saudi Arabia": ["Riyadh", "Jeddah", "Mecca", "Dammam"],
+//   Bahrain: ["Manama", "Riffa", "Muharraq"],
+//   Kuwait: ["Hawalli", "Salmiya", "Farwaniya"],
+// };
 
 function ExistingEmployee(props) {
   const [form] = Form.useForm();
@@ -76,7 +78,7 @@ function ExistingEmployee(props) {
   const [timeOffList, setTimeOffList] = useState([]); // Time-off policies list
   const [selectedTimeOffId, setSelectedTimeOffId] = useState(null); // Selected policy ID
   const [policiesData, setPoliciesData] = useState([]); // Holds data for each policy
-  // const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [selectedType, setSelectedType] = useState(null);
@@ -88,17 +90,23 @@ function ExistingEmployee(props) {
     resetPolicy: false,
   });
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
 
   // Function to handle the cancel button click
-  const showModal = () => {
-    setIsModalVisible(true);
+  const showCancelModal = () => {
+    setIsCancelModalVisible(true);
+  };
+
+  const showConfirmModal = () => {
+    setIsConfirmModalVisible(true);
   };
 
   // Function to handle modal Cancel button
   const handleCancel = () => {
-    setIsModalVisible(false);
-    console.log("Cancelled action cancelled");
+    setIsCancelModalVisible(false);
+    setIsConfirmModalVisible(false);
+    // console.log("Cancelled action cancelled");
   };
 
   // Function to handle checkbox selection
@@ -259,11 +267,12 @@ function ExistingEmployee(props) {
       if (data.success) {
         setActiveTab("2"); // Navigate to Benefits tab on form submission
         setChangeTab(true);
-        // setUserId(data.user._id);
+        setUserId(data.user._id);
         setLoading(false);
         toast.success(data.message);
       } else {
         toast.error(data.message);
+        setLoading(false);
       }
     }
     props.userData.addUserResponse = null;
@@ -332,32 +341,9 @@ function ExistingEmployee(props) {
   };
 
   const handleSubmitTimeOff = () => {
-    // const payload = {
-    //   companyId: userInfo.companyId,
-    //   userId: userId,
-    //   timeOff: policiesData.map((x) => ({
-    //     policyName: x.policyName,
-    //     policyCode: x.policyCode,
-    //     policyType: x.policyType,
-    //     units: x.units,
-    //     per: x.per,
-    //     creditsHours: x.creditsHours,
-    //     creditsUnits: x.creditsUnits,
-    //     carryForwardUnits: x.carryForwardUnits,
-    //     // carryForwardBy: x.carryForwardBy,
-    //     accuralUnits: x.accuralUnits,
-    //     // accuralBy: x.accuralBy,
-    //     EncashedUnusedLeaveUnits: x.EncashedUnusedLeaveUnits,
-    //     // EncashedUnusedLeaveFrequency: x.EncashedUnusedLeaveFrequency,
-    //     resetInd: x.resetInd,
-    //     resetType: x.resetType,
-    //     resetDate: x.resetDate,
-    //   })),
-    // };
-
     const payload = {
       companyId: userInfo.companyId,
-      userId: userInfo._id,
+      userId: userId,
       timeOff: policiesData.map((x) => {
         let resetDate = "";
         if (x.resetType === "monthly") {
@@ -392,7 +378,7 @@ function ExistingEmployee(props) {
       }),
     };
 
-    console.log("policy payload", payload);
+    // console.log("policy payload", payload);
     props.addUserTimeOff(payload);
   };
 
@@ -400,10 +386,12 @@ function ExistingEmployee(props) {
     if (props.userTimeOffData.addUserTimeOffResponse) {
       let data = props.userTimeOffData.addUserTimeOffResponse;
       if (data.success) {
-        toast.success(data.message);
+        // toast.success(data.message);
         // props.onClose();
+        handleCancel();
+        props.existingEmployees(false)
       } else {
-        toast.error(data.message);
+        // toast.error(data.message);
       }
       props.userTimeOffData.addUserTimeOffResponse = null;
     }
@@ -430,8 +418,47 @@ function ExistingEmployee(props) {
           </div>
         </div>
         <div style={{ display: "flex" }}>
-          <div className="existing-employee-tabs">Profile Details</div>
-          <div className="existing-employee-tabs">Add Benefits</div>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <div
+              className="existing_employee_tab_number"
+              style={
+                activeTab === "1"
+                  ? { backgroundColor: "#F3686D" }
+                  : { backgroundColor: "#f9b3b6" }
+              }
+            >
+              1
+            </div>
+            <div
+              className="existing-employee-tabs"
+              style={
+                activeTab === "1" ? { color: "#F3686D" } : { color: "#f9b3b6" }
+              }
+            >
+              Profile Details
+            </div>
+          </div>
+          <div className="existing_employee_tab_line"></div>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <div
+              className="existing_employee_tab_number"
+              style={
+                activeTab === "2"
+                  ? { backgroundColor: "#F3686D" }
+                  : { backgroundColor: "#f9b3b6" }
+              }
+            >
+              2
+            </div>
+            <div
+              className="existing-employee-tabs"
+              style={
+                activeTab === "2" ? { color: "#F3686D" } : { color: "#f9b3b6" }
+              }
+            >
+              Add Benefits
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1312,13 +1339,13 @@ function ExistingEmployee(props) {
                     borderRadius: "22px",
                     color: "#FFF",
                   }}
-                  onClick={showModal}
+                  onClick={showCancelModal}
                 >
                   Cancel
                 </Button>
                 <Modal
                   // title="Confirm Cancel"
-                  visible={isModalVisible}
+                  visible={isCancelModalVisible}
                   onCancel={handleCancel}
                   footer={null}
                 >
@@ -1365,7 +1392,9 @@ function ExistingEmployee(props) {
                           borderRadius: "22px",
                           height: "40px",
                         }}
-                        onClick={()=>setActiveTab("1")}
+                        onClick={() => {
+                          setActiveTab("1"), handleCancel();
+                        }}
                       >
                         Cancel
                       </Button>
@@ -1380,10 +1409,74 @@ function ExistingEmployee(props) {
                     borderRadius: "22px",
                     color: "#FFF",
                   }}
-                  onClick={handleSubmitTimeOff}
+                  // onClick={handleSubmitTimeOff}
+                  onClick={showConfirmModal}
                 >
                   Finish
                 </Button>
+                <Modal
+                  // title="Confirm Mail"
+                  visible={isConfirmModalVisible}
+                  onCancel={handleCancel}
+                  footer={null}
+                  closable={false}
+                  width={600}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "20px",
+                      gap: "20px",
+                    }}
+                  >
+                    <div>
+                      <img src={MailIcon} alt="Mail icon" />
+                    </div>
+                    <div>
+                      <div className="cancel_popup_title">
+                        An invitation will be send to
+                      </div>
+                      <div className="cancel_popup_desc">
+                        {formValues.email}
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column-reverse",
+                        gap: "10px",
+                        width: "150px",
+                        // marginTop: "20px",
+                      }}
+                    >
+                      <Button
+                        style={{
+                          width: "100%",
+                          backgroundColor: "#C5CBD7",
+                          color: "#FFFFFF",
+                          borderRadius: "22px",
+                          height: "40px",
+                        }}
+                        onClick={handleCancel}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        style={{
+                          width: "100%",
+                          backgroundColor: "#0057FF",
+                          color: "#FFFFFF",
+                          borderRadius: "22px",
+                          height: "40px",
+                        }}
+                        onClick={handleSubmitTimeOff}
+                      >
+                        Confirm
+                      </Button>
+                    </div>
+                  </div>
+                </Modal>
               </div>
             </Layout>
           </Layout>

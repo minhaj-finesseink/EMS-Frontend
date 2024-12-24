@@ -73,7 +73,7 @@ function ForgotPassword(props) {
                 layout="vertical"
                 initialValues={{ remember: true }}
               >
-                {message ? <div className="error-message">{message}</div> : ""}
+                {/* {message ? <div className="error-message">{message}</div> : ""} */}
                 <Form.Item
                   name="email"
                   rules={[

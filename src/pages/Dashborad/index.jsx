@@ -67,6 +67,7 @@ const contentStyle = { backgroundColor: "#FFFFFF" };
 
 function Dashboard(props) {
   // const [accountSetup, setAccountSetup] = useState(null);
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [visible, setVisible] = useState(false); // Modal visibility state
   const [modalContent, setModalContent] = useState(null); // Content to show in the modal
   const [showAddEmployees, setShowAddEmployees] = useState(false); // State to show/hide "Add Employees"
@@ -74,7 +75,6 @@ function Dashboard(props) {
   const [role, setRole] = useState("");
   const [activeTab, setActiveTab] = useState("1"); // Track active tab
   const [accountSetupComplete, setAccountSetupComplete] = useState(null); // Track active tab
-  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [addEmployees, setAddEmployees] = useState(false);
   const [addExistingEmployees, setAddExistingEmployees] = useState(false);
   const [addContractor, setAddContractor] = useState(false);
@@ -117,12 +117,31 @@ function Dashboard(props) {
       let data = props.loginData.loginResponse;
       localStorage.setItem("userInfo", JSON.stringify(data.user));
       setAccountSetupComplete(data.user.isSetupComplete);
+    } else if (props.userData.addUserResponse) {
+      let data = props.userData.addUserResponse;
+      if (data.user.role === "admin") {
+        localStorage.setItem("userInfo", JSON.stringify(data.user));
+        setAccountSetupComplete(data.user.isSetupComplete);
+      }
+    } else if (props.companyData.addCompanyResponse) {
+      let data = props.companyData.addCompanyResponse;
+      if (data.success) {
+        localStorage.setItem("userInfo", JSON.stringify(data.user));
+        setAccountSetupComplete(data.user.isSetupComplete);
+      }
     } else if (userInfo) {
       setAccountSetupComplete(userInfo.isSetupComplete);
     }
     props.loginData.loginResponse = null;
+    props.userData.addUserResponse = null;
+    props.companyData.addCompanyResponse = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.loginData.loginResponse, userInfo]);
+  }, [
+    props.loginData.loginResponse,
+    props.userData.addUserResponse,
+    props.companyData.addCompanyResponse,
+    userInfo,
+  ]);
 
   const employeeData = [
     {
@@ -251,48 +270,49 @@ function Dashboard(props) {
           >
             <div
               className={`${
-                showAddEmployees
+                showAddEmployees || leavePolicy
                   ? "dashboard_content_center_ful"
                   : "dashboard_content_center"
               }`}
               // style={{ width: showAddEmployees ? "100%" : "70%" }}
             >
               {role === "user" ? (
-                // <Tabs
-                //   style={{ padding: "20px" }}
-                //   activeKey={activeTab}
-                //   onChange={handleTabChange}
-                // >
-                //   <TabPane tab="Personal Details" key="1">
-                //     <PeronalDetails
-                //       handleTabChange={handleTabChange}
-                //       tabKey={activeTab}
-                //     />
-                //   </TabPane>
-                //   <TabPane tab="Contact Details" key="2">
-                //     <ContactDetails
-                //       handleTabChange={handleTabChange}
-                //       tabKey={activeTab}
-                //     />
-                //   </TabPane>
-                //   <TabPane tab="Address Details" key="3">
-                //     <AddressDetails
-                //       handleTabChange={handleTabChange}
-                //       tabKey={activeTab}
-                //     />
-                //   </TabPane>
-                //   <TabPane tab="Education Details" key="4">
-                //     <EducationDetails
-                //       handleTabChange={handleTabChange}
-                //       tabKey={activeTab}
-                //     />
-                //   </TabPane>
-                //   <TabPane tab="Visa Details" key="5" tabKey={activeTab}>
-                //     <VisaDetails />
-                //   </TabPane>
-                // </Tabs>
-                ""
-              ) : !accountSetupComplete ? (
+                "user tabs"
+              ) : // <Tabs
+              //   style={{ padding: "20px" }}
+              //   activeKey={activeTab}
+              //   onChange={handleTabChange}
+              // >
+              //   <TabPane tab="Personal Details" key="1">
+              //     <PeronalDetails
+              //       handleTabChange={handleTabChange}
+              //       tabKey={activeTab}
+              //     />
+              //   </TabPane>
+              //   <TabPane tab="Contact Details" key="2">
+              //     <ContactDetails
+              //       handleTabChange={handleTabChange}
+              //       tabKey={activeTab}
+              //     />
+              //   </TabPane>
+              //   <TabPane tab="Address Details" key="3">
+              //     <AddressDetails
+              //       handleTabChange={handleTabChange}
+              //       tabKey={activeTab}
+              //     />
+              //   </TabPane>
+              //   <TabPane tab="Education Details" key="4">
+              //     <EducationDetails
+              //       handleTabChange={handleTabChange}
+              //       tabKey={activeTab}
+              //     />
+              //   </TabPane>
+              //   <TabPane tab="Visa Details" key="5" tabKey={activeTab}>
+              //     <VisaDetails />
+              //   </TabPane>
+              // </Tabs>
+
+              !accountSetupComplete ? (
                 <AccountSetup showModal={accountSetupComplete} />
               ) : showAddEmployees ? (
                 addExistingEmployees ? (
@@ -541,7 +561,7 @@ function Dashboard(props) {
                 </div>
               ) : (
                 <div style={{ padding: "20px" }}>
-                  <h2>Overview</h2>
+                  {/* <h2>Overview</h2>
                   <div className="button-container">
                     <Button
                       className="custom-button"
@@ -560,19 +580,22 @@ function Dashboard(props) {
                     <Button className="custom-button">Add Payroll</Button>
                     <Button className="custom-button">Setup Learning</Button>
                     <Button className="custom-button">Send Offer Letter</Button>
-                  </div>
+                  </div> */}
                   <div>
-                    <OverviewCards addEmployees={setShowAddEmployees} />
+                    <OverviewCards
+                      addEmployees={setShowAddEmployees}
+                      leavePolicy={setLeavePolicy}
+                    />
                   </div>
                 </div>
               )}
             </div>
-            {!showAddEmployees && (
+            {!showAddEmployees && !leavePolicy && (
               <div
                 // className="dashboard_content_right"
                 // style={{ width: "30%", marginRight: "20px" }}
                 className={`${
-                  showAddEmployees
+                  showAddEmployees || leavePolicy
                     ? "dashboard_content_right_ful"
                     : "dashboard_content_right"
                 }`}
@@ -591,6 +614,7 @@ function Dashboard(props) {
 const mapStateToProps = (state) => ({
   loginData: state.login,
   userData: state.user,
+  companyData: state.company,
 });
 
 Dashboard.propTypes = {

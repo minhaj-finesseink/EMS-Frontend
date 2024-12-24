@@ -25,6 +25,8 @@ function OverviewCards(props) {
       backgoundColor: "#1FEC304D",
       title: "Setup leave policy",
       description: "Add or edit leave policy",
+      // eslint-disable-next-line react/prop-types
+      onClick: () => props.leavePolicy(true),
     },
     {
       icon: ProjectIcon,

@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Typography } from "antd";
 import { LockOutlined } from "@ant-design/icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { userPassword } from "../../redux/User/user.action";
+import NewUserImage from "../../assets/new_user_image.jpeg";
+import UsitiveLogo from "../../assets/usitive-logo-with-text.png";
 import "./style.css";
 
 const { Title } = Typography;
@@ -28,6 +30,11 @@ const SetNewPasswordPage = (props) => {
   // Extract token from the URL
   const { token } = useParams();
   // console.log("token", token);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const name = queryParams.get("name");
+  const email = queryParams.get("email");
+  // console.log("name", name, "email", email);
 
   const validatePassword = (value) => {
     setPasswordStrength({
@@ -61,121 +68,147 @@ const SetNewPasswordPage = (props) => {
       newPassword: newPassword,
     });
 
-    setMessage("Password updated successfully!");
-    setTimeout(() => {
-      navigate("/sign-in"); // Redirect to login page
-    }, 1500);
+    // setMessage("Password updated successfully!");
+    // setTimeout(() => {
+    //   navigate("/sign-in"); // Redirect to login page
+    // }, 1500);
   };
 
-  // useEffect(()=>{
-  //   if(props){
-  //     console.log("test new pass",props);
-
-  //   }
-  // },[props])
+  useEffect(() => {
+    if (props.userData.userPasswordResponse) {
+      let data = props.userData.userPasswordResponse;
+      if(data){
+        
+        console.log("test new pass", data);
+      }
+    }
+  }, [props.userData.userPasswordResponse]);
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <Title className="login-title">Set New Password</Title>
-        {message && <div className="error-message">{message}</div>}
-        <Form
-          name="setNewPassword"
-          layout="vertical"
-          onFinish={handleSubmit}
-          className="password-form"
-        >
-          {/* New Password */}
-          <Form.Item
-            name="newPassword"
-            label="New Password"
-            rules={[
-              {
-                required: true,
-                message: "Please enter your new password!",
-              },
-            ]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Enter new password"
-              className="login-input"
-              value={newPassword}
-              onChange={(e) => {
-                setNewPassword(e.target.value);
-                validatePassword(e.target.value);
-              }}
+    <div className="new_user_container">
+      <div className="new_user_image_container">
+        <img
+          className="new_user_image"
+          src={NewUserImage}
+          alt="new user image"
+        />
+      </div>
+      <div className="new_user_input_container">
+        <div className="new_user_input_items">
+          <div className="new_user_input">
+            <img
+              src={UsitiveLogo}
+              alt="new user logo"
+              className="new_user_logo"
             />
-          </Form.Item>
 
-          {/* Password Strength */}
-          <div className="password-requirements">
-            <span
-              className={
-                passwordStrength.hasMinLength
-                  ? "requirement met"
-                  : "requirement"
-              }
-            >
-              8 Characters
-            </span>
-            <span
-              className={
-                passwordStrength.hasUppercase
-                  ? "requirement met"
-                  : "requirement"
-              }
-            >
-              1 Uppercase
-            </span>
-            <span
-              className={
-                passwordStrength.hasNumber ? "requirement met" : "requirement"
-              }
-            >
-              1 Numeric
-            </span>
-            <span
-              className={
-                passwordStrength.hasSymbol ? "requirement met" : "requirement"
-              }
-            >
-              1 Symbol
-            </span>
+            <div className="new_user_title">
+              Hi {name} <br />
+              Welcome to Usitive
+            </div>
+            <div className="new_user_desc">
+              Reset your password and login to usitive account
+            </div>
           </div>
-
-          {/* Confirm Password */}
-          <Form.Item
-            name="confirmPassword"
-            label="Confirm Password"
-            rules={[
-              {
-                required: true,
-                message: "Please confirm your password!",
-              },
-            ]}
+          {message && <div className="error-message">{message}</div>}
+          <Form
+            name="setNewPassword"
+            layout="vertical"
+            onFinish={handleSubmit}
+            className="password-form"
           >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Re-enter new password"
-              className="login-input"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </Form.Item>
-
-          {/* Submit Button */}
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="login-button"
-              block
+            <div className="new_user_email_conatiner">
+              <div className="new_user_label">Your email</div>
+              <div className="new_user_email">{email}</div>
+            </div>
+            <Form.Item
+              name="newPassword"
+              label={<span className="new_user_label">New Password</span>}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter your new password!",
+                },
+              ]}
             >
-              Update Password
-            </Button>
-          </Form.Item>
-        </Form>
+              <Input.Password
+                // prefix={<LockOutlined />}
+                placeholder="Enter new password"
+                className="login-input"
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  validatePassword(e.target.value);
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="confirmPassword"
+              label={<span className="new_user_label">confirm Password</span>}
+              rules={[
+                {
+                  required: true,
+                  message: "Please confirm your password!",
+                },
+              ]}
+            >
+              <Input.Password
+                // prefix={<LockOutlined />}
+                placeholder="Re-enter new password"
+                className="login-input"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </Form.Item>
+
+            <div className="password-requirements">
+              <span
+                className={
+                  passwordStrength.hasMinLength
+                    ? "requirement met"
+                    : "requirement"
+                }
+              >
+                8 Characters
+              </span>
+              <span
+                className={
+                  passwordStrength.hasUppercase
+                    ? "requirement met"
+                    : "requirement"
+                }
+              >
+                1 Uppercase
+              </span>
+              <span
+                className={
+                  passwordStrength.hasNumber ? "requirement met" : "requirement"
+                }
+              >
+                1 Numeric
+              </span>
+              <span
+                className={
+                  passwordStrength.hasSymbol ? "requirement met" : "requirement"
+                }
+              >
+                1 Symbol
+              </span>
+            </div>
+
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="login-button"
+                block
+              >
+                Sign In
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
       </div>
     </div>
   );

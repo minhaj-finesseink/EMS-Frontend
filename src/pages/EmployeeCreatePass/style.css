@@ -1,0 +1,88 @@
+.new_user_container {
+    display: flex;
+    height: 100vh;
+}
+
+.new_user_image_container {
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.new_user_input_container {
+    width: 40%;
+    /* display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 100px 80px 100px 40px; */
+}
+
+.new_user_input_items {
+    padding: 100px 120px 50px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.new_user_image {
+    width: 100%;
+    /* border-radius: 18px 0 0 18px; */
+}
+
+.new_user_logo {
+    width: 158px;
+    height: 33px;
+}
+
+.new_user_title {
+    color: #65686A;
+    font-feature-settings: 'liga' off, 'clig' off;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 28px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.new_user_desc {
+    color: #65686A;
+    font-feature-settings: 'liga' off, 'clig' off;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
+    /* 200% */
+}
+
+.new_user_email {
+    color: var(--black-500808080, #808080);
+    font-feature-settings: 'liga' off, 'clig' off;
+    font-family: Inter;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.new_user_label {
+    color: var(--black-800333333, #333);
+    font-feature-settings: 'liga' off, 'clig' off;
+    font-family: Inter;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 12px;
+    letter-spacing: 0.3px;
+}
+
+.new_user_email_conatiner {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}

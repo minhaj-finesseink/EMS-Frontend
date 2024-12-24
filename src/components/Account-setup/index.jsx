@@ -701,19 +701,20 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { addDepartment } from "../../redux/Add-department/department.action";
 import Image from "../../assets/company-details-image.jpeg";
+import countryStateMapping from '../../utils/countryStateMapping'
 import "./style.css";
 
 const { Option } = Select;
 
-const countryStateMapping = {
-  "United States": ["California", "Texas", "Florida", "New York"],
-  "United Kingdom": ["England", "Scotland", "Wales", "Northern Ireland"],
-  "United Arab Emirates": ["Dubai", "Abu Dhabi", "Sharjah"],
-  Qatar: ["Doha", "Al Rayyan", "Al Wakrah"],
-  "Saudi Arabia": ["Riyadh", "Jeddah", "Mecca", "Dammam"],
-  Bahrain: ["Manama", "Riffa", "Muharraq"],
-  Kuwait: ["Hawalli", "Salmiya", "Farwaniya"],
-};
+// const countryStateMapping = {
+//   "United States": ["California", "Texas", "Florida", "New York"],
+//   "United Kingdom": ["England", "Scotland", "Wales", "Northern Ireland"],
+//   "United Arab Emirates": ["Dubai", "Abu Dhabi", "Sharjah"],
+//   Qatar: ["Doha", "Al Rayyan", "Al Wakrah"],
+//   "Saudi Arabia": ["Riyadh", "Jeddah", "Mecca", "Dammam"],
+//   Bahrain: ["Manama", "Riffa", "Muharraq"],
+//   Kuwait: ["Hawalli", "Salmiya", "Farwaniya"],
+// };
 
 const AccountSetup = (props) => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
@@ -817,9 +818,9 @@ const AccountSetup = (props) => {
         // localStorageData.companyId = companyId;
         // Save the updated data back to local storage
         // localStorage.setItem("userInfo", JSON.stringify(localStorageData));
-        let userData = data.user;
+        // let userData = data.user;
         // Save the updated data back to local storage
-        localStorage.setItem("userInfo", JSON.stringify(userData));
+        // localStorage.setItem("userInfo", JSON.stringify(userData));
         handleCancel();
       }
     }
@@ -970,7 +971,7 @@ const AccountSetup = (props) => {
             {/* City, Country, State, Zipcode */}
             <Row gutter={16}>
               {/* City */}
-              <Col span={6}>
+              <Col span={12}>
                 <Form.Item
                   name="city"
                   rules={[
@@ -988,7 +989,7 @@ const AccountSetup = (props) => {
               </Col>
 
               {/* Country */}
-              <Col span={6}>
+              <Col span={12}>
                 <Form.Item
                   name="country"
                   rules={[
@@ -1010,7 +1011,7 @@ const AccountSetup = (props) => {
                 </Form.Item>
               </Col>
               {/* State */}
-              <Col span={6}>
+              <Col span={12}>
                 <Form.Item
                   name="state"
                   rules={[
@@ -1036,7 +1037,7 @@ const AccountSetup = (props) => {
               </Col>
 
               {/* Zipcode */}
-              <Col span={6}>
+              <Col span={12}>
                 <Form.Item
                   name="zipcode"
                   rules={[
@@ -1064,7 +1065,7 @@ const AccountSetup = (props) => {
               rules={[
                 { required: true, message: "Please input your phone number!" },
                 {
-                  pattern: /^[0-9]{10,15}$/, // Allows only digits with a length of 10 to 15
+                  pattern: /^[0-9]{8,15}$/, // Allows only digits with a length of 10 to 15
                   message: "Please enter a valid phone number (10-15 digits)!",
                 },
               ]}
