@@ -270,14 +270,29 @@ function Dashboard(props) {
           >
             <div
               className={`${
-                showAddEmployees || leavePolicy
+                showAddEmployees || leavePolicy || role === "user"
                   ? "dashboard_content_center_ful"
                   : "dashboard_content_center"
               }`}
               // style={{ width: showAddEmployees ? "100%" : "70%" }}
             >
               {role === "user" ? (
-                "user tabs"
+                <div style={{ padding: "20px 50px" }}>
+                  <Tabs>
+                    <TabPane tab="Personal Details" key="1">
+                      <PeronalDetails />
+                    </TabPane>
+                    <TabPane tab="Contact Details" key="2">
+                      <ContactDetails />
+                    </TabPane>
+                    <TabPane tab="Address Details" key="3">
+                      <AddressDetails />
+                    </TabPane>
+                    <TabPane tab="Education Details" key="4">
+                      <EducationDetails />
+                    </TabPane>
+                  </Tabs>
+                </div>
               ) : // <Tabs
               //   style={{ padding: "20px" }}
               //   activeKey={activeTab}
@@ -422,40 +437,6 @@ function Dashboard(props) {
                     </div>
 
                     <div className="add-employee-cards">
-                      <div className="add-employee-card-1">
-                        <div className="add-employee-card-items-wrapper">
-                          <div
-                            className="add-employee-card-icon-container"
-                            // style={{ backgroundColor: card.backgoundColor }}
-                          >
-                            <div
-                              style={{
-                                backgroundColor: "#ED1C24",
-                                borderRadius: "50%",
-                                height: "48px",
-                                width: "48px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <img
-                                className="add-employee-card-icon"
-                                src={AddUser}
-                                alt="Icon"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="add-employee-card-title">
-                              Add New Employee
-                            </div>
-                            <div className="add-employee-card-description">
-                              Add a new employee to the system.{" "}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                       <div
                         className="add-employee-card-2"
                         onClick={() => {
@@ -487,10 +468,10 @@ function Dashboard(props) {
                           </div>
                           <div>
                             <div className="add-employee-card-title">
-                              Add Existing Employee
+                              Add Employee
                             </div>
                             <div className="add-employee-card-description">
-                              Bring an existing employee into the system
+                              Bring an employee into the system
                             </div>
                           </div>
                         </div>
@@ -529,7 +510,10 @@ function Dashboard(props) {
                           </div>
                         </div>
                       </div>
+                    </div>
+                    <div style={{ marginTop: "50px" }}>
                       <Button
+                        className="create_employee_back_button"
                         onClick={() => {
                           setShowAddEmployees(false);
                         }}
@@ -590,12 +574,12 @@ function Dashboard(props) {
                 </div>
               )}
             </div>
-            {!showAddEmployees && !leavePolicy && (
+            {!showAddEmployees && !leavePolicy && role !== "user" && (
               <div
                 // className="dashboard_content_right"
                 // style={{ width: "30%", marginRight: "20px" }}
                 className={`${
-                  showAddEmployees || leavePolicy
+                  showAddEmployees || leavePolicy || role === "user"
                     ? "dashboard_content_right_ful"
                     : "dashboard_content_right"
                 }`}

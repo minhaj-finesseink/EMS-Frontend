@@ -1,13 +1,14 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import { Form, Input, DatePicker, Radio, Select, Button } from "antd";
+import { Form, Input, DatePicker, Radio, Select, Button, Table } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import moment from "moment";
-
 import toast from "react-hot-toast";
 import { getUserById, userUpdate } from "../../redux/User/user.action";
+import "./style.css";
+import { SearchOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -31,6 +32,18 @@ function PersonalDetails(props) {
     allergies: "",
     dietary: "",
   });
+
+  const [data, setData] = useState([]);
+
+  const columns = [
+    { title: "" },
+    { title: "Date" },
+    { title: "Visa" },
+    { title: "Issuing Country" },
+    { title: "Issued" },
+    { title: "Expiry" },
+    { title: "Status" },
+  ];
 
   useEffect(() => {
     props.getUserById(userInfo._id);
@@ -61,7 +74,7 @@ function PersonalDetails(props) {
       setFormValue(updatedFormValue);
       form.setFieldsValue(updatedFormValue);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.getUserByIdResponse]);
 
   const handleChange = (e) => {
@@ -143,218 +156,272 @@ function PersonalDetails(props) {
         props.userData.userUpdateResponse = null;
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.userUpdateResponse]);
 
   // console.log("form value", formValue);
 
   return (
-    <Form form={form} layout="vertical" onFinish={handleSubmit}>
-      <div
-        style={{
-          display: "grid",
-          gap: "20px",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          border: "1px solid #d9d9d9",
-          borderRadius: "5px",
-          padding: "20px",
-        }}
-      >
-        <Form.Item
-          name="firstName"
-          label="First Name"
-          rules={[{ required: true, message: "Please enter first name!" }]}
-        >
-          <Input
-            name="firstName"
-            value={formValue.firstName}
-            onChange={handleChange}
-            placeholder="Enter first name"
-          />
-        </Form.Item>
-
-        <Form.Item name="middleName" label="Middle Name">
-          <Input
-            name="middleName"
-            value={formValue.middleName}
-            onChange={handleChange}
-            placeholder="Enter middle name"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="lastName"
-          label="Last Name"
-          rules={[{ required: true, message: "Please enter last name!" }]}
-        >
-          <Input
-            name="lastName"
-            value={formValue.lastName}
-            onChange={handleChange}
-            placeholder="Enter last name"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="employeeStartDate"
-          label="Employment Start Date"
-          rules={[{ required: true, message: "Please select start date!" }]}
-        >
-          <DatePicker
-            name="employeeStartDate"
-            value={formValue.employeeStartDate}
-            onChange={(date) => handleDateChange(date, "employeeStartDate")}
-            style={{ width: "100%" }}
-            placeholder="Select start date"
-          />
-        </Form.Item>
-
-        <Form.Item name="dob" label="Date of Birth">
-          <DatePicker
-            name="dob"
-            value={formValue.dob}
-            onChange={(date) => handleDateChange(date, "dob")}
-            style={{ width: "100%" }}
-            placeholder="Select date of birth"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="sex"
-          label="Gender"
-          rules={[{ required: true, message: "Please select gender!" }]}
-        >
-          <Radio.Group name="sex" value={formValue.sex} onChange={handleChange}>
-            <Radio value="Male">Male</Radio>
-            <Radio value="Female">Female</Radio>
-          </Radio.Group>
-        </Form.Item>
-
-        <Form.Item
-          name="employeeId"
-          label="Employee ID"
-          rules={[{ required: true, message: "Please enter employee ID!" }]}
-        >
-          <Input
-            name="employeeId"
-            value={formValue.employeeId}
-            onChange={handleChange}
-            placeholder="Enter employee ID"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="phone"
-          label="Phone"
-          rules={[{ required: true, message: "Please enter phone number!" }]}
-        >
-          <Input
-            name="phone"
-            value={formValue.phone}
-            onChange={handleChange}
-            placeholder="Enter phone number"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="ssn"
-          label="SSN"
-          rules={[{ required: true, message: "Please enter SSN!" }]}
-        >
-          <Input
-            name="ssn"
-            value={formValue.ssn}
-            onChange={handleChange}
-            placeholder="Enter SSN"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="maritalStatus"
-          label="Marital Status"
-          rules={[{ required: true, message: "Please enter marital status!" }]}
-        >
-          <Input
-            name="maritalStatus"
-            value={formValue.maritalStatus}
-            onChange={handleChange}
-            placeholder="Enter marital status"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="taxFileNumber"
-          label="Tax File Number"
-          // rules={[{ required: true, message: "Please enter tax file number!" }]}
-        >
-          <Input
-            name="taxNumber"
-            value={formValue.taxNumber}
-            onChange={handleChange}
-            placeholder="Enter tax file number"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="nin"
-          label="NIN"
-          rules={[{ required: true, message: "Please enter NIN!" }]}
-        >
-          <Input
-            name="nin"
-            value={formValue.nin}
-            onChange={handleChange}
-            placeholder="Enter NIN"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="shirtSize"
-          label="Shirt Size"
-          // rules={[{ required: true, message: "Please select shirt size!" }]}
-        >
-          <Select
-            value={formValue.size}
-            onChange={(value) => handleSelectChange(value, "size")}
-            placeholder="Select shirt size"
+    <div className="personal_details_container">
+      <div style={{ margin: "30px 0" }}>
+        <div className="personal_details_title">
+          Enter your personal details
+        </div>
+        <div className="personal_details_desc">
+          Complete the form with your correct information
+        </div>
+      </div>
+      <div className="personal_details_form">
+        {" "}
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <div
+            style={{
+              display: "grid",
+              gap: "20px",
+              gridTemplateColumns: "repeat(3, 1fr)",
+            }}
           >
-            <Option value="small">Small</Option>
-            <Option value="medium">Medium</Option>
-            <Option value="large">Large</Option>
-            <Option value="xlarge">X-Large</Option>
-          </Select>
-        </Form.Item>
+            <Form.Item
+              name="firstName"
+              label={
+                <span className="patient_details_input_label">First Name</span>
+              }
+              rules={[{ required: true, message: "Please enter first name!" }]}
+            >
+              <Input
+                className="patient_details_input"
+                name="firstName"
+                value={formValue.firstName}
+                onChange={handleChange}
+                placeholder="Enter first name"
+              />
+            </Form.Item>
 
-        <Form.Item name="allergies" label="Allergies">
-          <Input
-            name="allergies"
-            value={formValue.allergies}
-            onChange={handleChange}
-            placeholder="Enter allergies (if any)"
-          />
-        </Form.Item>
+            <Form.Item
+              name="middleName"
+              label={
+                <span className="patient_details_input_label">Middle Name</span>
+              }
+            >
+              <Input
+                className="patient_details_input"
+                name="middleName"
+                value={formValue.middleName}
+                onChange={handleChange}
+                placeholder="Enter middle name"
+              />
+            </Form.Item>
 
-        <Form.Item name="dietaryRestrictions" label="Dietary Restrictions">
-          <Input
-            name="dietary"
-            value={formValue.dietary}
-            onChange={handleChange}
-            placeholder="Enter dietary restrictions (if any)"
-          />
-        </Form.Item>
+            <Form.Item
+              name="lastName"
+              label={
+                <span className="patient_details_input_label">Last Name</span>
+              }
+              rules={[{ required: true, message: "Please enter last name!" }]}
+            >
+              <Input
+                className="patient_details_input"
+                name="lastName"
+                value={formValue.lastName}
+                onChange={handleChange}
+                placeholder="Enter last name"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="employeeStartDate"
+              label={
+                <span className="patient_details_input_label">
+                  Employment Start Date
+                </span>
+              }
+              rules={[{ required: true, message: "Please select start date!" }]}
+            >
+              <DatePicker
+                className="patient_details_input"
+                name="employeeStartDate"
+                value={formValue.employeeStartDate}
+                onChange={(date) => handleDateChange(date, "employeeStartDate")}
+                style={{ width: "100%" }}
+                placeholder="Select start date"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="dob"
+              label={
+                <span className="patient_details_input_label">
+                  DOB (Optional)
+                </span>
+              }
+            >
+              <DatePicker
+                className="patient_details_input"
+                name="dob"
+                value={formValue.dob}
+                onChange={(date) => handleDateChange(date, "dob")}
+                style={{ width: "100%" }}
+                placeholder="Select date of birth"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="sex"
+              label={
+                <span className="patient_details_input_label">Gender</span>
+              }
+              rules={[{ required: true, message: "Please select gender!" }]}
+            >
+              <Select
+                className="patient_details_input"
+                value={formValue.sex}
+                onChange={(value) => handleSelectChange(value, "sex")}
+                placeholder="Select Gender"
+              >
+                <Option value="Male">Male</Option>
+                <Option value="Female">Female</Option>
+                <Option value="Other">Other</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              className="patient_details_input"
+              name="employeeId"
+              label={
+                <span className="patient_details_input_label">
+                  Employee ID Number
+                </span>
+              }
+              rules={[{ required: true, message: "Please enter employee ID!" }]}
+            >
+              <Input
+                className="patient_details_input"
+                name="employeeId"
+                value={formValue.employeeId}
+                onChange={handleChange}
+                placeholder="Enter employee ID"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="phone"
+              label={
+                <span className="patient_details_input_label">
+                  Phone (Optional)
+                </span>
+              }
+              rules={[
+                { required: true, message: "Please enter phone number!" },
+              ]}
+            >
+              <Input
+                className="patient_details_input"
+                name="phone"
+                value={formValue.phone}
+                onChange={handleChange}
+                placeholder="Enter phone number"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="maritalStatus"
+              label={
+                <span className="patient_details_input_label">
+                  Marital Status
+                </span>
+              }
+              rules={[
+                { required: true, message: "Please enter marital status!" },
+              ]}
+            >
+              <Select
+                className="patient_details_input"
+                value={formValue.maritalStatus}
+                onChange={(value) =>
+                  handleChange({ target: { name: "maritalStatus", value } })
+                }
+                placeholder="Select marital status"
+              >
+                <Option value="single">Single</Option>
+                <Option value="married">Married</Option>
+                <Option value="divorced">Divorced</Option>
+                <Option value="widowed">Widowed</Option>
+              </Select>
+            </Form.Item>
+          </div>
+          <div className="visa_details">
+            <div style={{ margin: "30px 0" }}>
+              <div className="personal_details_title">Visa Details</div>
+              <div className="personal_details_desc">
+                Kindly provide your visa particulars if any
+              </div>
+            </div>
+
+            <div className="visa_deatils_header">
+              <Input
+                placeholder="Search"
+                prefix={<SearchOutlined />}
+                style={{ width: "200px", height: "34px", borderRadius: "28px" }}
+              />
+              <Button
+                className="add_policy_button"
+                // onClick={handleAddNewPolicy}
+              >
+                Add Entry
+              </Button>
+            </div>
+            <div className="visa_details_table">
+              <Table
+                dataSource={data}
+                columns={columns}
+                pagination={{ pageSize: 5 }}
+                style={{
+                  border: "1px solid #e5e9ee", // Outer border color
+                  borderRadius: "14px", // Rounded corners
+                  overflow: "hidden",
+                }}
+                bordered={false} // Avoid double borders from Ant Design default styles
+                scroll={{ x: "max-content" }}
+              />
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "20px",
+              gap: "20px",
+            }}
+          >
+            <Button
+              type="primary"
+              style={{
+                width: "292px",
+                backgroundColor: "#E0E5EB",
+                color: "#FFFFFF",
+                height: "50px",
+                borderRadius: "18px",
+              }}
+            >
+              Cancel
+            </Button>{" "}
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{
+                width: "292px",
+                backgroundColor: "#007DC5",
+                color: "#FFFFFF",
+                height: "50px",
+                borderRadius: "18px",
+              }}
+            >
+              Next
+            </Button>
+          </div>
+        </Form>
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginTop: "20px",
-        }}
-      >
-        <Button type="primary" htmlType="submit" style={{ width: "100px" }}>
-          Continue
-        </Button>
-      </div>
-    </Form>
+    </div>
   );
 }
 

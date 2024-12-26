@@ -107,10 +107,11 @@ function EducationDetails(props) {
   };
 
   useEffect(() => {
-    props.getEducation({
-      accountId: userInfo.accountId,
-      userId: userInfo._id,
-    });
+    // props.getEducation({
+    //   accountId: userInfo.accountId,
+    //   userId: userInfo._id,
+    // });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -144,162 +145,222 @@ function EducationDetails(props) {
       // Set form values
       form.setFieldsValue(formValues);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.educationData.getEducationResponse]);
 
   return (
-    <Form form={form} layout="vertical" onFinish={handleSubmit}>
-      {educationFields.map((field) => (
-        <div
-          key={field.id}
-          style={{
-            border: "1px solid #d9d9d9",
-            borderRadius: "5px",
-            padding: "20px",
-            marginBottom: "20px",
-            position: "relative",
-          }}
-        >
+    <div className="address_details_container">
+      <div style={{ margin: "30px 0" }}>
+        <div className="address_details_title">
+          Enter your Education details
+        </div>
+        <div className="address_details_desc">
+          Complete the form with your Education Details
+        </div>
+      </div>
+      <div className="address_details_form">
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          {educationFields.map((field) => (
+            <div key={field.id}>
+              <div
+                style={{
+                  display: "grid",
+                  gap: "20px",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                }}
+              >
+                <Form.Item
+                  name={`college_${field.id}`}
+                  label={
+                    <span className="address_details_input_label">
+                      College/Institute
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter the college/institute!",
+                    },
+                  ]}
+                >
+                  <Input
+                    className="address_details_input"
+                    name="college"
+                    value={field.college}
+                    onChange={(e) => handleInputChange(e, field.id)}
+                    placeholder="Enter college/institute name"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name={`degree_${field.id}`}
+                  label={
+                    <span className="address_details_input_label">Degree</span>
+                  }
+                  rules={[
+                    { required: true, message: "Please select a degree!" },
+                  ]}
+                >
+                  <Select
+                    className="address_details_input"
+                    value={field.degree}
+                    onChange={(value) =>
+                      handleSelectChange(value, "degree", field.id)
+                    }
+                    placeholder="Select a degree"
+                  >
+                    {degrees.map((degree, index) => (
+                      <Option key={index} value={degree}>
+                        {degree}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  name={`major_${field.id}`}
+                  label={
+                    <span className="address_details_input_label">
+                      Major/Specialization
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter your major or specialization!",
+                    },
+                  ]}
+                >
+                  <Input
+                    className="address_details_input"
+                    name="specialization"
+                    value={field.specialization}
+                    onChange={(e) => handleInputChange(e, field.id)}
+                    placeholder="Enter major/specialization"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name={`gpa_${field.id}`}
+                  label={
+                    <span className="address_details_input_label">GPA</span>
+                  }
+                  rules={[
+                    { required: true, message: "Please enter your GPA!" },
+                  ]}
+                >
+                  <Input
+                    className="address_details_input"
+                    name="gpa"
+                    value={field.gpa}
+                    onChange={(e) => handleInputChange(e, field.id)}
+                    placeholder="Enter GPA"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name={`startDate_${field.id}`}
+                  label={
+                    <span className="address_details_input_label">
+                      Start Date
+                    </span>
+                  }
+                  rules={[
+                    { required: true, message: "Please select a start date!" },
+                  ]}
+                >
+                  <DatePicker
+                    className="address_details_input"
+                    value={field.startDate}
+                    onChange={(date) =>
+                      handleDateChange(date, "startDate", field.id)
+                    }
+                    style={{ width: "100%" }}
+                    placeholder="Select start date"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name={`endDate_${field.id}`}
+                  label={
+                    <span className="address_details_input_label">
+                      End Date
+                    </span>
+                  }
+                  rules={[
+                    { required: true, message: "Please select an end date!" },
+                  ]}
+                >
+                  <DatePicker
+                    className="address_details_input"
+                    value={field.endDate}
+                    onChange={(date) =>
+                      handleDateChange(date, "endDate", field.id)
+                    }
+                    style={{ width: "100%" }}
+                    placeholder="Select end date"
+                  />
+                </Form.Item>
+              </div>
+
+              {educationFields.length > 1 && (
+                <Button
+                  type="text"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => removeEducationField(field.id)}
+                >
+                  Delete
+                </Button>
+              )}
+            </div>
+          ))}
+          <Button
+            className="address_details_input_label"
+            type="dashed"
+            onClick={addEducationField}
+            block
+            icon={<PlusOutlined />}
+          >
+            Add Education
+          </Button>
           <div
             style={{
-              display: "grid",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "100px",
               gap: "20px",
-              gridTemplateColumns: "repeat(2, 1fr)",
             }}
           >
-            <Form.Item
-              name={`college_${field.id}`}
-              label="College/Institute"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter the college/institute!",
-                },
-              ]}
-            >
-              <Input
-                name="college"
-                value={field.college}
-                onChange={(e) => handleInputChange(e, field.id)}
-                placeholder="Enter college/institute name"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name={`degree_${field.id}`}
-              label="Degree"
-              rules={[{ required: true, message: "Please select a degree!" }]}
-            >
-              <Select
-                value={field.degree}
-                onChange={(value) =>
-                  handleSelectChange(value, "degree", field.id)
-                }
-                placeholder="Select a degree"
-              >
-                {degrees.map((degree, index) => (
-                  <Option key={index} value={degree}>
-                    {degree}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              name={`major_${field.id}`}
-              label="Major/Specialization"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter your major or specialization!",
-                },
-              ]}
-            >
-              <Input
-                name="specialization"
-                value={field.specialization}
-                onChange={(e) => handleInputChange(e, field.id)}
-                placeholder="Enter major/specialization"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name={`gpa_${field.id}`}
-              label="GPA"
-              rules={[{ required: true, message: "Please enter your GPA!" }]}
-            >
-              <Input
-                name="gpa"
-                value={field.gpa}
-                onChange={(e) => handleInputChange(e, field.id)}
-                placeholder="Enter GPA"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name={`startDate_${field.id}`}
-              label="Start Date"
-              rules={[
-                { required: true, message: "Please select a start date!" },
-              ]}
-            >
-              <DatePicker
-                value={field.startDate}
-                onChange={(date) =>
-                  handleDateChange(date, "startDate", field.id)
-                }
-                style={{ width: "100%" }}
-                placeholder="Select start date"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name={`endDate_${field.id}`}
-              label="End Date"
-              rules={[
-                { required: true, message: "Please select an end date!" },
-              ]}
-            >
-              <DatePicker
-                value={field.endDate}
-                onChange={(date) => handleDateChange(date, "endDate", field.id)}
-                style={{ width: "100%" }}
-                placeholder="Select end date"
-              />
-            </Form.Item>
-          </div>
-
-          {educationFields.length > 1 && (
             <Button
-              type="text"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={() => removeEducationField(field.id)}
+              type="primary"
+              style={{
+                width: "292px",
+                backgroundColor: "#E0E5EB",
+                color: "#FFFFFF",
+                height: "50px",
+                borderRadius: "18px",
+              }}
             >
-              Delete
+              Cancel
+            </Button>{" "}
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{
+                width: "292px",
+                backgroundColor: "#007DC5",
+                color: "#FFFFFF",
+                height: "50px",
+                borderRadius: "18px",
+              }}
+            >
+              Finish
             </Button>
-          )}
-        </div>
-      ))}
-      <Button
-        type="dashed"
-        onClick={addEducationField}
-        block
-        icon={<PlusOutlined />}
-      >
-        Add Education
-      </Button>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginTop: "20px",
-        }}
-      >
-        <Button type="primary" htmlType="submit" style={{ width: "100px" }}>
-          Continue
-        </Button>
+          </div>
+        </Form>
       </div>
-    </Form>
+    </div>
   );
 }
 

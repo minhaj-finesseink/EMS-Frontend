@@ -233,6 +233,13 @@
   width: 100%;
 }
 
+.create_employee_back_button {
+  width: 200px;
+  background-color: #007DC5;
+  color: #FFFFFF;
+  height: 50px;
+  border-radius: 12px;
+}
 
 @media (max-width: 767px) {
   .dashboard_content_container {

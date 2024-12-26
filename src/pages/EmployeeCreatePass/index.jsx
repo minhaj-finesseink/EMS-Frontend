@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Typography } from "antd";
+import { Form, Input, Button, Typography, Alert } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -24,6 +24,7 @@ const SetNewPasswordPage = (props) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -48,6 +49,7 @@ const SetNewPasswordPage = (props) => {
   const handleSubmit = () => {
     if (newPassword !== confirmPassword) {
       setMessage("Passwords do not match!");
+      setIsError(true);
       return;
     }
 
@@ -77,11 +79,18 @@ const SetNewPasswordPage = (props) => {
   useEffect(() => {
     if (props.userData.userPasswordResponse) {
       let data = props.userData.userPasswordResponse;
-      if(data){
-        
-        console.log("test new pass", data);
+      if (data.success) {
+        setMessage(data.message);
+        setIsError(false);
+        setTimeout(() => {
+          navigate("/sign-in");
+        }, 2000);
+      } else {
+        setMessage(data.message);
+        setIsError(true);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.userPasswordResponse]);
 
   return (
@@ -110,7 +119,7 @@ const SetNewPasswordPage = (props) => {
               Reset your password and login to usitive account
             </div>
           </div>
-          {message && <div className="error-message">{message}</div>}
+          {/* {message && <div className="error-message">{message}</div>} */}
           <Form
             name="setNewPassword"
             layout="vertical"
@@ -208,6 +217,17 @@ const SetNewPasswordPage = (props) => {
               </Button>
             </Form.Item>
           </Form>
+
+          {/* Display Message */}
+          {message && (
+            <div>
+              <Alert
+                message={message}
+                type={isError ? "error" : "success"}
+                showIcon
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

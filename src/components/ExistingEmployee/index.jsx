@@ -1,54 +1,34 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
-  Col,
   DatePicker,
-  Divider,
   Form,
   Input,
   Layout,
   List,
   Modal,
-  Radio,
-  Row,
   Select,
   Switch,
-  Tabs,
 } from "antd";
-import TabPane from "antd/es/tabs/TabPane";
-import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { addUser } from "../../redux/User/user.action";
-import { getDepartment } from "../../redux/Add-department/department.action";
 import { getGeneralTimeOff } from "../../redux/GeneralTimeOff/generalTimeOff.action";
-import GeneralTimeOff from "../GeneralTimeOff";
 import { addUserTimeOff } from "../../redux/UserTimeOff/userTimeOff.action";
 import toast from "react-hot-toast";
-import countryStateMapping from "../../utils/countryStateMapping";
 import MailIcon from "../../assets/mail-open.svg";
 import "./style.css";
 
 const { Option } = Select;
 const { Sider, Content } = Layout;
 
-// const countryStateMapping = {
-//   "United States": ["California", "Texas", "Florida", "New York"],
-//   "United Kingdom": ["England", "Scotland", "Wales", "Northern Ireland"],
-//   "United Arab Emirates": ["Dubai", "Abu Dhabi", "Sharjah"],
-//   Qatar: ["Doha", "Al Rayyan", "Al Wakrah"],
-//   "Saudi Arabia": ["Riyadh", "Jeddah", "Mecca", "Dammam"],
-//   Bahrain: ["Manama", "Riffa", "Muharraq"],
-//   Kuwait: ["Hawalli", "Salmiya", "Farwaniya"],
-// };
-
 function ExistingEmployee(props) {
   const [form] = Form.useForm();
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [activeTab, setActiveTab] = useState("1"); // Track active tab
-  const [changeTab, setChangeTab] = useState(false);
   const [formValues, setFormValues] = useState({
     employementType: "",
     firstName: "",
@@ -71,10 +51,6 @@ function ExistingEmployee(props) {
     department: "",
     reporting: "",
   });
-  const [departmentList, setDepartmentList] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Control modal visibility
-  const [timeOffButton, setTimeOffButton] = useState(false); // To track whether the time-off data is loaded
-
   const [timeOffList, setTimeOffList] = useState([]); // Time-off policies list
   const [selectedTimeOffId, setSelectedTimeOffId] = useState(null); // Selected policy ID
   const [policiesData, setPoliciesData] = useState([]); // Holds data for each policy
@@ -118,20 +94,6 @@ function ExistingEmployee(props) {
     });
   };
 
-  // console.log("form values", formValues);
-
-  const handleTabChange = (key) => {
-    if (changeTab) {
-      setActiveTab(key); // Update the active tab key
-    }
-  };
-
-  const getHeadingContent = () => {
-    if (activeTab === "1") return "Add Existing Employee";
-    if (activeTab === "2") return "Employee Time Off";
-    return "Form Section";
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({
@@ -165,26 +127,9 @@ function ExistingEmployee(props) {
   };
 
   useEffect(() => {
-    props.getDepartment(userInfo._id);
     props.getGeneralTimeOff(userInfo.companyId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (props.departmentData.getDepartmentResponse) {
-      let data = props.departmentData.getDepartmentResponse;
-      if (data.success) {
-        let department = data.department.department;
-        let departmentNames = department.map((dept) => {
-          let name = dept.departmentName.toLowerCase().split(" ");
-          name = name
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
-          return name;
-        });
-        setDepartmentList(departmentNames);
-      }
-    }
-  }, [props.departmentData.getDepartmentResponse]);
 
   useEffect(() => {
     if (props.generalTimeOffData.getGeneralTimeOffResponse) {
@@ -200,7 +145,6 @@ function ExistingEmployee(props) {
         }));
         // console.log("Extracted Policies:", policies);
         setTimeOffList(policies); // Set the time-off policies to state
-        setTimeOffButton(true);
         setSelectedTimeOffId(policies[0]?.code); // Set the first policy as selected by default
         setPoliciesData(
           policies.map((x) => ({
@@ -212,17 +156,10 @@ function ExistingEmployee(props) {
             creditsHours: "",
             creditsUnits: "",
             carryForwardUnits: "",
-            // carryForwardBy: "end of year",
             accuralUnits: "",
-            // accuralBy: "per month",
             EncashedUnusedLeaveUnits: "",
-            // EncashedUnusedLeaveFrequency: "yearly",
             resetInd: "yes",
             resetType: "yearly",
-            // resetDate:
-            //   x.resetType === "monthly"
-            //     ? "on the last day of the month"
-            //     : "On 31st of Dec",
           }))
         );
       }
@@ -257,7 +194,6 @@ function ExistingEmployee(props) {
       departmentName: formValues.department,
       reporting: formValues.reporting,
     };
-    // console.log("payload", payload);
     props.addUser(payload);
   };
 
@@ -266,7 +202,6 @@ function ExistingEmployee(props) {
       let data = props.userData.addUserResponse;
       if (data.success) {
         setActiveTab("2"); // Navigate to Benefits tab on form submission
-        setChangeTab(true);
         setUserId(data.user._id);
         setLoading(false);
         toast.success(data.message);
@@ -279,22 +214,11 @@ function ExistingEmployee(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.addUserResponse]);
 
-  // Function to handle modal opening
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  // Function to handle modal closing
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   useEffect(() => {
     if (props.generalTimeOffData.addGeneralTimeOffResponse) {
       let data = props.generalTimeOffData.addGeneralTimeOffResponse;
       if (data.success) {
         props.getGeneralTimeOff(userInfo.companyId);
-        handleCloseModal();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -302,14 +226,6 @@ function ExistingEmployee(props) {
 
   const handleSelectTimeOff = (timeOffId) => {
     setSelectedTimeOffId(timeOffId); // Update selected policy
-  };
-
-  const handlePolicyChange = (index, field, value) => {
-    setPoliciesData((prevPolicies) => {
-      const newPolicies = [...prevPolicies];
-      newPolicies[index][field] = value;
-      return newPolicies;
-    });
   };
 
   // Function to handle input changes for policiesData
@@ -386,12 +302,8 @@ function ExistingEmployee(props) {
     if (props.userTimeOffData.addUserTimeOffResponse) {
       let data = props.userTimeOffData.addUserTimeOffResponse;
       if (data.success) {
-        // toast.success(data.message);
-        // props.onClose();
         handleCancel();
-        props.existingEmployees(false)
-      } else {
-        // toast.error(data.message);
+        props.existingEmployees(false);
       }
       props.userTimeOffData.addUserTimeOffResponse = null;
     }
@@ -405,8 +317,6 @@ function ExistingEmployee(props) {
       [key]: value,
     }));
   };
-
-  // console.log("time off list", timeOffList);
 
   return (
     <div className="existing-employee-container">
@@ -523,6 +433,7 @@ function ExistingEmployee(props) {
                 gridTemplateColumns: "repeat(3, 1fr)",
               }}
             >
+              {/* First Name */}
               <Form.Item
                 name="firstName"
                 label={
@@ -544,6 +455,7 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
+              {/* Middle Name */}
               <Form.Item
                 name="middleName"
                 label={
@@ -559,6 +471,7 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
+              {/* Last Name */}
               <Form.Item
                 name="lastName"
                 label={<span className="employee-custom-label">Last Name</span>}
@@ -578,6 +491,48 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
+              {/* Phone Number */}
+              <Form.Item
+                name="phoneNumber"
+                label={<span className="employee-custom-label">Phone</span>}
+                rules={[
+                  {
+                    pattern: /^[0-9]{10,15}$/, // Allows only digits with a length of 10 to 15
+                    message:
+                      "Please enter a valid phone number (10-15 digits)!",
+                  },
+                ]}
+              >
+                <Input
+                  className="employee-input"
+                  name="phoneNumber"
+                  value={formValues.phoneNumber}
+                  onChange={handleChange}
+                  placeholder="Phone"
+                />
+              </Form.Item>
+
+              {/* Email */}
+              <Form.Item
+                name="email"
+                label={<span className="employee-custom-label">Email</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter employee email!",
+                  },
+                ]}
+              >
+                <Input
+                  className="employee-input"
+                  name="email"
+                  value={formValues.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                />
+              </Form.Item>
+
+              {/* Employement Start Date */}
               <Form.Item
                 name="employmentStartDate"
                 label={
@@ -604,7 +559,8 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              <Form.Item
+              {/* DOB */}
+              {/* <Form.Item
                 name="dob"
                 label={<span className="employee-custom-label">DOB</span>}
               >
@@ -617,9 +573,10 @@ function ExistingEmployee(props) {
                   }
                   style={{ width: "100%" }}
                 />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* Gender */}
+              {/* <Form.Item
                 name="sex"
                 label={<span className="employee-custom-label">Gender</span>}
                 rules={[
@@ -639,8 +596,9 @@ function ExistingEmployee(props) {
                   <Option value="Female">Female</Option>
                   <Option value="Other">Other</Option>
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
+              {/* ID Number */}
               <Form.Item
                 name="idNumber"
                 label={
@@ -664,46 +622,8 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              <Form.Item
-                name="phoneNumber"
-                label={<span className="employee-custom-label">Phone</span>}
-                rules={[
-                  {
-                    pattern: /^[0-9]{10,15}$/, // Allows only digits with a length of 10 to 15
-                    message:
-                      "Please enter a valid phone number (10-15 digits)!",
-                  },
-                ]}
-              >
-                <Input
-                  className="employee-input"
-                  name="phoneNumber"
-                  value={formValues.phoneNumber}
-                  onChange={handleChange}
-                  placeholder="Phone"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="email"
-                label={<span className="employee-custom-label">Email</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter employee email!",
-                  },
-                ]}
-              >
-                <Input
-                  className="employee-input"
-                  name="email"
-                  value={formValues.email}
-                  onChange={handleChange}
-                  placeholder="Email"
-                />
-              </Form.Item>
-
-              <Form.Item
+              {/* Address1 */}
+              {/* <Form.Item
                 name="address1"
                 label={<span className="employee-custom-label">Address 1</span>}
               >
@@ -714,9 +634,10 @@ function ExistingEmployee(props) {
                   onChange={handleChange}
                   placeholder="Address 1"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* Address2 */}
+              {/* <Form.Item
                 name="address2"
                 label={<span className="employee-custom-label">Address 2</span>}
               >
@@ -727,9 +648,10 @@ function ExistingEmployee(props) {
                   onChange={handleChange}
                   placeholder="Address 2"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* Country */}
+              {/* <Form.Item
                 name="country"
                 label={<span className="employee-custom-label">Country</span>}
               >
@@ -745,9 +667,10 @@ function ExistingEmployee(props) {
                     </Option>
                   ))}
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* State */}
+              {/* <Form.Item
                 name="state"
                 label={<span className="employee-custom-label">State</span>}
               >
@@ -766,9 +689,10 @@ function ExistingEmployee(props) {
                     )
                   )}
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* City */}
+              {/* <Form.Item
                 name="city"
                 label={<span className="employee-custom-label">City</span>}
               >
@@ -779,9 +703,10 @@ function ExistingEmployee(props) {
                   onChange={handleChange}
                   placeholder="City"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* Zip */}
+              {/* <Form.Item
                 name="zip"
                 label={<span className="employee-custom-label">ZIP</span>}
                 rules={[
@@ -798,8 +723,9 @@ function ExistingEmployee(props) {
                   onChange={handleChange}
                   placeholder="Ward"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
+              {/* Job Title */}
               <Form.Item
                 name="jobTitle"
                 label={<span className="employee-custom-label">Job Title</span>}
@@ -813,7 +739,8 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              <Form.Item
+              {/* Shift */}
+              {/* <Form.Item
                 name="employeeShift"
                 label={
                   <span className="employee-custom-label">Employee Shift</span>
@@ -826,19 +753,14 @@ function ExistingEmployee(props) {
                   onChange={handleChange}
                   placeholder="Employee Shift"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
+              {/* Department */}
+              {/* <Form.Item
                 name="department"
                 label={
                   <span className="employee-custom-label">Department Name</span>
                 }
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: "Please input employee department name!",
-                //   },
-                // ]}
               >
                 <Select
                   className="employee-input"
@@ -852,8 +774,9 @@ function ExistingEmployee(props) {
                     </Option>
                   ))}
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
+              {/* Reporting */}
               <Form.Item
                 name="reporting"
                 label={
@@ -861,12 +784,6 @@ function ExistingEmployee(props) {
                     Employee reporting to
                   </span>
                 }
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: "Please input employee department name!",
-                //   },
-                // ]}
               >
                 <Select
                   className="employee-input"
@@ -874,11 +791,6 @@ function ExistingEmployee(props) {
                   onChange={(value) => handleSelectChange(value, "reporting")}
                   placeholder="Select reporter"
                 >
-                  {/* {departmentList.map((dept, index) => (
-                    <Option key={index} value={dept}>
-                      {dept}
-                    </Option>
-                  ))} */}
                   <Option value="admin1">Admin 1</Option>
                   <Option value="admin2">Admin 2</Option>
                   <Option value="admin3">Admin 3</Option>
@@ -921,7 +833,6 @@ function ExistingEmployee(props) {
                     borderRadius: "25px",
                   }}
                   loading={loading}
-                  // disabled={loading}
                 >
                   {loading ? "Continue ..." : "Continue"}
                 </Button>
@@ -995,12 +906,10 @@ function ExistingEmployee(props) {
                                   padding: " 20px 100px 0",
                                   borderBottom: "1px solid #e0e0e0",
                                   display: "flex",
-                                  // gridTemplateColumns: "repeat(3, 1fr)",
                                   gap: "50px",
                                 }}
                               >
                                 <Form.Item
-                                  // label="Type"
                                   label={
                                     <span className="policy-custom-label">
                                       Type
@@ -1020,7 +929,6 @@ function ExistingEmployee(props) {
                                   />
                                 </Form.Item>
                                 <Form.Item
-                                  // label="Units"
                                   label={
                                     <span className="policy-custom-label">
                                       Units
@@ -1040,7 +948,6 @@ function ExistingEmployee(props) {
                                   />
                                 </Form.Item>
                                 <Form.Item
-                                  // label="Units per"
                                   label={
                                     <span className="policy-custom-label">
                                       Units per
@@ -1409,13 +1316,11 @@ function ExistingEmployee(props) {
                     borderRadius: "22px",
                     color: "#FFF",
                   }}
-                  // onClick={handleSubmitTimeOff}
                   onClick={showConfirmModal}
                 >
                   Finish
                 </Button>
                 <Modal
-                  // title="Confirm Mail"
                   visible={isConfirmModalVisible}
                   onCancel={handleCancel}
                   footer={null}
@@ -1447,7 +1352,6 @@ function ExistingEmployee(props) {
                         flexDirection: "column-reverse",
                         gap: "10px",
                         width: "150px",
-                        // marginTop: "20px",
                       }}
                     >
                       <Button
@@ -1488,8 +1392,6 @@ function ExistingEmployee(props) {
 
 const mapStateToProps = (state) => ({
   userData: state.user,
-  loginData: state.login,
-  registerData: state.register,
   departmentData: state.department,
   generalTimeOffData: state.generalTimeOff,
   userTimeOffData: state.userTimeOff,
@@ -1497,18 +1399,20 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   addUser: (values) => dispatch(addUser(values)),
-  getDepartment: (values) => dispatch(getDepartment(values)),
+  // getDepartment: (values) => dispatch(getDepartment(values)),
   getGeneralTimeOff: (values) => dispatch(getGeneralTimeOff(values)),
   addUserTimeOff: (values) => dispatch(addUserTimeOff(values)),
 });
 
 ExistingEmployee.propTypes = {
   addUser: PropTypes.func,
-  getDepartment: PropTypes.func,
+  // getDepartment: PropTypes.func,
   getGeneralTimeOff: PropTypes.func,
   addUserTimeOff: PropTypes.func,
-  departmentData: PropTypes.object,
   userData: PropTypes.object,
+  departmentData: PropTypes.object,
+  generalTimeOffData: PropTypes.object,
+  userTimeOffData: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExistingEmployee);

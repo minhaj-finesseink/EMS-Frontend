@@ -5,7 +5,7 @@ import { Button, Form, Input, Select } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { userUpdate } from "../../redux/User/user.action";
-
+import "./style.css";
 
 const { Option } = Select;
 
@@ -13,6 +13,7 @@ function ContactDetails(props) {
   const [form] = Form.useForm();
   const [formValue, setFormValue] = useState({
     workPhone: "",
+    extensionNumber: "",
     mobilePhone: "",
     homePhone: "",
     workEmail: "",
@@ -54,10 +55,9 @@ function ContactDetails(props) {
       };
       setFormValue(updatedFormValue);
       // Set form values
-      form.setFieldsValue(updatedFormValue);  // Use setFieldsValue instead of setFieldValue
+      form.setFieldsValue(updatedFormValue); // Use setFieldsValue instead of setFieldValue
     }
-  }, [props.userData.getUserByIdResponse, form]);  // Ensure form is included in the dependencies
-  
+  }, [props.userData.getUserByIdResponse, form]); // Ensure form is included in the dependencies
 
   const handleSubmit = () => {
     props.userUpdate({
@@ -80,156 +80,242 @@ function ContactDetails(props) {
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={handleSubmit}>
-      <div
-        style={{
-          display: "grid",
-          gap: "20px",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          border: "1px solid #d9d9d9",
-          borderRadius: "5px",
-          padding: "20px",
-        }}
-      >
-        {/* Work Phone */}
-        <Form.Item
-          name="workPhone"
-          label="Work Phone"
-          rules={[{ required: true, message: "Please enter work phone!" }]}
-        >
-          <Input
-            name="workPhone"
-            value={formValue.workPhone}
-            onChange={handleChange}
-            placeholder="Enter work phone"
-          />
-        </Form.Item>
-
-        {/* Mobile Phone */}
-        <Form.Item
-          name="mobilePhone"
-          label="Mobile Phone"
-          rules={[{ required: true, message: "Please enter mobile phone!" }]}
-        >
-          <Input
-            name="mobilePhone"
-            value={formValue.mobilePhone}
-            onChange={handleChange}
-            placeholder="Enter mobile phone"
-          />
-        </Form.Item>
-
-        {/* Home Phone */}
-        <Form.Item name="homePhone" label="Home Phone">
-          <Input
-            name="homePhone"
-            value={formValue.homePhone}
-            onChange={handleChange}
-            placeholder="Enter home phone"
-          />
-        </Form.Item>
-
-        {/* Work Email */}
-        <Form.Item
-          name="workEmail"
-          label="Work Email"
-          rules={[{ required: true, message: "Please enter work email!" }]}
-        >
-          <Input
-            name="workEmail"
-            value={formValue.workEmail}
-            // onChange={handleChange}
-            disabled={true}  
-            placeholder="Enter work email"
-          />
-        </Form.Item>
-
-        {/* Home Email */}
-        <Form.Item name="homeEmail" label="Home Email">
-          <Input
-            name="homeEmail"
-            value={formValue.homeEmail}
-            onChange={handleChange}
-            placeholder="Enter home email"
-          />
-        </Form.Item>
-
-        {/* Emergency Contact Name */}
-        <Form.Item
-          name="emergencyContactName"
-          label="Emergency Contact Name"
-          rules={[
-            {
-              required: true,
-              message: "Please enter emergency contact Name!",
-            },
-          ]}
-        >
-          <Input
-            name="emergencyContactName"
-            value={formValue.emergencyContactName}
-            onChange={handleChange}
-            placeholder="Enter emergency contact name"
-          />
-        </Form.Item>
-
-        {/* Emergency Contact Phone */}
-        <Form.Item
-          name="emergencyContactPhone"
-          label="Emergency Contact Phone"
-          rules={[
-            {
-              required: true,
-              message: "Please enter emergency contact Phone number!",
-            },
-          ]}
-        >
-          <Input
-            name="emergencyContactPhone"
-            value={formValue.emergencyContactPhone}
-            onChange={handleChange}
-            placeholder="Enter emergency contact phone"
-          />
-        </Form.Item>
-
-        {/* Emergency Contact Relation */}
-        <Form.Item
-          name="emergencyContactRelation"
-          label="Emergency Contact Relation"
-          rules={[
-            {
-              required: true,
-              message: "Please select emergency contact relation!",
-            },
-          ]}
-        >
-          <Select
-            value={formValue.emergencyContactRelation}
-            onChange={(value) =>
-              handleSelectChange(value, "emergencyContactRelation")
-            }
-            placeholder="Select relation"
+    <div className="contact_details_container">
+      <div style={{ margin: "30px 0" }}>
+        <div className="contact_details_title">Enter your Contact details</div>
+        <div className="contact_details_desc">
+          Complete the form with your correct contact information
+        </div>
+      </div>
+      <div className="contact_details_form">
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <div
+            style={{
+              display: "grid",
+              gap: "20px",
+              gridTemplateColumns: "repeat(3, 1fr)",
+            }}
           >
-            <Option value="parent">Parent</Option>
-            <Option value="spouse">Spouse</Option>
-            <Option value="sibling">Sibling</Option>
-            <Option value="friend">Friend</Option>
-            <Option value="other">Other</Option>
-          </Select>
-        </Form.Item>
+            {/* Work Phone */}
+            <Form.Item
+              name="workPhone"
+              label={
+                <span className="contact_details_input_label">Work Phone</span>
+              }
+              rules={[{ required: true, message: "Please enter work phone!" }]}
+            >
+              <Input
+                className="contact_details_input"
+                name="workPhone"
+                value={formValue.workPhone}
+                onChange={handleChange}
+                placeholder="Enter work phone"
+              />
+            </Form.Item>
+
+            {/* Extension Number */}
+            <Form.Item
+              name="extensionNumber"
+              label={
+                <span className="contact_details_input_label">
+                  Extension Number
+                </span>
+              }
+              rules={[
+                { required: true, message: "Please enter Extension Number!" },
+              ]}
+            >
+              <Input
+                className="contact_details_input"
+                name="extensionNumber"
+                value={formValue.extensionNumber}
+                onChange={handleChange}
+                placeholder="Enter extension number"
+              />
+            </Form.Item>
+
+            {/* Mobile Phone */}
+            <Form.Item
+              name="mobilePhone"
+              label={
+                <span className="contact_details_input_label">
+                  Mobile Phone
+                </span>
+              }
+              rules={[
+                { required: true, message: "Please enter mobile phone!" },
+              ]}
+            >
+              <Input
+                className="contact_details_input"
+                name="mobilePhone"
+                value={formValue.mobilePhone}
+                onChange={handleChange}
+                placeholder="Enter mobile phone"
+              />
+            </Form.Item>
+
+            {/* Home number */}
+            <Form.Item
+              name="homePhone"
+              label={
+                <span className="contact_details_input_label">Home number</span>
+              }
+            >
+              <Input
+                className="contact_details_input"
+                name="homePhone"
+                value={formValue.homePhone}
+                onChange={handleChange}
+                placeholder="Enter home number"
+              />
+            </Form.Item>
+
+            {/* Work Email */}
+            <Form.Item
+              name="workEmail"
+              label={
+                <span className="contact_details_input_label">
+                  {" "}
+                  Work Email Address
+                </span>
+              }
+              rules={[{ required: true, message: "Please enter work email!" }]}
+            >
+              <Input
+                className="contact_details_input"
+                name="workEmail"
+                value={formValue.workEmail}
+                // onChange={handleChange}
+                disabled={true}
+                placeholder="Enter work email"
+              />
+            </Form.Item>
+          </div>
+          <div className="emergency_contact_container">
+            <div style={{ margin: "30px 0" }}>
+              <div className="contact_details_title">
+                Emergency Contact Information
+              </div>
+              <div className="contact_details_desc">
+                Add your immediate emergency contact
+              </div>
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gap: "20px",
+                gridTemplateColumns: "repeat(3, 1fr)",
+              }}
+            >
+              {/* Emergency contact Name */}
+              <Form.Item
+                name="emergencyContactName"
+                label={
+                  <span className="contact_details_input_label"> Name</span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter Emergency contact name!",
+                  },
+                ]}
+              >
+                <Input
+                  className="contact_details_input"
+                  name="emergencyContactName"
+                  value={formValue.emergencyContactName}
+                  onChange={handleChange}
+                  placeholder="Emergency Contact Name"
+                />
+              </Form.Item>{" "}
+              {/* Emergency contact Number */}
+              <Form.Item
+                name="emergencyContactNumber"
+                label={
+                  <span className="contact_details_input_label">
+                    {" "}
+                    Phone Number
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter Emergency contact number!",
+                  },
+                ]}
+              >
+                <Input
+                  className="contact_details_input"
+                  name="emergencyContactNumber"
+                  value={formValue.emergencyContactPhone}
+                  onChange={handleChange}
+                  placeholder="Emergency Contact Number"
+                />
+              </Form.Item>{" "}
+              {/* Emergency contact Relation */}
+              <Form.Item
+                name="emergencyContactRelation"
+                label={
+                  <span className="contact_details_input_label">
+                    {" "}
+                    Relation with the contact
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter Emergency contact relation!",
+                  },
+                ]}
+              >
+                <Input
+                  className="contact_details_input"
+                  name="emergencyContactRelation"
+                  value={formValue.emergencyContactRelation}
+                  onChange={handleChange}
+                  placeholder="Emergency Contact Relation"
+                />
+              </Form.Item>{" "}
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "20px",
+              gap: "20px",
+            }}
+          >
+            <Button
+              type="primary"
+              style={{
+                width: "292px",
+                backgroundColor: "#E0E5EB",
+                color: "#FFFFFF",
+                height: "50px",
+                borderRadius: "18px",
+              }}
+            >
+              Cancel
+            </Button>{" "}
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{
+                width: "292px",
+                backgroundColor: "#007DC5",
+                color: "#FFFFFF",
+                height: "50px",
+                borderRadius: "18px",
+              }}
+            >
+              Next
+            </Button>
+          </div>
+        </Form>
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginTop: "20px",
-        }}
-      >
-        <Button type="primary" htmlType="submit" style={{ width: "100px" }}>
-          Continue
-        </Button>
-      </div>
-    </Form>
+    </div>
   );
 }
 

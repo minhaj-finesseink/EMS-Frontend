@@ -19,7 +19,7 @@
 }
 
 .new_user_input_items {
-    padding: 100px 120px 50px 80px;
+    padding: 100px 100px 50px 80px;
     display: flex;
     flex-direction: column;
     gap: 20px;

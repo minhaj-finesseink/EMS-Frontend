@@ -1,0 +1,48 @@
+.contact_details_title {
+    color: #979797;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 38.4px;
+}
+
+.contact_details_desc {
+    color: var(--Greys-Blue-Grey-700, #737791);
+    font-family: Inter;
+    font-size: 14.4px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 19.2px;
+}
+
+.contact_details_input_label {
+    color: var(--Type-Dark, #3A3541);
+    font-family: Inter;
+    font-size: 14.22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.contact_details_input {
+    color: var(--Type-Light, #89868D);
+    font-family: Inter;
+    font-size: 14.22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    height: 46px;
+    border-radius: 18px;
+}
+
+.contact_details_input .ant-select-selector {
+    color: var(--Type-Light, #89868D);
+    font-family: Inter;
+    font-size: 14.22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    height: 46px;
+    border-radius: 18px;
+}

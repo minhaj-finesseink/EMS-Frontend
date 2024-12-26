@@ -1,153 +1,317 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Select } from "antd";
-import { addDepartment } from "../../redux/Add-department/department.action";
+import { Button, Input, Space, Table } from "antd";
+import {
+  addDepartment,
+  getDepartment,
+} from "../../redux/Add-department/department.action";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import DepartmentImage from "../../assets/department-image.jpeg";
+import { DeleteOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
+import toast from "react-hot-toast";
 import "./style.css";
 
-const { Option } = Select;
-
 function AddDepartment(props) {
-  const [isOtherSelected, setIsOtherSelected] = useState(false); // To track if 'Other' is selected
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [departmentName, setDepartmentName] = useState(""); // Controlled state for department name
   const [departmentCode, setDepartmentCode] = useState(""); // Controlled state for department code
-  const [accountId, setAccountId] = useState(null);
+  const [editingKey, setEditingKey] = useState(""); // Tracks the currently editing row
 
-  const handleDepartmentChange = (value) => {
-    if (value === "other") {
-      setIsOtherSelected(true); // Show custom department input if 'Other' is selected
-      setDepartmentName(""); // Clear department name when switching to 'Other'
-    } else {
-      setIsOtherSelected(false); // Hide the input if it's not 'Other'
-      setDepartmentName(value); // Update department name with selected value
-    }
+  const isEditing = (record) => record.key === editingKey;
+
+  const handleEdit = (record) => {
+    setEditingKey(record.key); // Set the row to editing mode
   };
 
-  const handleCustomDepartmentChange = (e) => {
-    setDepartmentName(e.target.value); // Update department name for custom input
+  const handleSave = (key) => {
+    setEditingKey(""); // Exit editing mode after saving
   };
 
-  const handleDepartmentCodeChange = (e) => {
-    setDepartmentCode(e.target.value); // Update department code
+  const handleChange = (key, field, value) => {
+    const updatedData = data.map((item) => {
+      if (item.key === key) {
+        return { ...item, [field]: value };
+      }
+      return item;
+    });
+    setData(updatedData);
   };
 
-  // useEffect(() => {
-  //   if (props.loginData.loginResponse) {
-  //     let data = props.loginData.loginResponse;
-  //     // console.log("add company login data", data.user.accountId);
-  //     setAccountId(data.user.accountId);
-  //   }
-  // }, [props.loginData]);
+  const handleDelete = (key) => {
+    const updatedData = data.filter((item) => item.key !== key);
+    setData(updatedData);
+  };
+
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    if (props.loginData?.loginResponse) {
-      const loginData = props.loginData.loginResponse;
-      setAccountId(loginData.user.accountId); // Set accountId from loginData
-    }
+    props.getDepartment(userInfo.companyId);
+  }, []);
 
-    if (props.registerData?.registerResponse) {
-      const registerData = props.registerData.registerResponse;
-      setAccountId(registerData.user.accountId); // Set accountId from registerData
+  useEffect(() => {
+    if (props.departmentData.getDepartmentResponse) {
+      let data = props.departmentData.getDepartmentResponse.department;
+      // console.log("props.departmentData", data);
+      const departmentList = data?.department.map((item, index) => ({
+        key: index.toString(),
+        departmentName: item.departmentName,
+        departmentCode: item.departmentCode,
+      }));
+      setData(departmentList);
     }
-  }, [props.loginData, props.registerData]);
+  }, [props.departmentData.getDepartmentResponse]);
 
-  const handleSubmit = () => {
-    props.addDepartment({
-      accountId: accountId,
-      departmentName: departmentName,
-      departmentCode: departmentCode,
-    });
+  // Handle form submission for adding a new department
+  const handleAddDepartment = () => {
+    if (departmentName) {
+      // Add logic for saving department
+      setData([
+        ...data,
+        { key: data.length + 1, departmentName, departmentCode },
+      ]);
+      setDepartmentName(""); // Clear department name after adding
+      setDepartmentCode("");
+    }
   };
 
+  const handleSubmit = () => {
+    const payload = {
+      userId: userInfo._id,
+      companyId: userInfo.companyId,
+      department: data.map((x) => ({
+        departmentName: x.departmentName,
+        departmentCode: x.departmentCode,
+      })),
+    };
+    props.addDepartment(payload);
+    // console.log(payload);
+  };
+
+  useEffect(() => {
+    if (props.departmentData.addDepartmentResponse) {
+      let data = props.departmentData.addDepartmentResponse;
+      // console.log("for toast", data);
+      if (data.success) {
+        toast.success(data.message);
+        setTimeout(() => {
+          props.closeDepartmentModal();
+        }, 1000);
+      }
+      props.departmentData.addDepartmentResponse = null;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.departmentData.addDepartmentResponse]);
+
   return (
-    <div>
-      {/* Description */}
-      <div>
-        <p style={{ margin: 0 }}>
-          Help the company organize employees into functional units or teams for
-          better management.
-        </p>
+    <div className="department_container">
+      <div className="department_image_container">
+        <img
+          className="department_image"
+          src={DepartmentImage}
+          alt="Department Image"
+        />
       </div>
+      <div className="department_table_container">
+        <div>
+          <div className="department_table_title">
+            <div className="department_table_heading">Add departments</div>
+            <div className="department_table_desc">
+              Enter the department details
+            </div>
+          </div>
+          <div className="department_table">
+            {" "}
+            <Table
+              dataSource={[...data, { key: "new", isNewRow: true }]} // Add a new row for "Add Department"
+              columns={[
+                {
+                  title: "",
+                  dataIndex: "key",
+                  key: "number",
+                  render: (text, record, index) => {
+                    return record.isNewRow ? data.length + 1 : index + 1; // Display correct index
+                  },
+                  className: "department-custom-no-padding",
+                },
+                {
+                  className: "department-custom-no-padding",
+                  title: (
+                    <div style={{ whiteSpace: "nowrap" }}>Department Name</div>
+                  ),
+                  dataIndex: "departmentName",
+                  key: "departmentName",
+                  render: (text, record) => {
+                    if (isEditing(record)) {
+                      return (
+                        <Input
+                          placeholder="Enter Name"
+                          value={record.departmentName}
+                          onChange={(e) =>
+                            handleChange(
+                              record.key,
+                              "departmentName",
+                              e.target.value
+                            )
+                          }
+                        />
+                      );
+                    }
+                    if (record.isNewRow) {
+                      return (
+                        <Input
+                          placeholder="Enter Name"
+                          value={departmentName} // This value comes from the controlled state
+                          onChange={(e) => setDepartmentName(e.target.value)} // Set state when input changes
+                        />
+                      );
+                    }
 
-      <Form
-        layout="vertical"
-        onFinish={handleSubmit}
-        style={{ maxWidth: "600px", margin: "auto", padding: "10px 20px 0 0" }}
-      >
-        {/* Department Name */}
-        <Form.Item
-          label="Department Name"
-          name="departmentName"
-          rules={[{ required: true, message: "Please select a department!" }]}
-        >
-          <Select
-            placeholder="Select Department"
-            value={isOtherSelected ? "other" : departmentName}
-            onChange={handleDepartmentChange}
-          >
-            <Option value="sales">Sales</Option>
-            <Option value="hr">HR</Option>
-            <Option value="it">IT</Option>
-            <Option value="finance">Finance</Option>
-            <Option value="other">Other</Option>
-          </Select>
-        </Form.Item>
-
-        {/* Custom Department Name (appears when 'Other' is selected) */}
-        {isOtherSelected && (
-          <Form.Item
-            label="Custom Department Name"
-            name="customDepartment"
-            rules={[
-              {
-                required: true,
-                message: "Please enter a custom department name!",
-              },
-            ]}
-          >
-            <Input
-              placeholder="Enter custom department name"
-              value={departmentName}
-              onChange={handleCustomDepartmentChange}
+                    return text;
+                  },
+                },
+                {
+                  className: "department-custom-no-padding",
+                  title: (
+                    <div style={{ whiteSpace: "nowrap" }}>
+                      Department Code (optional)
+                    </div>
+                  ),
+                  dataIndex: "departmentCode",
+                  key: "departmentCode",
+                  render: (text, record) => {
+                    if (isEditing(record)) {
+                      return (
+                        <Input
+                          placeholder="Enter Code"
+                          value={record.departmentCode}
+                          onChange={(e) =>
+                            handleChange(
+                              record.key,
+                              "departmentCode",
+                              e.target.value
+                            )
+                          }
+                        />
+                      );
+                    }
+                    if (record.isNewRow) {
+                      return (
+                        <Input
+                          placeholder="Enter Code"
+                          value={departmentCode}
+                          onChange={(e) => setDepartmentCode(e.target.value)}
+                        />
+                      );
+                    }
+                    return text;
+                  },
+                },
+                {
+                  title: "Actions",
+                  key: "actions",
+                  render: (text, record) => {
+                    if (record.isNewRow) {
+                      return (
+                        <Button
+                          style={{
+                            width: "100%",
+                            backgroundColor: departmentName
+                              ? "#007DC5"
+                              : "#E0E5EB",
+                            color: "#FFFFFF",
+                          }}
+                          // type="primary"
+                          disabled={!departmentName} // Disable button if departmentName is empty
+                          onClick={handleAddDepartment}
+                        >
+                          Add Department
+                        </Button>
+                      );
+                    }
+                    return (
+                      <Space size={0}>
+                        {isEditing(record) ? (
+                          <Button
+                            icon={<SaveOutlined />}
+                            type="link"
+                            onClick={() => handleSave(record.key)}
+                          />
+                        ) : (
+                          <Button
+                            icon={<EditOutlined />}
+                            type="link"
+                            onClick={() => handleEdit(record)}
+                          />
+                        )}
+                        <Button
+                          icon={<DeleteOutlined />}
+                          type="link"
+                          danger
+                          onClick={() => handleDelete(record.key)}
+                        />
+                      </Space>
+                    );
+                  },
+                  className: "department-custom-no-padding",
+                },
+              ]}
+              pagination={{ pageSize: 5 }}
+              style={{
+                border: "1px solid #e5e9ee",
+                borderRadius: "14px",
+                overflow: "hidden",
+              }}
+              bordered={false}
+              scroll={{ x: "max-content" }}
             />
-          </Form.Item>
-        )}
-
-        {/* Department Code */}
-        <Form.Item label="Department Code (optional)" name="departmentCode">
-          <Input
-            placeholder="Enter department code"
-            value={departmentCode}
-            onChange={handleDepartmentCodeChange}
-          />
-        </Form.Item>
-
-        {/* Register Button */}
-        <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+          </div>
+        </div>
+        <div className="department_buttons">
+          <Button
+            style={{
+              width: "100%",
+              backgroundColor: "#007DC5",
+              color: "#FFFFFF",
+              borderRadius: "18px",
+              height: "50px",
+            }}
+            onClick={handleSubmit}
+          >
             Finish
           </Button>
-        </Form.Item>
-      </Form>
+          <Button
+            style={{
+              width: "100%",
+              backgroundColor: "#E0E5EB",
+              color: "#FFFFFF",
+              borderRadius: "18px",
+              height: "50px",
+            }}
+            onClick={props.closeDepartmentModal}
+          >
+            Cancel
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
 
 const mapStateToProps = (state) => ({
-  departmentData: state.addDepartment,
-  loginData: state.login,
-  registerData: state.register,
+  departmentData: state.department,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   addDepartment: (values) => dispatch(addDepartment(values)),
+  getDepartment: (values) => dispatch(getDepartment(values)),
 });
 
 AddDepartment.propTypes = {
-  login: PropTypes.func,
   addDepartment: PropTypes.func,
+  getDepartment: PropTypes.func,
+  departmentData: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddDepartment);
