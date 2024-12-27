@@ -31,7 +31,7 @@
 
 .login-desc {
     color: rgba(164, 157, 157, 0.87);
-    font-family: Rubik;
+    font-family: Inter;
     font-size: 18px;
     font-weight: 400;
     line-height: 160%;
@@ -41,7 +41,7 @@
 
 .login-end-text {
     color: rgba(164, 157, 157, 0.87);
-    font-family: Rubik;
+    font-family: Inter;
     font-size: 16px;
     font-weight: 400;
     line-height: 160%;
@@ -192,11 +192,15 @@
         gap: 20px;
     }
 
-    .login-image-container,
+
     .login-form-container {
         width: 100%;
-        /* justify-content: center;
-        text-align: center; */
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .login-image-container {
+        display: none;
     }
 
     .login-image {
@@ -204,12 +208,9 @@
         height: auto;
     }
 
-    .login-company-logo {
-        width: 130px;
-    }
 
     .login-desc {
-        font-size: 16px;
+        font-size: 20px;
     }
 
     .login-input {
@@ -231,6 +232,11 @@
         flex-direction: column;
         gap: 10px;
     }
+
+    .sign_in_heading {
+        display: none;
+    }
+
 }
 
 /* For larger devices*/

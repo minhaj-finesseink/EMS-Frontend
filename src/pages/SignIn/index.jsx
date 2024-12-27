@@ -83,6 +83,7 @@ function SignIn(props) {
                 color: "#949090",
                 marginBottom: "10px",
               }}
+              className="sign_in_heading"
             >
               SIGN IN
             </div>
@@ -155,7 +156,7 @@ function SignIn(props) {
                     justifyContent: "space-between",
                     marginBottom: "20px",
                   }}
-                  className="style-for-mobile"
+                  // className="style-for-mobile"
                 >
                   <div className="remember">
                     <Checkbox /> <span>Remember me</span>

@@ -20,6 +20,7 @@ import { getGeneralTimeOff } from "../../redux/GeneralTimeOff/generalTimeOff.act
 import { addUserTimeOff } from "../../redux/UserTimeOff/userTimeOff.action";
 import toast from "react-hot-toast";
 import MailIcon from "../../assets/mail-open.svg";
+import GeneralTimeOff from "../GeneralTimeOff";
 import "./style.css";
 
 const { Option } = Select;
@@ -68,6 +69,8 @@ function ExistingEmployee(props) {
 
   const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+
+  const [isCustomPolicyVisible, setIsCustompolicyVisible] = useState(false);
 
   // Function to handle the cancel button click
   const showCancelModal = () => {
@@ -880,10 +883,24 @@ function ExistingEmployee(props) {
                 )}
               />
               <div style={{ marginTop: "20px" }}>
-                <Button className="custom-policy-button">
+                <Button
+                  className="custom-policy-button"
+                  onClick={() => setIsCustompolicyVisible(true)}
+                >
                   Create custom leave policy
                 </Button>
               </div>
+              <Modal
+                visible={isCustomPolicyVisible}
+                footer={null}
+                width={"90%"}
+                // style={{ top: "20px" }}
+                onCancel={() => setIsCustompolicyVisible(false)}
+              >
+                <div style={{ padding: "10px" }}>
+                  <GeneralTimeOff />
+                </div>
+              </Modal>
             </Sider>
 
             <Layout className="policy-details-continer">

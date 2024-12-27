@@ -250,3 +250,10 @@
     line-height: 160%;
     letter-spacing: 0.138px;
 }
+
+/* Extra small devices (phones) */
+@media (max-width: 767px) {
+    .existing-employee-header {
+        flex-direction: column-reverse;
+    }
+}

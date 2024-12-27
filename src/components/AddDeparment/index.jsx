@@ -18,7 +18,7 @@ function AddDepartment(props) {
   const [departmentName, setDepartmentName] = useState(""); // Controlled state for department name
   const [departmentCode, setDepartmentCode] = useState(""); // Controlled state for department code
   const [editingKey, setEditingKey] = useState(""); // Tracks the currently editing row
-
+  const [data, setData] = useState([]);
   const isEditing = (record) => record.key === editingKey;
 
   const handleEdit = (record) => {
@@ -44,22 +44,23 @@ function AddDepartment(props) {
     setData(updatedData);
   };
 
-  const [data, setData] = useState([]);
-
   useEffect(() => {
     props.getDepartment(userInfo.companyId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (props.departmentData.getDepartmentResponse) {
       let data = props.departmentData.getDepartmentResponse.department;
       // console.log("props.departmentData", data);
-      const departmentList = data?.department.map((item, index) => ({
-        key: index.toString(),
-        departmentName: item.departmentName,
-        departmentCode: item.departmentCode,
-      }));
-      setData(departmentList);
+      if (data) {
+        const departmentList = data?.department.map((item, index) => ({
+          key: index.toString(),
+          departmentName: item.departmentName,
+          departmentCode: item.departmentCode,
+        }));
+        setData(departmentList);
+      }
     }
   }, [props.departmentData.getDepartmentResponse]);
 
@@ -124,7 +125,11 @@ function AddDepartment(props) {
           <div className="department_table">
             {" "}
             <Table
-              dataSource={[...data, { key: "new", isNewRow: true }]} // Add a new row for "Add Department"
+              // dataSource={[...data, { key: "new", isNewRow: true }]} // Add a new row for "Add Department"
+              dataSource={[
+                ...(Array.isArray(data) ? data : []),
+                { key: "new", isNewRow: true },
+              ]}
               columns={[
                 {
                   title: "",
