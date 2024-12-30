@@ -54,3 +54,20 @@
 .department-custom-no-padding {
     padding: 8px 8px !important;
 }
+
+/* Extra small devices (phones) */
+@media (max-width: 767px) {
+    .department_container {
+        height: 95vh;
+        padding: 0;
+        margin-bottom: 50px;
+    }
+
+    .department_image_container {
+        display: none;
+    }
+
+    .department_table_container {
+        width: 100%;
+    }
+}

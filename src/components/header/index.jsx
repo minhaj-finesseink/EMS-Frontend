@@ -1,100 +1,158 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Avatar, Badge, Switch, Menu, Popover, Drawer } from "antd";
+import { DownOutlined, MenuOutlined } from "@ant-design/icons";
+import SettingsIcon from "../../assets/IoSettings.png";
+import BellIcon from "../../assets/bell-icon.svg";
+import UsitiveLogo from "../../assets/usitive-logo-with-text.png";
 import "./style.css";
-import { Input, Badge, Space } from "antd";
-import {
-  BulbOutlined,
-  BellOutlined,
-  SettingOutlined,
-  GlobalOutlined,
-} from "@ant-design/icons";
+import Sidebar from "../sideBar";
 
-const { Search } = Input;
+function Header() {
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState(false);
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
-
-const Header = () => {
-  const [currentTime, setCurrentTime] = useState(new Date());
+  // Open or close the drawer (sidebar in mobile/tablet view)
+  const toggleDrawer = () => {
+    setDrawerVisible(!drawerVisible);
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(interval);
+    // Function to check device width
+    const checkDeviceType = () => {
+      const width = window.innerWidth;
+      if (width <= 767) {
+        setIsMobileView(true); // Mobile or tablet
+      } else {
+        setIsMobileView(false); // Desktop
+      }
+    };
+
+    // Initial check and add event listener
+    checkDeviceType();
+    window.addEventListener("resize", checkDeviceType);
+
+    // Cleanup event listener on unmount
+    return () => {
+      window.removeEventListener("resize", checkDeviceType);
+    };
   }, []);
 
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">Profile</Menu.Item>
+      <Menu.Item key="2">Settings</Menu.Item>
+      <Menu.Item key="3">Logout</Menu.Item>
+    </Menu>
+  );
   return (
-    <div className="header" style={styles.headerContainer}>
-      <div style={styles.searchContainer}>
-        <Search
-          className="custom-search"
-          placeholder="input search text"
-          onSearch={onSearch}
-          bordered={false} // To remove the border of the input
-        />
-      </div>
-      <div style={styles.topBarContainer}>
-        <Space size="large">
-          <BulbOutlined style={styles.icon} />
-          <Badge count={1}>
-            <BellOutlined style={styles.icon} />
-          </Badge>
-          <SettingOutlined style={styles.icon} />
-        </Space>
-        {/* Language and Time */}
-        <Space size="middle">
-          <span style={styles.languageContainer}>
-            <GlobalOutlined style={styles.icon} />
-            ENG
-          </span>
-          <span>
-            {currentTime.toLocaleString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-            })}
-          </span>
-        </Space>
-      </div>
+    <div className="header_container">
+      {isMobileView ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+            padding: "0 20px",
+          }}
+        >
+          <div>
+            <MenuOutlined
+              style={{ fontSize: "18px", color: "#000" }}
+              onClick={toggleDrawer}
+            />
+            <Drawer
+              style={{ padding: 0 }}
+              // title="Sidebar"
+              placement="left"
+              // closable={false}
+              onClose={toggleDrawer}
+              visible={drawerVisible}
+              width={"100%"}
+            >
+              <Sidebar isDrawer={"drawer"} />
+            </Drawer>
+          </div>
+          <div>
+            <img
+              style={{ width: "82px" }}
+              src={UsitiveLogo}
+              alt="usitive logo"
+            />
+          </div>
+          <div>
+            <Avatar src="https://randomuser.me/api/portraits/women/44.jpg" />
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="header_title">OverView</div>
+          <div className="header_right_section">
+            {/* Notification Icon */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginRight: "10px",
+              }}
+            >
+              <Badge count={6} offset={[0, 4]}>
+                <img src={BellIcon} alt="bell icon" />
+              </Badge>
+            </div>
+            {/* Light/Dark Mode Toggle */}
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Switch
+                checkedChildren="🌞"
+                unCheckedChildren="🌙"
+                style={{ backgroundColor: "#ffc107" }}
+              />
+            </div>
+            {/* Settings Icon */}
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img src={SettingsIcon} alt="settings icon" />
+            </div>
+            {/* User Info with Dropdown */}
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Popover
+                content={menu}
+                trigger="click"
+                placement="bottomRight"
+                overlayClassName="profile-popover"
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Avatar
+                    src="https://randomuser.me/api/portraits/women/44.jpg"
+                    style={{ marginRight: "8px" }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      lineHeight: 1,
+                    }}
+                  >
+                    <span style={{ fontWeight: "bold", marginBottom: "5px" }}>
+                      John Reese
+                    </span>
+                    <span style={{ color: "gray", fontSize: "12px" }}>
+                      Admin
+                    </span>
+                  </div>
+                  <DownOutlined className="header_dropdown_down_iocn" />
+                </div>
+              </Popover>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
-};
-
-const styles = {
-  headerContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "0 20px",
-    borderRadius: "8px",
-    backgroundColor: "rgb(255, 255, 255)",
-    boxShadow: "rgba(0, 0, 0, 0.1) 0px 1px 3px",
-    border: "1px solid #D9D9D9",
-  },
-  searchContainer: {
-    display: "flex",
-    alignItems: "center",
-    height: "100px",
-    width: "50%",
-  },
-  topBarContainer: {
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    gap: "20px",
-  },
-  icon: {
-    fontSize: "18px",
-    color: "#606770",
-    cursor: "pointer",
-  },
-  languageContainer: {
-    display: "flex",
-    alignItems: "center",
-    gap: "5px",
-    fontSize: "14px",
-    color: "#606770",
-  },
-};
+}
 
 export default Header;

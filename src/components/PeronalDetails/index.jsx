@@ -43,6 +43,7 @@ function PersonalDetails(props) {
     { title: "Issued" },
     { title: "Expiry" },
     { title: "Status" },
+    { title: "Notes" },
   ];
 
   useEffect(() => {
@@ -174,13 +175,7 @@ function PersonalDetails(props) {
       <div className="personal_details_form">
         {" "}
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <div
-            style={{
-              display: "grid",
-              gap: "20px",
-              gridTemplateColumns: "repeat(3, 1fr)",
-            }}
-          >
+          <div className="personal_details_form_field">
             <Form.Item
               name="firstName"
               label={

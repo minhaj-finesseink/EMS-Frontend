@@ -72,6 +72,33 @@ function ExistingEmployee(props) {
 
   const [isCustomPolicyVisible, setIsCustompolicyVisible] = useState(false);
 
+  const [selectedTimeOffDetails, setSelectedTimeOffDetails] = useState(null); // To store the full details
+
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    // Function to check device width
+    const checkDeviceType = () => {
+      const width = window.innerWidth;
+      if (width <= 767) {
+        // console.log("mobile");
+        setIsMobileView(true); // Mobile
+      } else {
+        // console.log("desk");
+        setIsMobileView(false); // Desktop
+      }
+    };
+
+    // Initial check and add event listener
+    checkDeviceType();
+    window.addEventListener("resize", checkDeviceType);
+
+    // Cleanup event listener on unmount
+    return () => {
+      window.removeEventListener("resize", checkDeviceType);
+    };
+  }, []);
+
   // Function to handle the cancel button click
   const showCancelModal = () => {
     setIsCancelModalVisible(true);
@@ -228,7 +255,13 @@ function ExistingEmployee(props) {
   }, [props.generalTimeOffData.addGeneralTimeOffResponse]);
 
   const handleSelectTimeOff = (timeOffId) => {
+    // console.log("timeOffId", timeOffId);
     setSelectedTimeOffId(timeOffId); // Update selected policy
+    // Find the full details of the selected time-off
+    const selectedDetails = timeOffList.find(
+      (timeOff) => timeOff.code === timeOffId
+    );
+    setSelectedTimeOffDetails(selectedDetails); // Save the details in state
   };
 
   // Function to handle input changes for policiesData
@@ -393,7 +426,7 @@ function ExistingEmployee(props) {
                   },
                 ]}
               >
-                <div style={{ display: "flex", gap: "70px" }}>
+                <div className="employee_type_container">
                   <Checkbox
                     checked={selectedType === "fullTime"}
                     onChange={() => handleCheckboxChange("fullTime")}
@@ -429,13 +462,7 @@ function ExistingEmployee(props) {
               </div>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gap: "0 30px",
-                gridTemplateColumns: "repeat(3, 1fr)",
-              }}
-            >
+            <div className="existing_employee_form_container">
               {/* First Name */}
               <Form.Item
                 name="firstName"
@@ -802,25 +829,18 @@ function ExistingEmployee(props) {
               </Form.Item>
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: "20px",
-                gap: "20px",
-              }}
-            >
+            <div className="existing_employee_buttons_container">
               <div>
                 <Button
                   type="primary"
                   style={{
-                    width: "292px",
                     height: "50px",
                     borderRadius: "25px",
                     backgroundColor: "#B1B1B1",
                     boxShadow:
                       "0px 2.757px 0.919px -1.838px rgba(0, 0, 0, 0.20), 0px 1.838px 1.838px 0px rgba(0, 0, 0, 0.14), 0px 0.919px 4.595px 0px rgba(0, 0, 0, 0.12)",
                   }}
+                  className="existing_employee_buttons"
                   onClick={() => props.existingEmployees(false)}
                 >
                   Cancel
@@ -831,10 +851,10 @@ function ExistingEmployee(props) {
                   type="primary"
                   htmlType="submit"
                   style={{
-                    width: "292px",
                     height: "50px",
                     borderRadius: "25px",
                   }}
+                  className="existing_employee_buttons"
                   loading={loading}
                 >
                   {loading ? "Continue ..." : "Continue"}
@@ -846,64 +866,131 @@ function ExistingEmployee(props) {
       ) : (
         <>
           <Layout style={{ backgroundColor: "#fff" }}>
-            <Sider width={300} style={{ background: "#fff", padding: "10px" }}>
-              <div
-                style={{ marginTop: "30px" }}
-                className="leave-policy-heading"
-              >
-                Leave Policies
+            {isMobileView ? (
+              <div style={{ padding: "10px", marginTop: "20px" }}>
+                <div
+                  className="policy-custom-label"
+                  style={{ marginBottom: "10px" }}
+                >
+                  Select Leave Policy
+                </div>
+                <Select
+                  className="leave-policy-input"
+                  style={{ width: "100%" }}
+                  placeholder="Select"
+                  onChange={handleSelectTimeOff}
+                >
+                  {timeOffList.map((x) => (
+                    <Option key={x.code} value={x.code}>
+                      {x.name}
+                    </Option>
+                  ))}
+                </Select>
+                <div className="card">
+                  <div className="circle"></div>
+                  <div className="content">
+                    <h3>
+                      {selectedTimeOffDetails
+                        ? selectedTimeOffDetails.name
+                        : ""}
+                    </h3>
+                    <div className="details">
+                      Code:{" "}
+                      <span>
+                        {selectedTimeOffDetails
+                          ? selectedTimeOffDetails.code
+                          : ""}
+                      </span>{" "}
+                      &nbsp; &nbsp; Type:{" "}
+                      <span>
+                        {selectedTimeOffDetails
+                          ? selectedTimeOffDetails.type
+                          : ""}
+                      </span>
+                    </div>
+                    <div className="details">
+                      Units:{" "}
+                      <span>
+                        {selectedTimeOffDetails
+                          ? selectedTimeOffDetails.units
+                          : ""}
+                      </span>{" "}
+                      &nbsp; &nbsp; Per:{" "}
+                      <span>
+                        {selectedTimeOffDetails
+                          ? selectedTimeOffDetails.per
+                          : ""}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <List
-                style={{ marginTop: "20px", border: 0 }}
-                bordered
-                dataSource={timeOffList}
-                renderItem={(timeOff) => (
-                  <List.Item
-                    style={{ cursor: "pointer", padding: "20px 0 20px 20px" }}
-                    onClick={() => handleSelectTimeOff(timeOff.code)}
-                    className={`card-item ${
-                      selectedTimeOffId === timeOff.code ? "selected" : ""
-                    }`}
-                  >
-                    <div className="card">
-                      <div className="circle"></div>
-                      <div className="content">
-                        <h3>{timeOff.name}</h3>
-                        <div className="details">
-                          Code: <span>{timeOff.code}</span> &nbsp; &nbsp; Type:{" "}
-                          <span>{timeOff.type}</span>
-                        </div>
-                        <div className="details">
-                          Units: <span>{timeOff.units}</span> &nbsp; &nbsp; Per:{" "}
-                          <span>{timeOff.per}</span>
+            ) : (
+              <Sider
+                width={300}
+                style={{ background: "#fff", padding: "10px" }}
+              >
+                <div
+                  style={{ marginTop: "30px" }}
+                  className="leave-policy-heading"
+                >
+                  Leave Policies
+                </div>
+                <List
+                  style={{ marginTop: "20px", border: 0 }}
+                  bordered
+                  dataSource={timeOffList}
+                  renderItem={(timeOff) => (
+                    <List.Item
+                      style={{ cursor: "pointer", padding: "20px 0 20px 20px" }}
+                      onClick={() => handleSelectTimeOff(timeOff.code)}
+                      className={`card-item ${
+                        selectedTimeOffId === timeOff.code ? "selected" : ""
+                      }`}
+                    >
+                      <div className="card">
+                        <div className="circle"></div>
+                        <div className="content">
+                          <h3>{timeOff.name}</h3>
+                          <div className="details">
+                            Code: <span>{timeOff.code}</span> &nbsp; &nbsp;
+                            Type: <span>{timeOff.type}</span>
+                          </div>
+                          <div className="details">
+                            Units: <span>{timeOff.units}</span> &nbsp; &nbsp;
+                            Per: <span>{timeOff.per}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </List.Item>
-                )}
-              />
-              <div style={{ marginTop: "20px" }}>
-                <Button
-                  className="custom-policy-button"
-                  onClick={() => setIsCustompolicyVisible(true)}
-                >
-                  Create custom leave policy
-                </Button>
-              </div>
-              <Modal
-                visible={isCustomPolicyVisible}
-                footer={null}
-                width={"90%"}
-                // style={{ top: "20px" }}
-                onCancel={() => setIsCustompolicyVisible(false)}
-              >
-                <div style={{ padding: "10px" }}>
-                  <GeneralTimeOff />
+                    </List.Item>
+                  )}
+                />
+                <div style={{ marginTop: "20px" }}>
+                  <Button
+                    className="custom-policy-button"
+                    onClick={() => setIsCustompolicyVisible(true)}
+                  >
+                    Create custom leave policy
+                  </Button>
                 </div>
-              </Modal>
-            </Sider>
+                <Modal
+                  visible={isCustomPolicyVisible}
+                  footer={null}
+                  width={"80%"}
+                  // style={{ top: "20px" }}
+                  onCancel={() => setIsCustompolicyVisible(false)}
+                >
+                  <div style={{ padding: "10px" }}>
+                    <GeneralTimeOff />
+                  </div>
+                </Modal>
+              </Sider>
+            )}
 
-            <Layout className="policy-details-continer">
+            <Layout
+              style={{ minHeight: "400px" }}
+              className="policy-details-continer"
+            >
               <Content>
                 {selectedTimeOffId ? (
                   <>
@@ -911,88 +998,95 @@ function ExistingEmployee(props) {
                       (policy, index) =>
                         selectedTimeOffId === policy.code && (
                           <div key={policy.code}>
-                            <div
-                              style={{ borderBottom: "1px solid #e0e0e0" }}
-                              className="leave-policy-heading"
-                            >
-                              {policy.name}
-                            </div>
-                            <Form layout="vertical">
+                            {!isMobileView && (
                               <div
-                                style={{
-                                  padding: " 20px 100px 0",
-                                  borderBottom: "1px solid #e0e0e0",
-                                  display: "flex",
-                                  gap: "50px",
-                                }}
+                                style={{ borderBottom: "1px solid #e0e0e0" }}
+                                className="leave-policy-heading"
                               >
-                                <Form.Item
-                                  label={
-                                    <span className="policy-custom-label">
-                                      Type
-                                    </span>
-                                  }
-                                >
-                                  <Input
-                                    style={{
-                                      backgroundColor: "#f5f7fa",
-                                      width: "130px",
-                                      border: 0,
-                                    }}
-                                    className="leave-policy-input"
-                                    value={policiesData[index]?.policyType}
-                                    readOnly
-                                    placeholder="Paid"
-                                  />
-                                </Form.Item>
-                                <Form.Item
-                                  label={
-                                    <span className="policy-custom-label">
-                                      Units
-                                    </span>
-                                  }
-                                >
-                                  <Input
-                                    style={{
-                                      backgroundColor: "#f5f7fa",
-                                      width: "130px",
-                                      border: 0,
-                                    }}
-                                    className="leave-policy-input"
-                                    value={policiesData[index]?.units}
-                                    readOnly
-                                    placeholder="Hour"
-                                  />
-                                </Form.Item>
-                                <Form.Item
-                                  label={
-                                    <span className="policy-custom-label">
-                                      Units per
-                                    </span>
-                                  }
-                                >
-                                  <Input
-                                    style={{
-                                      backgroundColor: "#f5f7fa",
-                                      width: "130px",
-                                      border: 0,
-                                    }}
-                                    className="leave-policy-input"
-                                    value={policiesData[index]?.per}
-                                    readOnly
-                                    placeholder="Month"
-                                  />
-                                </Form.Item>
+                                {policy.name}
                               </div>
+                            )}
+                            <Form layout="vertical">
+                              {!isMobileView && (
+                                <div
+                                  style={{
+                                    padding: " 20px 100px 0",
+                                    borderBottom: "1px solid #e0e0e0",
+                                    display: "flex",
+                                    gap: "50px",
+                                  }}
+                                >
+                                  <Form.Item
+                                    label={
+                                      <span className="policy-custom-label">
+                                        Type
+                                      </span>
+                                    }
+                                  >
+                                    <Input
+                                      style={{
+                                        backgroundColor: "#f5f7fa",
+                                        width: "130px",
+                                        border: 0,
+                                      }}
+                                      className="leave-policy-input"
+                                      value={policiesData[index]?.policyType}
+                                      readOnly
+                                      placeholder="Paid"
+                                    />
+                                  </Form.Item>
+                                  <Form.Item
+                                    label={
+                                      <span className="policy-custom-label">
+                                        Units
+                                      </span>
+                                    }
+                                  >
+                                    <Input
+                                      style={{
+                                        backgroundColor: "#f5f7fa",
+                                        width: "130px",
+                                        border: 0,
+                                      }}
+                                      className="leave-policy-input"
+                                      value={policiesData[index]?.units}
+                                      readOnly
+                                      placeholder="Hour"
+                                    />
+                                  </Form.Item>
+                                  <Form.Item
+                                    label={
+                                      <span className="policy-custom-label">
+                                        Units per
+                                      </span>
+                                    }
+                                  >
+                                    <Input
+                                      style={{
+                                        backgroundColor: "#f5f7fa",
+                                        width: "130px",
+                                        border: 0,
+                                      }}
+                                      className="leave-policy-input"
+                                      value={policiesData[index]?.per}
+                                      readOnly
+                                      placeholder="Month"
+                                    />
+                                  </Form.Item>
+                                </div>
+                              )}
 
                               <div
                                 style={{
                                   display: "flex",
                                   borderBottom: "1px solid #E0E0E0",
-                                  padding: "20px 0",
+                                  padding: !isMobileView ? "20px 0" : "",
                                 }}
                               >
-                                <div style={{ width: "104px" }}></div>
+                                {" "}
+                                {!isMobileView && (
+                                  <div style={{ width: "104px" }}></div>
+                                )}
                                 <Form.Item
                                   label={
                                     <span className="policy-custom-label">
@@ -1022,7 +1116,9 @@ function ExistingEmployee(props) {
                                   }
                                 >
                                   <Input
-                                    style={{ width: "136px" }}
+                                    style={{
+                                      width: !isMobileView ? "136px" : "",
+                                    }}
                                     className="leave-policy-input"
                                     value={policiesData[index]?.creditsUnits}
                                     placeholder="Hours"
@@ -1038,15 +1134,12 @@ function ExistingEmployee(props) {
                               </div>
 
                               {/* Carryforward Unused Leave */}
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  borderBottom: "1px solid #E0E0E0",
-                                  padding: "20px 0",
-                                }}
-                              >
-                                <div style={{ padding: "30px" }}>
+                              <div className="policy_details_switch_byn_container">
+                                <div
+                                  style={{
+                                    padding: !isMobileView ? "30px" : "10px",
+                                  }}
+                                >
                                   <Switch
                                     checked={switchStates.carryforward}
                                     onChange={(checked) =>
@@ -1057,47 +1150,55 @@ function ExistingEmployee(props) {
                                     }
                                   />
                                 </div>
-                                <Form.Item
-                                  label={
-                                    <span className="policy-custom-label">
-                                      Carryforward Unused leave upto
-                                    </span>
-                                  }
-                                >
-                                  <Input
-                                    className="leave-policy-input"
-                                    placeholder="0.00 hours"
-                                    disabled={!switchStates.carryforward}
-                                    onChange={(e) =>
-                                      handleChangePolicy(
-                                        "carryForwardUnits",
-                                        e.target.value,
-                                        index
-                                      )
-                                    }
-                                    value={
-                                      policiesData[index]?.carryForwardUnits
-                                    }
-                                  />
-                                </Form.Item>
                                 <div
-                                  className="policy-custom-label"
-                                  style={{ marginLeft: "20px" }}
+                                  style={{
+                                    display: "flex",
+                                    padding: !isMobileView ? 0 : "10px",
+                                  }}
                                 >
-                                  Hours
+                                  <Form.Item
+                                    label={
+                                      <span className="policy-custom-label">
+                                        Carryforward Unused leave upto
+                                      </span>
+                                    }
+                                  >
+                                    <Input
+                                      className="leave-policy-input"
+                                      placeholder="0.00 hours"
+                                      disabled={!switchStates.carryforward}
+                                      onChange={(e) =>
+                                        handleChangePolicy(
+                                          "carryForwardUnits",
+                                          e.target.value,
+                                          index
+                                        )
+                                      }
+                                      value={
+                                        policiesData[index]?.carryForwardUnits
+                                      }
+                                    />
+                                  </Form.Item>
+                                  <div
+                                    className="policy-custom-label hours-div"
+                                    style={{
+                                      marginLeft: "20px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    Hours
+                                  </div>
                                 </div>
                               </div>
 
                               {/* Maximum Annual Accrual Limit */}
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  borderBottom: "1px solid #E0E0E0",
-                                  padding: "20px 0",
-                                }}
-                              >
-                                <div style={{ padding: "30px" }}>
+                              <div className="policy_details_switch_byn_container">
+                                <div
+                                  style={{
+                                    padding: !isMobileView ? "30px" : "10px",
+                                  }}
+                                >
                                   <Switch
                                     checked={switchStates.accrualLimit}
                                     onChange={(checked) =>
@@ -1108,44 +1209,52 @@ function ExistingEmployee(props) {
                                     }
                                   />
                                 </div>
-                                <Form.Item
-                                  label={
-                                    <span className="policy-custom-label">
-                                      Maximum Anual Acrual limit
-                                    </span>
-                                  }
-                                >
-                                  <Input
-                                    className="leave-policy-input"
-                                    placeholder="0.00 hours"
-                                    disabled={!switchStates.accrualLimit}
-                                    onChange={(e) =>
-                                      handleChangePolicy(
-                                        "accuralUnits",
-                                        e.target.value,
-                                        index
-                                      )
-                                    }
-                                    value={policiesData[index]?.accuralUnits}
-                                  />
-                                </Form.Item>
                                 <div
-                                  className="policy-custom-label"
-                                  style={{ marginLeft: "20px" }}
+                                  style={{
+                                    display: "flex",
+                                    padding: !isMobileView ? 0 : "10px",
+                                  }}
                                 >
-                                  Hours
+                                  <Form.Item
+                                    label={
+                                      <span className="policy-custom-label">
+                                        Maximum Anual Acrual limit
+                                      </span>
+                                    }
+                                  >
+                                    <Input
+                                      className="leave-policy-input"
+                                      placeholder="0.00 hours"
+                                      disabled={!switchStates.accrualLimit}
+                                      onChange={(e) =>
+                                        handleChangePolicy(
+                                          "accuralUnits",
+                                          e.target.value,
+                                          index
+                                        )
+                                      }
+                                      value={policiesData[index]?.accuralUnits}
+                                    />
+                                  </Form.Item>
+                                  <div
+                                    className="policy-custom-label"
+                                    style={{
+                                      marginLeft: "20px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    Hours
+                                  </div>
                                 </div>
                               </div>
                               {/* Cashout Unused Time Limit */}
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  borderBottom: "1px solid #E0E0E0",
-                                  padding: "20px 0",
-                                }}
-                              >
-                                <div style={{ padding: "30px" }}>
+                              <div className="policy_details_switch_byn_container">
+                                <div
+                                  style={{
+                                    padding: !isMobileView ? "30px" : "10px",
+                                  }}
+                                >
                                   <Switch
                                     checked={switchStates.cashoutLimit}
                                     onChange={(checked) =>
@@ -1156,47 +1265,55 @@ function ExistingEmployee(props) {
                                     }
                                   />
                                 </div>
-                                <Form.Item
-                                  label={
-                                    <span className="policy-custom-label">
-                                      Cashout Unused Time limit
-                                    </span>
-                                  }
-                                >
-                                  <Input
-                                    className="leave-policy-input"
-                                    placeholder="0.00 hours"
-                                    disabled={!switchStates.cashoutLimit}
-                                    onChange={(e) =>
-                                      handleChangePolicy(
-                                        "EncashedUnusedLeaveUnits",
-                                        e.target.value,
-                                        index
-                                      )
-                                    }
-                                    value={
-                                      policiesData[index]
-                                        ?.EncashedUnusedLeaveUnits
-                                    }
-                                  />
-                                </Form.Item>
                                 <div
-                                  className="policy-custom-label"
-                                  style={{ marginLeft: "20px" }}
+                                  style={{
+                                    display: "flex",
+                                    padding: !isMobileView ? 0 : "10px",
+                                  }}
                                 >
-                                  Hours
+                                  <Form.Item
+                                    label={
+                                      <span className="policy-custom-label">
+                                        Cashout Unused Time limit
+                                      </span>
+                                    }
+                                  >
+                                    <Input
+                                      className="leave-policy-input"
+                                      placeholder="0.00 hours"
+                                      disabled={!switchStates.cashoutLimit}
+                                      onChange={(e) =>
+                                        handleChangePolicy(
+                                          "EncashedUnusedLeaveUnits",
+                                          e.target.value,
+                                          index
+                                        )
+                                      }
+                                      value={
+                                        policiesData[index]
+                                          ?.EncashedUnusedLeaveUnits
+                                      }
+                                    />
+                                  </Form.Item>
+                                  <div
+                                    className="policy-custom-label"
+                                    style={{
+                                      marginLeft: "20px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    Hours
+                                  </div>
                                 </div>
                               </div>
                               {/* Reset Time Policy */}
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  borderBottom: "1px solid #E0E0E0",
-                                  padding: "20px 0",
-                                }}
-                              >
-                                <div style={{ padding: "30px" }}>
+                              <div className="policy_details_switch_byn_container">
+                                <div
+                                  style={{
+                                    padding: !isMobileView ? "30px" : "10px",
+                                  }}
+                                >
                                   <Switch
                                     checked={switchStates.resetPolicy}
                                     onChange={(checked) =>
@@ -1204,39 +1321,51 @@ function ExistingEmployee(props) {
                                     }
                                   />
                                 </div>
-                                <Form.Item
-                                  label={
-                                    <span className="policy-custom-label">
-                                      Reset Time policy
-                                    </span>
-                                  }
-                                >
-                                  <Select
-                                    style={{ width: "200px" }}
-                                    className="leave-policy-input"
-                                    placeholder="Select reset"
-                                    value={policiesData[index]?.resetType} // Bind to the corresponding policy
-                                    onChange={(value) =>
-                                      handleSelectChangePolicy(
-                                        value,
-                                        index,
-                                        "resetType"
-                                      )
-                                    } // Pass value, index, and field
-                                    disabled={!switchStates.resetPolicy}
-                                  >
-                                    <Option value="monthly">Monthly</Option>
-                                    <Option value="yearly">Yearly</Option>
-                                  </Select>
-                                </Form.Item>
                                 <div
-                                  className="policy-custom-label"
-                                  style={{ marginLeft: "20px" }}
+                                  style={{
+                                    display: "flex",
+                                    padding: !isMobileView ? 0 : "10px",
+                                  }}
                                 >
-                                  {policiesData[index]?.resetType === "monthly"
-                                    ? "Reset on the last day of every month"
-                                    : "Reset on 31st December"}
-                                </div>{" "}
+                                  <Form.Item
+                                    label={
+                                      <span className="policy-custom-label">
+                                        Reset Time policy
+                                      </span>
+                                    }
+                                  >
+                                    <Select
+                                      style={{ width: "200px" }}
+                                      className="leave-policy-input"
+                                      placeholder="Select reset"
+                                      value={policiesData[index]?.resetType} // Bind to the corresponding policy
+                                      onChange={(value) =>
+                                        handleSelectChangePolicy(
+                                          value,
+                                          index,
+                                          "resetType"
+                                        )
+                                      } // Pass value, index, and field
+                                      disabled={!switchStates.resetPolicy}
+                                    >
+                                      <Option value="monthly">Monthly</Option>
+                                      <Option value="yearly">Yearly</Option>
+                                    </Select>
+                                  </Form.Item>
+                                  <div
+                                    className="policy-custom-label"
+                                    style={{
+                                      marginLeft: "20px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    {policiesData[index]?.resetType ===
+                                    "monthly"
+                                      ? "Reset on the last day of every month"
+                                      : "Reset on 31st December"}
+                                  </div>{" "}
+                                </div>
                               </div>
                             </Form>
                           </div>

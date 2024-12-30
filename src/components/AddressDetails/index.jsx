@@ -86,13 +86,7 @@ function AddressDetails(props) {
       </div>
       <div className="address_details_form">
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <div
-            style={{
-              display: "grid",
-              gap: "20px",
-              gridTemplateColumns: "repeat(3, 1fr)",
-            }}
-          >
+          <div className="address_details_form_field">
             {/* Address 1 */}
             <Form.Item
               name="address1"

@@ -15,6 +15,7 @@
     font-weight: 500;
     line-height: 19.2px;
 }
+
 .address_details_input {
     color: var(--Type-Light, #89868D);
     font-family: Inter;
@@ -44,4 +45,21 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+}
+
+.address_details_form_field {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 767px) {
+    .address_details_container {
+        margin-bottom: 100px;
+    }
+
+    .address_details_form_field {
+        display: flex;
+        flex-direction: column;
+    }
 }

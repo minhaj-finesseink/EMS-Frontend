@@ -241,8 +241,9 @@ function OverviewCards(props) {
         visible={departmentModalOpen}
         onCancel={closeDepartmentModal}
         footer={null}
-        width={"90%"}
-        style={{ top: 20 }}
+        // width={"90%"}
+        // style={{ top: 20 }}
+        className="department-setup-modal"
       >
         <AddDeparment closeDepartmentModal={closeDepartmentModal} />
       </Modal>

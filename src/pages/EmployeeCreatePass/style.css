@@ -72,7 +72,7 @@
     color: var(--black-800333333, #333);
     font-feature-settings: 'liga' off, 'clig' off;
     font-family: Inter;
-    font-size: 11px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 400;
     line-height: 12px;
@@ -85,4 +85,28 @@
     flex-direction: column;
     gap: 10px;
     margin-bottom: 15px;
+}
+
+@media (max-width: 767px) {
+    .new_user_image_container {
+        display: none;
+    }
+
+    .new_user_input_container {
+        width: 100%;
+    }
+
+    .new_user_input_items {
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .new_user_logo_container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .new_user_desc {
+        font-size: 16px;
+    }
 }

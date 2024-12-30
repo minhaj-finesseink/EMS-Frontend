@@ -162,13 +162,7 @@ function EducationDetails(props) {
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           {educationFields.map((field) => (
             <div key={field.id}>
-              <div
-                style={{
-                  display: "grid",
-                  gap: "20px",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                }}
-              >
+              <div className="address_details_form_field">
                 <Form.Item
                   name={`college_${field.id}`}
                   label={

@@ -124,6 +124,7 @@
 .requirement {
     display: inline-block;
     font-size: 14px;
+    font-family: Inter;
     color: #888;
     margin-right: 10px;
     background-color: #f9f9f9;

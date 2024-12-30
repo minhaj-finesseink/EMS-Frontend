@@ -214,7 +214,8 @@
 }
 
 .dashboard_content_right {
-  margin-right: 20px;
+  /* margin-right: 20px; */
+  padding: 20px 20px 0 0;
 }
 
 .dashboard_content_center {
@@ -241,12 +242,16 @@
   border-radius: 12px;
 }
 
+.user_tabs_container {
+  padding: 20px 50px;
+}
+
 @media (max-width: 767px) {
   .dashboard_content_container {
     flex-direction: column;
-    height: auto;
+    /* height: auto;
     padding: 10px;
-    gap: 20px;
+    gap: 20px; */
   }
 
   .dashboard_content_center {
@@ -255,6 +260,7 @@
 
   .dashboard_content_right {
     width: 100%;
+    padding: 20px;
   }
 
   .add-employee-container {
@@ -275,5 +281,17 @@
   .add-employee-cards {
     display: flex;
     flex-direction: column;
+  }
+
+  .calender-container {
+    max-width: 100%;
+  }
+
+  .dashboard_content_center_ful {
+    padding: 20px;
+  }
+
+  .user_tabs_container {
+    padding: 0;
   }
 }

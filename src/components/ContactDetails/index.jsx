@@ -89,13 +89,7 @@ function ContactDetails(props) {
       </div>
       <div className="contact_details_form">
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <div
-            style={{
-              display: "grid",
-              gap: "20px",
-              gridTemplateColumns: "repeat(3, 1fr)",
-            }}
-          >
+          <div className="contact_details_form_container">
             {/* Work Phone */}
             <Form.Item
               name="workPhone"
@@ -201,13 +195,7 @@ function ContactDetails(props) {
                 Add your immediate emergency contact
               </div>
             </div>
-            <div
-              style={{
-                display: "grid",
-                gap: "20px",
-                gridTemplateColumns: "repeat(3, 1fr)",
-              }}
-            >
+            <div className="contact_details_form_container">
               {/* Emergency contact Name */}
               <Form.Item
                 name="emergencyContactName"

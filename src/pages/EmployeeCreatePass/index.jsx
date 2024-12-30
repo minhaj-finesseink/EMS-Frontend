@@ -90,7 +90,7 @@ const SetNewPasswordPage = (props) => {
         setIsError(true);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.userPasswordResponse]);
 
   return (
@@ -105,12 +105,13 @@ const SetNewPasswordPage = (props) => {
       <div className="new_user_input_container">
         <div className="new_user_input_items">
           <div className="new_user_input">
-            <img
-              src={UsitiveLogo}
-              alt="new user logo"
-              className="new_user_logo"
-            />
-
+            <div className="new_user_logo_container">
+              <img
+                src={UsitiveLogo}
+                alt="new user logo"
+                className="new_user_logo"
+              />
+            </div>
             <div className="new_user_title">
               Hi {name} <br />
               Welcome to Usitive

@@ -57,3 +57,20 @@
 .visa_details_table {
     margin-top: 20px;
 }
+
+.personal_details_form_field {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 767px) {
+    .personal_details_container {
+        margin-bottom: 100px;
+    }
+
+    .personal_details_form_field {
+        display: flex;
+        flex-direction: column;
+    }
+}

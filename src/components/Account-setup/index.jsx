@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Input, Form, message, Select, Row, Col } from "antd";
+import { Button, Modal, Input, Form, Select, Row, Col } from "antd";
 import { industryTypes } from "../../utils/industryType";
 import { addcompany } from "../../redux/Add-company/company.action";
 import PropTypes from "prop-types";
@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import { addDepartment } from "../../redux/Add-department/department.action";
 import Image from "../../assets/company-details-image.jpeg";
 import countryStateMapping from "../../utils/countryStateMapping";
+import toast from "react-hot-toast";
 import "./style.css";
 
 const { Option } = Select;
@@ -109,9 +110,12 @@ const AccountSetup = (props) => {
     if (props.companyData.addCompanyResponse) {
       let data = props.companyData.addCompanyResponse;
       if (data.success) {
-        message.success("Account details added successfully!");
-        handleCancel();
+        toast.success(data.message);
+        setTimeout(() => {
+          handleCancel();
+        }, 2000);
       }
+      props.companyData.addCompanyResponse = null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.companyData.addCompanyResponse]);

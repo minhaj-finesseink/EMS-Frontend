@@ -86,6 +86,13 @@
     text-align: center;
 }
 
+.department-setup-modal {
+    width: 90% !important;
+    /* Override inline or default styles */
+    top: 20px !important;
+    /* Ensure specificity if needed */
+}
+
 /* Media Queries for responsiveness */
 @media (max-width: 1200px) {
     .overview-cards-container {
@@ -114,11 +121,15 @@
         font-size: 18px;
         /* Adjust font size for smaller screens */
     }
+
+    .department-setup-modal {
+        top: 0 !important;
+    }
 }
 
 @media (max-width: 480px) {
     .overview-card {
-        height: auto;
+        /* height: auto; */
         /* Adjust card height for very small screens */
     }
 }

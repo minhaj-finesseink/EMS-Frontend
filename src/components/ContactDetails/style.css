@@ -46,3 +46,20 @@
     height: 46px;
     border-radius: 18px;
 }
+
+.contact_details_form_container {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 767px) {
+    .contact_details_container {
+        margin-bottom: 100px;
+    }
+
+    .contact_details_form_container {
+        display: flex;
+        flex-direction: column;
+    }
+}

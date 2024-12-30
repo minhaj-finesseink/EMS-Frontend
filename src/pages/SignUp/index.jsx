@@ -72,11 +72,6 @@ function SignUpPage(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.addUserResponse]);
 
-  // const handleClick = () => {
-  //   navigate("/sign-in");
-  //   setCreated(false);
-  // };
-
   return (
     <div className="sign-up-container">
       <div className="image-container">

@@ -58,11 +58,11 @@ const { Title, Text, Link } = Typography;
 
 const layoutStyle = { backgroundColor: "#FFFFFF" };
 const siderStyle = { backgroundColor: "#FFFFFF" };
-const headerStyle = {
-  backgroundColor: "#FFFFFF",
-  padding: "20px 20px",
-  height: "85px",
-};
+// const headerStyle = {
+//   backgroundColor: "#FFFFFF",
+//   padding: 0,
+//   height: "100px",
+// };
 const contentStyle = { backgroundColor: "#FFFFFF" };
 
 function Dashboard(props) {
@@ -79,19 +79,50 @@ function Dashboard(props) {
   const [addExistingEmployees, setAddExistingEmployees] = useState(false);
   const [addContractor, setAddContractor] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [isMobileView, setIsMobileView] = useState(false); // Track if mobile/tablet view
+  const [isTabView, setIsTabView] = useState(false); // Track if tablet view
+  const [isDesktopView, setIsDesktopView] = useState(false); // Track if desktop view
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // This effect will collapse the sidebar on mobile or tablet, and expand it on larger screens
+  // useEffect(() => {
+  //   const checkDeviceType = () => {
+  //     const width = window.innerWidth;
+  //     if (width <= 1024) {
+  //       setIsSidebarCollapsed(false); // Collapse for mobile and tablet
+  //       setIsMobileView(true); // It's a mobile or tablet device
+  //     } else {
+  //       setIsSidebarCollapsed(true); // Expand for larger screens
+  //       setIsMobileView(false); // It's a desktop device
+  //     }
+
+  //   };
+
+  //   checkDeviceType();
+  //   window.addEventListener("resize", checkDeviceType);
+
+  //   return () => {
+  //     window.removeEventListener("resize", checkDeviceType);
+  //   };
+  // }, []);
+
   useEffect(() => {
     const checkDeviceType = () => {
       const width = window.innerWidth;
-      if (width <= 1024) {
+      if (width <= 767) {
+        // console.log("mobile");
+        setIsSidebarCollapsed(false);
+        setIsTabView(false);
+        setIsDesktopView(false);
+      } else if (width >= 768 && width <= 1024) {
+        // console.log("tabs");
         setIsSidebarCollapsed(false); // Collapse for mobile and tablet
-        setIsMobileView(true); // It's a mobile or tablet device
+        setIsTabView(true); // It's a mobile or tablet device
+        setIsDesktopView(false);
       } else {
+        // console.log("decktop");
         setIsSidebarCollapsed(true); // Expand for larger screens
-        setIsMobileView(false); // It's a desktop device
+        setIsTabView(false); // It's a desktop device
+        setIsDesktopView(true);
       }
     };
 
@@ -134,7 +165,7 @@ function Dashboard(props) {
     }
     props.loginData.loginResponse = null;
     props.userData.addUserResponse = null;
-    props.companyData.addCompanyResponse = null;
+    // props.companyData.addCompanyResponse = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props.loginData.loginResponse,
@@ -212,7 +243,7 @@ function Dashboard(props) {
       </Sider> */}
 
       {/* Sidebar for Desktop View */}
-      {!isMobileView && (
+      {isDesktopView && (
         <Sider
           style={{ backgroundColor: "#FFFFFF" }}
           width={isSidebarCollapsed ? 300 : 30}
@@ -221,10 +252,6 @@ function Dashboard(props) {
             <SideBar collapse={setIsSidebarCollapsed} />
           ) : (
             <div className="collapse_container">
-              {/* <ArrowRightOutlined
-                className="collapse_icon"
-                onClick={toggleSidebar}
-              /> */}
               <MenuUnfoldOutlined
                 className="collapse_icon"
                 onClick={toggleSidebar}
@@ -234,8 +261,8 @@ function Dashboard(props) {
         </Sider>
       )}
 
-      {/* Drawer for Mobile/Tablet View */}
-      {isMobileView && (
+      {/* Drawer for Tablet View */}
+      {isTabView && (
         <>
           <Sider style={{ backgroundColor: "#FFFFFF" }} width={30}>
             <div className="collapse_container">
@@ -260,7 +287,13 @@ function Dashboard(props) {
       )}
 
       <Layout>
-        <Header style={headerStyle}>
+        <Header
+          style={{
+            backgroundColor: "#FFFFFF",
+            padding: 0,
+            height: isDesktopView && isTabView ? "100px" : "75px",
+          }}
+        >
           <HeaderBar />
         </Header>
         <Content style={contentStyle}>
@@ -277,7 +310,7 @@ function Dashboard(props) {
               // style={{ width: showAddEmployees ? "100%" : "70%" }}
             >
               {role === "user" ? (
-                <div style={{ padding: "20px 50px" }}>
+                <div className="user_tabs_container">
                   <Tabs>
                     <TabPane tab="Personal Details" key="1">
                       <PeronalDetails />
@@ -544,7 +577,9 @@ function Dashboard(props) {
                   </div>
                 </div>
               ) : (
-                <div style={{ padding: "20px" }}>
+                <div
+                // style={{ padding: "20px" }}
+                >
                   {/* <h2>Overview</h2>
                   <div className="button-container">
                     <Button

@@ -346,7 +346,7 @@ const GeneralTimeOff = (props) => {
 
   return (
     <>
-      <div style={{ padding: "16px" }}>
+      <div>
         <div
           style={{
             marginBottom: "16px",
