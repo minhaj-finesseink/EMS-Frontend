@@ -122,6 +122,7 @@ function ExistingEmployee(props) {
       ...formValues,
       employementType: value,
     });
+    form.setFieldsValue({ employmentType: value });
   };
 
   const handleChange = (e) => {
@@ -447,6 +448,41 @@ function ExistingEmployee(props) {
                   </Checkbox>
                 </div>
               </Form.Item>
+              {/* <Form.Item
+                name="employmentType"
+                rules={[
+                  {
+                    validator: (_, value) =>
+                      selectedType
+                        ? Promise.resolve()
+                        : Promise.reject(
+                            new Error("Please select employment type!")
+                          ),
+                  },
+                ]}
+              >
+                <div className="employee_type_container">
+                  <Checkbox
+                    checked={selectedType === "fullTime"}
+                    onChange={() => handleCheckboxChange("fullTime")}
+                  >
+                    Full-time
+                  </Checkbox>
+                  <Checkbox
+                    checked={selectedType === "partTime"}
+                    onChange={() => handleCheckboxChange("partTime")}
+                  >
+                    Part-time
+                  </Checkbox>
+                  <Checkbox
+                    checked={selectedType === "internship"}
+                    onChange={() => handleCheckboxChange("internship")}
+                  >
+                    Internship
+                  </Checkbox>
+                </div>
+              </Form.Item> */}
+
               <div style={{ width: "170px" }}>
                 <Button
                   type="primary"
@@ -472,7 +508,7 @@ function ExistingEmployee(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Please input employee first name!",
+                    message: "Enter employee first name!",
                   },
                 ]}
               >
@@ -508,7 +544,7 @@ function ExistingEmployee(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Please input employee last name!",
+                    message: "Enter employee last name!",
                   },
                 ]}
               >
@@ -1108,7 +1144,7 @@ function ExistingEmployee(props) {
                                     }
                                   />
                                 </Form.Item>
-                                <Form.Item
+                                {/* <Form.Item
                                   label={
                                     <span className="policy-custom-label">
                                       Units
@@ -1117,11 +1153,11 @@ function ExistingEmployee(props) {
                                 >
                                   <Input
                                     style={{
-                                      width: !isMobileView ? "136px" : "",
+                                      width: !isMobileView ? "136px" : "", border:0
                                     }}
                                     className="leave-policy-input"
-                                    value={policiesData[index]?.creditsUnits}
-                                    placeholder="Hours"
+                                    value={policiesData[index]?.units}
+                                    // placeholder="Hours"
                                     onChange={(e) =>
                                       handleChangePolicy(
                                         "creditsUnits",
@@ -1130,7 +1166,17 @@ function ExistingEmployee(props) {
                                       )
                                     }
                                   />
-                                </Form.Item>
+                                </Form.Item> */}
+                                <div
+                                  className="policy-custom-label hours-div"
+                                  style={{
+                                    marginLeft: "20px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  {policiesData[index]?.units}
+                                </div>
                               </div>
 
                               {/* Carryforward Unused Leave */}
@@ -1335,7 +1381,7 @@ function ExistingEmployee(props) {
                                     }
                                   >
                                     <Select
-                                      style={{ width: "200px" }}
+                                      style={{ width: "250px" }}
                                       className="leave-policy-input"
                                       placeholder="Select reset"
                                       value={policiesData[index]?.resetType} // Bind to the corresponding policy
@@ -1548,6 +1594,7 @@ const mapDispatchToProps = (dispatch) => ({
   // getDepartment: (values) => dispatch(getDepartment(values)),
   getGeneralTimeOff: (values) => dispatch(getGeneralTimeOff(values)),
   addUserTimeOff: (values) => dispatch(addUserTimeOff(values)),
+  // addUserTimeOff: (values) => dispatch(addUserTimeOff(values)),
 });
 
 ExistingEmployee.propTypes = {

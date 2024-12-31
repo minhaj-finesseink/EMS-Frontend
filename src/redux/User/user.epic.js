@@ -3,8 +3,8 @@ import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
 import { baseUrl } from '../../environments/environment.dev';
-import { ADD_USER, GET_USER_BY_ID, USER_PASS, USER_UPDATE } from './user.types';
-import { addUserResponse, getUserByIdResponse, userPasswordResponse, userUpdateResponse } from './user.action';
+import { ADD_USER, GET_USER_BY_COMPANY_ID, GET_USER_BY_ID, USER_PASS, USER_UPDATE } from './user.types';
+import { addUserResponse, getUserByCompanyIdResponse, getUserByIdResponse, userPasswordResponse, userUpdateResponse } from './user.action';
 
 const BaseUrl = baseUrl
 
@@ -77,6 +77,23 @@ UserEpic.userUpdate = (action$) =>
             }).pipe(
                 map((response) => userUpdateResponse(response.response)), // Extract and pass response data
                 catchError((error) => of(userUpdateResponse({ error: error.message }))) // Graceful error handling
+            )
+        )
+    );
+
+UserEpic.getUserByCompanyId = (action$) =>
+    action$.pipe(
+        ofType(GET_USER_BY_COMPANY_ID), // Listen for the LOGIN action type
+        switchMap((action) =>
+            ajax({
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                url: `${BaseUrl}/get-user/company/${action.payload}`,
+                method: 'GET',
+            }).pipe(
+                map((response) => getUserByCompanyIdResponse(response.response)), // Extract and pass response data
+                catchError((error) => of(getUserByCompanyIdResponse({ error: error.message }))) // Graceful error handling
             )
         )
     );

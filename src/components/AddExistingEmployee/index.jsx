@@ -297,7 +297,7 @@ const AddEmployee = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input employee first name!",
+                    message: "Enter employee first name!",
                   },
                 ]}
               >
@@ -324,7 +324,7 @@ const AddEmployee = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input employee last name!",
+                    message: "Enter employee last name!",
                   },
                 ]}
               >
@@ -342,7 +342,7 @@ const AddEmployee = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input employee department name!",
+                    message: "Enter employee department name!",
                   },
                 ]}
               >

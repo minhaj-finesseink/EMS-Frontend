@@ -19,6 +19,7 @@ const rootEpic = combineEpics(
   UserEpic.userPass,
   UserEpic.getUserById,
   UserEpic.userUpdate,
+  UserEpic.getUserByCompanyId,
   LoginEpic.forgotPassword,
   LoginEpic.resetPassword,
   educationEpic.addEducation,

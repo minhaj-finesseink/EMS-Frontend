@@ -115,7 +115,7 @@ function AddEmployee(props) {
           rules={[
             {
               required: true,
-              message: "Please input your employee first name!",
+              message: "Enter your employee first name!",
             },
           ]}
         >
@@ -132,7 +132,7 @@ function AddEmployee(props) {
           rules={[
             {
               required: true,
-              message: "Please input your employee last name!",
+              message: "Enter your employee last name!",
             },
           ]}
         >
@@ -181,7 +181,7 @@ function AddEmployee(props) {
         <Form.Item
           label="Phone Number"
           name="phoneNumber"
-          rules={[{ required: true, message: "Please input phone number!" }]}
+          rules={[{ required: true, message: "Enter phone number!" }]}
         >
           <Input
             name="phoneNumber"
@@ -192,7 +192,7 @@ function AddEmployee(props) {
         <Form.Item
           label="Email Address"
           name="emailAddress"
-          rules={[{ required: true, message: "Please input email address!" }]}
+          rules={[{ required: true, message: "Enter email address!" }]}
         >
           <Input
             name="email"

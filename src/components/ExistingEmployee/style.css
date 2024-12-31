@@ -203,6 +203,7 @@
     color: #65686A;
     /* background-color: #F5F7FA; */
     /* border: none; */
+    width: 250px;
 }
 
 .leave-policy-input .ant-select-selector {
@@ -212,6 +213,7 @@
     color: #65686A;
     /* background-color: #F5F7FA; */
     /* border: none; */
+    /* width: 250px; */
 }
 
 .custom-policy-button {

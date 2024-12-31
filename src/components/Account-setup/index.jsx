@@ -137,8 +137,6 @@ const AccountSetup = (props) => {
         maskClosable={false} // Prevents modal dismissal on outside click
         closable={false} // Removes the close button
         className="company-setup-modal"
-        // width={"90%"}
-        // style={{ top: "20px" }}
       >
         <div className="company-setup-container">
           <div className="company-setup-image-container">
@@ -157,7 +155,7 @@ const AccountSetup = (props) => {
             <Form.Item
               name="companyName"
               rules={[
-                { required: true, message: "Please input your company name!" },
+                { required: true, message: "Enter your company name!" },
               ]}
             >
               <Input
@@ -221,7 +219,7 @@ const AccountSetup = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your company address!",
+                  message: "Enter your company address!",
                 },
               ]}
             >
@@ -251,7 +249,7 @@ const AccountSetup = (props) => {
                 <Form.Item
                   name="city"
                   rules={[
-                    { required: true, message: "Please input your city!" },
+                    { required: true, message: "Enter your city!" },
                   ]}
                 >
                   <Input
@@ -316,17 +314,10 @@ const AccountSetup = (props) => {
               <Col span={12}>
                 <Form.Item
                   name="zipcode"
-                  // rules={[
-                  //   { required: true, message: "Please input your zipcode!" },
-                  //   {
-                  //     pattern: /^\d{5}(-\d{4})?$/, // Regex for US ZIP codes (5 digits, optional 4 digits)
-                  //     message: "Please enter a valid ZIP code!",
-                  //   },
-                  // ]}
                   rules={[
                     {
                       required: true,
-                      message: "Please input your ZIP/Postal Code!",
+                      message: "Enter your ZIP/Postal Code!",
                     },
                     {
                       validator: (_, value) => {
@@ -378,7 +369,7 @@ const AccountSetup = (props) => {
             <Form.Item
               name="phoneNumber"
               rules={[
-                { required: true, message: "Please input your phone number!" },
+                { required: true, message: "Enter your phone number!" },
                 {
                   pattern: /^[0-9]{8,15}$/, // Allows only digits with a length of 10 to 15
                   message: "Please enter a valid phone number (10-15 digits)!",
@@ -397,7 +388,7 @@ const AccountSetup = (props) => {
             {/* Company Registration Number/EIN */}
             <Form.Item name="ein">
               <Input
-                placeholder="Company Registration Number/EIN"
+                placeholder="Company Registration Number/EIN (Optional)"
                 className="company-setup-input"
                 name="ein"
                 value={formValues.ein}
@@ -462,4 +453,5 @@ AccountSetup.propTypes = {
   companyData: PropTypes.object,
   departmentData: PropTypes.object,
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(AccountSetup);

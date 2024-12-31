@@ -18,13 +18,14 @@
 * @returns {{loginResponse: {}, login: boolean, status: boolean}|{loginResponse: *, login: boolean, status: boolean}|{loginResponse: {}, login: boolean, status: *}}
 */
 
-import { ADD_USER_RES, USER_PASS_RES, GET_USER_BY_ID_RES, USER_UPDATE_RES } from "./user.types";
+import { ADD_USER_RES, USER_PASS_RES, GET_USER_BY_ID_RES, USER_UPDATE_RES, GET_USER_BY_COMPANY_ID_RES } from "./user.types";
 
 const INITIAL_STATE = {
   addUserResponse: null,
   userPasswordResponse: null,
   getUserByIdResponse: null,
-  userUpdateResponse: null
+  userUpdateResponse: null,
+  getUserByCompanyIdResponse: null
 }
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -40,6 +41,9 @@ const userReducer = (state = INITIAL_STATE, action) => {
     }
     case USER_UPDATE_RES: {
       return { ...state, ...{ userUpdateResponse: action.payload } }
+    }
+    case GET_USER_BY_COMPANY_ID_RES: {
+      return { ...state, ...{ getUserByCompanyIdResponse: action.payload } }
     }
     default:
       return state;

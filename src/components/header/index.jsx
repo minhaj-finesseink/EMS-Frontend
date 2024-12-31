@@ -85,7 +85,7 @@ function Header() {
         </div>
       ) : (
         <>
-          <div className="header_title">OverView</div>
+          <div className="header_title">Overview</div>
           <div className="header_right_section">
             {/* Notification Icon */}
             <div

@@ -11,7 +11,7 @@
 })
  */
 
-import { ADD_USER, ADD_USER_RES, GET_USER_BY_ID, GET_USER_BY_ID_RES, USER_PASS, USER_PASS_RES, USER_UPDATE, USER_UPDATE_RES } from "./user.types"
+import { ADD_USER, ADD_USER_RES, GET_USER_BY_COMPANY_ID, GET_USER_BY_COMPANY_ID_RES, GET_USER_BY_ID, GET_USER_BY_ID_RES, USER_PASS, USER_PASS_RES, USER_UPDATE, USER_UPDATE_RES } from "./user.types"
 
 
 export const addUser = (data) => ({
@@ -51,5 +51,15 @@ export const userUpdate = (data) => ({
 
 export const userUpdateResponse = (res) => ({
     type: USER_UPDATE_RES,
+    payload: res
+})
+
+export const getUserByCompanyId = (data) => ({
+    type: GET_USER_BY_COMPANY_ID,
+    payload: data
+})
+
+export const getUserByCompanyIdResponse = (res) => ({
+    type: GET_USER_BY_COMPANY_ID_RES,
     payload: res
 })

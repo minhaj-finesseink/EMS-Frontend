@@ -31,6 +31,7 @@ function SignUpPage(props) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   // const [created, setCreated] = useState(false);
+  const [isEmailError, setIsEmailError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -59,14 +60,15 @@ function SignUpPage(props) {
   useEffect(() => {
     if (props.userData.addUserResponse) {
       let data = props.userData.addUserResponse;
-      // console.log("user data", data);
       if (!data.success) {
         setError(data.message);
         setLoading(false);
+        setIsEmailError(true)
       } else {
         navigate("/admin-dashboard");
         setLoading(true);
         // setCreated(true);
+        setIsEmailError(false)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,7 +100,7 @@ function SignUpPage(props) {
                 layout="vertical"
                 initialValues={{ remember: true }}
               >
-                {error ? <div className="error-message">{error}</div> : ""}
+                {/* {error ? <div className="error-message">{error}</div> : ""} */}
                 {/* First Name and Last Name in a Single Row */}
                 <Row gutter={16}>
                   {/* First Name */}
@@ -202,6 +204,8 @@ function SignUpPage(props) {
                     { required: true, message: "Please enter your email!" },
                     { type: "email", message: "Please enter a valid email!" },
                   ]}
+                  validateStatus={isEmailError ? "error" : ""}
+                  help={isEmailError ? "This email already exists!" : ""}
                 >
                   <Input
                     className="sign-up-input"
