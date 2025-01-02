@@ -19,21 +19,21 @@ function SignIn(props) {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState({
-    hasMinLength: false,
-    hasUppercase: false,
-    hasNumber: false,
-    hasSymbol: false,
-  });
+  // const [passwordStrength, setPasswordStrength] = useState({
+  //   hasMinLength: false,
+  //   hasUppercase: false,
+  //   hasNumber: false,
+  //   hasSymbol: false,
+  // });
 
-  const validatePassword = (value) => {
-    setPasswordStrength({
-      hasMinLength: value.length >= 8,
-      hasUppercase: /[A-Z]/.test(value),
-      hasNumber: /\d/.test(value),
-      hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(value),
-    });
-  };
+  // const validatePassword = (value) => {
+  //   setPasswordStrength({
+  //     hasMinLength: value.length >= 8,
+  //     hasUppercase: /[A-Z]/.test(value),
+  //     hasNumber: /\d/.test(value),
+  //     hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(value),
+  //   });
+  // };
 
   const handleSubmit = () => {
     setLoading(true);
@@ -119,24 +119,24 @@ function SignIn(props) {
                       required: true,
                       message: "Please enter your password!",
                     },
-                    {
-                      validator: (_, value) => {
-                        if (!value) {
-                          return Promise.resolve(); // Skip validation if the field is empty
-                        }
-                        if (
-                          passwordStrength.hasMinLength &&
-                          passwordStrength.hasUppercase &&
-                          passwordStrength.hasNumber &&
-                          passwordStrength.hasSymbol
-                        ) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          "Password must meet all requirements."
-                        );
-                      },
-                    },
+                    // {
+                    //   validator: (_, value) => {
+                    //     if (!value) {
+                    //       return Promise.resolve(); // Skip validation if the field is empty
+                    //     }
+                    //     if (
+                    //       passwordStrength.hasMinLength &&
+                    //       passwordStrength.hasUppercase &&
+                    //       passwordStrength.hasNumber &&
+                    //       passwordStrength.hasSymbol
+                    //     ) {
+                    //       return Promise.resolve();
+                    //     }
+                    //     return Promise.reject(
+                    //       "Password must meet all requirements."
+                    //     );
+                    //   },
+                    // },
                   ]}
                 >
                   <Input.Password
@@ -145,7 +145,7 @@ function SignIn(props) {
                     className="login-input"
                     value={password}
                     onChange={(e) => {
-                      validatePassword(e.target.value);
+                      // validatePassword(e.target.value);
                       setPassword(e.target.value);
                     }}
                   />
@@ -170,7 +170,7 @@ function SignIn(props) {
                   </div>
                 </div>
 
-                <div className="password-requirements">
+                {/* <div className="password-requirements">
                   <span
                     className={
                       passwordStrength.hasMinLength
@@ -207,7 +207,7 @@ function SignIn(props) {
                   >
                     1 Symbol
                   </span>
-                </div>
+                </div> */}
 
                 {/* Sign Up Button */}
                 <Form.Item>
