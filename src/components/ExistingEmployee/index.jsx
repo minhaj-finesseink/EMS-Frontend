@@ -15,7 +15,7 @@ import {
 } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { addUser } from "../../redux/User/user.action";
+import { addUser, getUserByCompanyId } from "../../redux/User/user.action";
 import { getGeneralTimeOff } from "../../redux/GeneralTimeOff/generalTimeOff.action";
 import { addUserTimeOff } from "../../redux/UserTimeOff/userTimeOff.action";
 import toast from "react-hot-toast";
@@ -57,7 +57,7 @@ function ExistingEmployee(props) {
   const [policiesData, setPoliciesData] = useState([]); // Holds data for each policy
   const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [usersList, setUsersList] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
 
   const [switchStates, setSwitchStates] = useState({
@@ -159,8 +159,19 @@ function ExistingEmployee(props) {
 
   useEffect(() => {
     props.getGeneralTimeOff(userInfo.companyId);
+    props.getUserByCompanyId(userInfo.companyId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (props.userData.getUserByCompanyIdResponse) {
+      let data = props.userData.getUserByCompanyIdResponse;
+      if (data.success) {
+        // console.log("user by company id", data.users);
+        setUsersList(data.users);
+      }
+    }
+  }, [props.userData.getUserByCompanyIdResponse]);
 
   useEffect(() => {
     if (props.generalTimeOffData.getGeneralTimeOffResponse) {
@@ -446,42 +457,14 @@ function ExistingEmployee(props) {
                   >
                     Internship
                   </Checkbox>
+                  {/* Helper Text */}
+                  {/* {!form.getFieldValue("employmentType") && (
+                <div style={{ color: "red", marginTop: "5px" }}>
+                  Please select an employment type!
+                </div>
+              )} */}
                 </div>
               </Form.Item>
-              {/* <Form.Item
-                name="employmentType"
-                rules={[
-                  {
-                    validator: (_, value) =>
-                      selectedType
-                        ? Promise.resolve()
-                        : Promise.reject(
-                            new Error("Please select employment type!")
-                          ),
-                  },
-                ]}
-              >
-                <div className="employee_type_container">
-                  <Checkbox
-                    checked={selectedType === "fullTime"}
-                    onChange={() => handleCheckboxChange("fullTime")}
-                  >
-                    Full-time
-                  </Checkbox>
-                  <Checkbox
-                    checked={selectedType === "partTime"}
-                    onChange={() => handleCheckboxChange("partTime")}
-                  >
-                    Part-time
-                  </Checkbox>
-                  <Checkbox
-                    checked={selectedType === "internship"}
-                    onChange={() => handleCheckboxChange("internship")}
-                  >
-                    Internship
-                  </Checkbox>
-                </div>
-              </Form.Item> */}
 
               <div style={{ width: "170px" }}>
                 <Button
@@ -857,10 +840,17 @@ function ExistingEmployee(props) {
                   onChange={(value) => handleSelectChange(value, "reporting")}
                   placeholder="Select reporter"
                 >
-                  <Option value="admin1">Admin 1</Option>
+                  {/* <Option value="admin1">Admin 1</Option>
                   <Option value="admin2">Admin 2</Option>
                   <Option value="admin3">Admin 3</Option>
-                  <Option value="admin4">Admin 4</Option>
+                  <Option value="admin4">Admin 4</Option> */}
+                  {usersList.map((user) => (
+                    <Select.Option key={user._id} value={user._id}>
+                      {`${user.firstName} ${user.middleName || ""} ${
+                        user.lastName
+                      }`.trim()}
+                    </Select.Option>
+                  ))}
                 </Select>
               </Form.Item>
             </div>
@@ -1591,17 +1581,16 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   addUser: (values) => dispatch(addUser(values)),
-  // getDepartment: (values) => dispatch(getDepartment(values)),
   getGeneralTimeOff: (values) => dispatch(getGeneralTimeOff(values)),
   addUserTimeOff: (values) => dispatch(addUserTimeOff(values)),
-  // addUserTimeOff: (values) => dispatch(addUserTimeOff(values)),
+  getUserByCompanyId: (values) => dispatch(getUserByCompanyId(values)),
 });
 
 ExistingEmployee.propTypes = {
   addUser: PropTypes.func,
-  // getDepartment: PropTypes.func,
   getGeneralTimeOff: PropTypes.func,
   addUserTimeOff: PropTypes.func,
+  getUserByCompanyId: PropTypes.func,
   userData: PropTypes.object,
   departmentData: PropTypes.object,
   generalTimeOffData: PropTypes.object,

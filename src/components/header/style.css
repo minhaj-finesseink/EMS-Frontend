@@ -5,6 +5,8 @@
     padding: 20px;
     margin: 20px 0;
     align-items: center;
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
 
 .header_right_section {

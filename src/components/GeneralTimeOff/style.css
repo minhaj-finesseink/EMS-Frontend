@@ -12,5 +12,48 @@
     border-radius: 28px;
 }
 
+.add_leave_policy_modal .ant-modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #979797;
+}
+
+.add_leave_policy_modal .ant-modal-title {
+    color: #96989E;
+    font-size: 24px;
+    font-family: Inter;
+}
+
+.add_leave_policy_modal_content {
+    padding: 20px 24px;
+}
+
+.add_leave_policy_modal_title {
+    font-size: 20px;
+    font-family: Inter;
+    color: #96989E;
+    margin-bottom: 5px;
+}
+
+.add_leave_policy_modal_desc {
+    font-family: Inter;
+    font-size: 14px;
+    color: #96989E;
+    margin-bottom: 20px;
+}
+
+.add_leave_policy_dropdown .ant-select-selector {
+    border-radius: 22px;
+}
+
+.add_leave_policy_modal .ant-modal-content {
+    padding: 0;
+}
+
+.add_leave_policy_modal_button {
+    padding: 60px 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+
 /* Extra small devices (phones) */
 @media (max-width: 767px) {}

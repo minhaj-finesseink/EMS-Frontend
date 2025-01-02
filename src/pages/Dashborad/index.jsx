@@ -1,109 +1,50 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import {
-  Layout,
-  Space,
-  DatePicker,
-  Button,
-  Card,
-  Row,
-  Col,
-  Typography,
-  Modal,
-  Tabs,
-  Drawer,
-} from "antd";
-import {
-  ArrowRightOutlined,
-  CalendarOutlined,
-  DownloadOutlined,
-  DownOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  ProjectOutlined,
-  RightOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { Layout, Button, Tabs, Drawer } from "antd";
+import { MenuUnfoldOutlined } from "@ant-design/icons";
 import SideBar from "../../components/sideBar";
 import HeaderBar from "../../components/header";
-import AttendanceAndPayroll from "../../components/attendanceAndPayroll";
-import EmployeeList from "../../components/employeeList";
-import TaskOverview from "../../components/taskOverview";
 import Activity from "../../components/activity";
 import Calender from "../../components/calender";
 import AccountSetup from "../../components/Account-setup";
-import AddEmployee from "../../components/AddEmployee";
 import GeneralTimeOff from "../../components/GeneralTimeOff";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import "./style.css";
-import AddExistingEmployee from "../../components/AddExistingEmployee";
 import TabPane from "antd/es/tabs/TabPane";
 import PeronalDetails from "../../components/PeronalDetails";
 import ContactDetails from "../../components/ContactDetails";
 import AddressDetails from "../../components/AddressDetails";
 import EducationDetails from "../../components/EducationDetails";
-import VisaDetails from "../../components/VisaDetails";
 import ExistingEmployee from "../../components/ExistingEmployee";
 import OverviewCards from "../../components/OverviewCards";
-import AddUser from "../../assets/add-user.svg";
 import AddExistingUser from "../../assets/add-existing-user.svg";
 import AddContactor from "../../assets/add-contactor.svg";
 import QuestionMark from "../../assets/question.svg";
+import "./style.css";
 
 const { Header, Sider, Content } = Layout;
-const { Title, Text, Link } = Typography;
 
-const layoutStyle = { backgroundColor: "#FFFFFF" };
-const siderStyle = { backgroundColor: "#FFFFFF" };
-// const headerStyle = {
-//   backgroundColor: "#FFFFFF",
-//   padding: 0,
-//   height: "100px",
-// };
-const contentStyle = { backgroundColor: "#FFFFFF" };
+const layoutStyle = {
+  backgroundColor: "var(--background-color)",
+  color: "var(--text-color)",
+};
+const contentStyle = {
+  backgroundColor: "var(--background-color)",
+  color: "var(--text-color)",
+};
 
 function Dashboard(props) {
-  // const [accountSetup, setAccountSetup] = useState(null);
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-  const [visible, setVisible] = useState(false); // Modal visibility state
-  const [modalContent, setModalContent] = useState(null); // Content to show in the modal
   const [showAddEmployees, setShowAddEmployees] = useState(false); // State to show/hide "Add Employees"
   const [leavePolicy, setLeavePolicy] = useState(false);
   const [role, setRole] = useState("");
-  const [activeTab, setActiveTab] = useState("1"); // Track active tab
   const [accountSetupComplete, setAccountSetupComplete] = useState(null); // Track active tab
-  const [addEmployees, setAddEmployees] = useState(false);
   const [addExistingEmployees, setAddExistingEmployees] = useState(false);
-  const [addContractor, setAddContractor] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isTabView, setIsTabView] = useState(false); // Track if tablet view
   const [isDesktopView, setIsDesktopView] = useState(false); // Track if desktop view
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-
-  // This effect will collapse the sidebar on mobile or tablet, and expand it on larger screens
-  // useEffect(() => {
-  //   const checkDeviceType = () => {
-  //     const width = window.innerWidth;
-  //     if (width <= 1024) {
-  //       setIsSidebarCollapsed(false); // Collapse for mobile and tablet
-  //       setIsMobileView(true); // It's a mobile or tablet device
-  //     } else {
-  //       setIsSidebarCollapsed(true); // Expand for larger screens
-  //       setIsMobileView(false); // It's a desktop device
-  //     }
-
-  //   };
-
-  //   checkDeviceType();
-  //   window.addEventListener("resize", checkDeviceType);
-
-  //   return () => {
-  //     window.removeEventListener("resize", checkDeviceType);
-  //   };
-  // }, []);
 
   useEffect(() => {
     const checkDeviceType = () => {
@@ -174,45 +115,6 @@ function Dashboard(props) {
     userInfo,
   ]);
 
-  const employeeData = [
-    {
-      value: 1,
-      title: "Add New Employee",
-      description: "An employee is a hired individual who works for a company.",
-      link: "Find out more",
-      imgSrc: "https://via.placeholder.com/50", // Replace with actual icon URL
-    },
-    {
-      value: 2,
-      title: "Add Existing Employee",
-      description: "Independent service provider with a written contract.",
-      link: "Find out more",
-      imgSrc: "https://via.placeholder.com/50", // Replace with actual icon URL
-    },
-    {
-      value: 3,
-      title: "Add Contractor",
-      description: "Independent service provider with a written contract.",
-      link: "Find out more",
-      imgSrc: "https://via.placeholder.com/50", // Replace with actual icon URL
-    },
-  ];
-
-  const handleCardClick = (cardInfo) => {
-    setModalContent(cardInfo); // Set the content for the modal
-    setVisible(true); // Show the modal
-  };
-
-  // Close the modal
-  const handleCloseModal = () => {
-    setVisible(false);
-    setModalContent(null);
-  };
-
-  const handleTabChange = (key) => {
-    setActiveTab(key); // Update the active tab key
-  };
-
   // New useEffect to fetch user info from localStorage
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
@@ -227,21 +129,6 @@ function Dashboard(props) {
 
   return (
     <Layout style={layoutStyle}>
-      {/* <Sider style={siderStyle} width={isSidebarCollapsed ? 300 : 30}>
-        {isSidebarCollapsed ? (
-          <SideBar collapse={setIsSidebarCollapsed} />
-        ) : (
-          <>
-            <div className="collapse_container">
-              <ArrowRightOutlined
-                className="collapse_icon"
-                onClick={toggleSidebar}
-              />
-            </div>
-          </>
-        )}
-      </Sider> */}
-
       {/* Sidebar for Desktop View */}
       {isDesktopView && (
         <Sider
@@ -274,12 +161,9 @@ function Dashboard(props) {
           </Sider>
           <Drawer
             style={{ padding: 0 }}
-            // title="Sidebar"
             placement="left"
-            // closable={false}
             onClose={toggleDrawer}
             visible={drawerVisible}
-            // width={400}
           >
             <SideBar isDrawer={"drawer"} />
           </Drawer>
@@ -289,7 +173,8 @@ function Dashboard(props) {
       <Layout>
         <Header
           style={{
-            backgroundColor: "#FFFFFF",
+            // backgroundColor: "#FFFFFF",
+            backgroundColor: "var(--background-color)",
             padding: 0,
             height: isDesktopView && isTabView ? "100px" : "75px",
           }}
@@ -307,7 +192,6 @@ function Dashboard(props) {
                   ? "dashboard_content_center_ful"
                   : "dashboard_content_center"
               }`}
-              // style={{ width: showAddEmployees ? "100%" : "70%" }}
             >
               {role === "user" ? (
                 <div className="user_tabs_container">
@@ -326,41 +210,7 @@ function Dashboard(props) {
                     </TabPane>
                   </Tabs>
                 </div>
-              ) : // <Tabs
-              //   style={{ padding: "20px" }}
-              //   activeKey={activeTab}
-              //   onChange={handleTabChange}
-              // >
-              //   <TabPane tab="Personal Details" key="1">
-              //     <PeronalDetails
-              //       handleTabChange={handleTabChange}
-              //       tabKey={activeTab}
-              //     />
-              //   </TabPane>
-              //   <TabPane tab="Contact Details" key="2">
-              //     <ContactDetails
-              //       handleTabChange={handleTabChange}
-              //       tabKey={activeTab}
-              //     />
-              //   </TabPane>
-              //   <TabPane tab="Address Details" key="3">
-              //     <AddressDetails
-              //       handleTabChange={handleTabChange}
-              //       tabKey={activeTab}
-              //     />
-              //   </TabPane>
-              //   <TabPane tab="Education Details" key="4">
-              //     <EducationDetails
-              //       handleTabChange={handleTabChange}
-              //       tabKey={activeTab}
-              //     />
-              //   </TabPane>
-              //   <TabPane tab="Visa Details" key="5" tabKey={activeTab}>
-              //     <VisaDetails />
-              //   </TabPane>
-              // </Tabs>
-
-              !accountSetupComplete ? (
+              ) : !accountSetupComplete ? (
                 <AccountSetup showModal={accountSetupComplete} />
               ) : showAddEmployees ? (
                 addExistingEmployees ? (
@@ -370,88 +220,6 @@ function Dashboard(props) {
                     />
                   </div>
                 ) : (
-                  // <div
-                  //   style={{
-                  //     padding: "20px",
-                  //     maxWidth: "800px",
-                  //     margin: "0 auto",
-                  //   }}
-                  // >
-                  //   <Title
-                  //     level={2}
-                  //     style={{
-                  //       textAlign: "center",
-                  //       marginBottom: "30px",
-                  //     }}
-                  //   >
-                  //     Add Employees
-                  //   </Title>
-                  //   <Row gutter={[16, 16]}>
-                  //     {employeeData.map((item, index) => (
-                  //       <Col span={24} key={index}>
-                  //         <Card
-                  //           className="employee-card"
-                  //           onClick={() => handleCardClick(item)}
-                  //         >
-                  //           <Row align="middle" gutter={[16, 16]}>
-                  //             <Col flex="auto">
-                  //               <Title level={4}>{item.title}</Title>
-                  //               <Text>{item.description}</Text>
-                  //               <div>
-                  //                 <Link href="#" style={{ color: "#1890ff" }}>
-                  //                   {item.link}
-                  //                 </Link>
-                  //               </div>
-                  //             </Col>
-                  //             <Col>
-                  //               <RightOutlined
-                  //                 style={{
-                  //                   fontSize: "18px",
-                  //                   color: "#1890ff",
-                  //                 }}
-                  //               />
-                  //             </Col>
-                  //           </Row>
-                  //         </Card>
-                  //       </Col>
-                  //     ))}
-                  //   </Row>
-                  //   <Modal
-                  //     title={modalContent?.title}
-                  //     visible={visible}
-                  //     onCancel={handleCloseModal}
-                  //     width="50%"
-                  //     footer={null}
-                  //     bodyStyle={{
-                  //       maxHeight: "70vh",
-                  //       overflowY: "auto",
-                  //       overflowX: "hidden",
-                  //     }}
-                  //   >
-                  //     <div>
-                  //       {modalContent?.value == 1 ? (
-                  //         <AddEmployee onClose={handleCloseModal} />
-                  //       ) : modalContent?.value == 2 ? (
-                  //         <ExistingEmployee onClose={handleCloseModal} />
-                  //       ) : (
-                  //         "Hello 3"
-                  //       )}
-                  //     </div>
-                  //   </Modal>
-                  //   <Button
-                  //     type="primary"
-                  //     onClick={() => setShowAddEmployees(false)}
-                  //     style={{
-                  //       backgroundColor: "#1890ff",
-                  //       borderColor: "#1890ff",
-                  //       color: "#fff",
-                  //       width: "100px",
-                  //       marginTop: "20px",
-                  //     }}
-                  //   >
-                  //     Back
-                  //   </Button>
-                  // </div>
                   <div className="add-employee-container">
                     <div className="add-employee-heading">
                       <div>
@@ -477,10 +245,7 @@ function Dashboard(props) {
                         }}
                       >
                         <div className="add-employee-card-items-wrapper">
-                          <div
-                            className="add-employee-card-icon-container"
-                            // style={{ backgroundColor: card.backgoundColor }}
-                          >
+                          <div className="add-employee-card-icon-container">
                             <div
                               style={{
                                 backgroundColor: "#007DC5",
@@ -511,10 +276,7 @@ function Dashboard(props) {
                       </div>
                       <div className="add-employee-card-3">
                         <div className="add-employee-card-items-wrapper">
-                          <div
-                            className="add-employee-card-icon-container"
-                            // style={{ backgroundColor: card.backgoundColor }}
-                          >
+                          <div className="add-employee-card-icon-container">
                             <div
                               style={{
                                 backgroundColor: "#FFCB05",
@@ -577,29 +339,7 @@ function Dashboard(props) {
                   </div>
                 </div>
               ) : (
-                <div
-                // style={{ padding: "20px" }}
-                >
-                  {/* <h2>Overview</h2>
-                  <div className="button-container">
-                    <Button
-                      className="custom-button"
-                      onClick={() => setShowAddEmployees(true)}
-                    >
-                      Add User
-                    </Button>
-                    <Button
-                      className="custom-button"
-                      onClick={() => setLeavePolicy(true)}
-                    >
-                      Setup Leave Policy
-                    </Button>
-                    <Button className="custom-button">Add a Project</Button>
-                    <Button className="custom-button">Add an Event</Button>
-                    <Button className="custom-button">Add Payroll</Button>
-                    <Button className="custom-button">Setup Learning</Button>
-                    <Button className="custom-button">Send Offer Letter</Button>
-                  </div> */}
+                <div>
                   <div>
                     <OverviewCards
                       addEmployees={setShowAddEmployees}

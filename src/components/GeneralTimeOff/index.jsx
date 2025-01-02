@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
-import { Input, Select, Button, Space, Table } from "antd";
+import { Input, Select, Button, Space, Table, Modal } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -20,9 +20,9 @@ import "./style.css";
 const GeneralTimeOff = (props) => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [data, setData] = useState([]);
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingKey, setEditingKey] = useState(""); // Tracks the currently editing row
-
+  const [selectedPolicyType, setSelectedPolicyType] = useState("");
   const isEditing = (record) => record.key === editingKey;
 
   const handleEdit = (record) => {
@@ -105,13 +105,13 @@ const GeneralTimeOff = (props) => {
               handleChange(record.key, "leavePolicy", e.target.value)
             }
             style={{
-              width: "100px",
+              width: "120px",
             }}
           />
         ) : (
           <div
             style={{
-              width: "100px",
+              width: "120px",
               display: "flex",
               alignItems: "center",
               textWrapMode: "nowrap",
@@ -130,16 +130,17 @@ const GeneralTimeOff = (props) => {
       render: (text, record) => {
         return isEditing(record) ? (
           <Input
-            value={record.code}
+            value={record.code || undefined}
             onChange={(e) => handleChange(record.key, "code", e.target.value)}
             style={{
-              width: "60px",
+              width: "100px",
             }}
+            placeholder="Enter code"
           />
         ) : (
           <div
             style={{
-              width: "60px",
+              width: "100px",
               display: "flex",
               alignItems: "center",
               textWrapMode: "nowrap",
@@ -158,11 +159,14 @@ const GeneralTimeOff = (props) => {
       render: (text, record) => {
         return isEditing(record) ? (
           <Select
-            value={record.type}
+            value={record.type || undefined}
             onChange={(value) => handleChange(record.key, "type", value)}
-            style={{
-              width: "85px", // Adjust width as needed
-            }}
+            style={
+              {
+                // width: "85px", // Adjust width as needed
+              }
+            }
+            placeholder="Select policy type"
           >
             <Select.Option value="Paid">Paid</Select.Option>
             <Select.Option value="Unpaid">Unpaid</Select.Option>
@@ -170,7 +174,7 @@ const GeneralTimeOff = (props) => {
         ) : (
           <div
             style={{
-              width: "85px", // Adjust width as needed
+              // width: "85px", // Adjust width as needed
               display: "flex",
               alignItems: "center",
               whiteSpace: "nowrap", // Ensures the text doesn't wrap
@@ -189,11 +193,14 @@ const GeneralTimeOff = (props) => {
       render: (text, record) => {
         return isEditing(record) ? (
           <Select
-            value={record.units}
+            value={record.units || undefined}
             onChange={(value) => handleChange(record.key, "units", value)}
-            style={{
-              width: "85px", // Adjust width as needed
-            }}
+            style={
+              {
+                // width: "85px", // Adjust width as needed
+              }
+            }
+            placeholder="Select units"
           >
             <Select.Option value="Hours">Hours</Select.Option>
             <Select.Option value="Days">Days</Select.Option>
@@ -201,7 +208,7 @@ const GeneralTimeOff = (props) => {
         ) : (
           <div
             style={{
-              width: "85px", // Adjust width as needed
+              // width: "85px", // Adjust width as needed
               display: "flex",
               alignItems: "center",
               whiteSpace: "nowrap", // Ensures the text doesn't wrap
@@ -220,13 +227,16 @@ const GeneralTimeOff = (props) => {
       render: (text, record) => {
         return isEditing(record) ? (
           <Select
-            value={record.selectUnitsPer}
+            value={record.selectUnitsPer || undefined}
             onChange={(value) =>
               handleChange(record.key, "selectUnitsPer", value)
             }
-            style={{
-              width: "85px", // Adjust width as needed
-            }}
+            style={
+              {
+                // width: "85px", // Adjust width as needed
+              }
+            }
+            placeholder="Select units per"
           >
             <Select.Option value="Monthly">Monthly</Select.Option>
             <Select.Option value="Yearly">Yearly</Select.Option>
@@ -234,7 +244,7 @@ const GeneralTimeOff = (props) => {
         ) : (
           <div
             style={{
-              width: "85px", // Adjust width as needed
+              // width: "85px", // Adjust width as needed
               display: "flex",
               alignItems: "center",
               whiteSpace: "nowrap", // Ensures the text doesn't wrap
@@ -251,24 +261,53 @@ const GeneralTimeOff = (props) => {
       render: (text, record) => (
         <Space size={0}>
           {isEditing(record) ? (
+            // <Button
+            //   icon={<SaveOutlined />}
+            //   type="link"
+            //   onClick={() => handleSave(record.key)}
+            // />
             <Button
-              icon={<SaveOutlined />}
-              type="link"
+              type="primary"
+              style={{ padding: "10px" }}
               onClick={() => handleSave(record.key)}
-            />
+              disabled={
+                !record.leavePolicy ||
+                !record.code ||
+                !record.type ||
+                !record.units ||
+                !record.selectUnitsPer
+              }
+            >
+              Save
+            </Button>
           ) : (
+            // <Button
+            //   icon={<EditOutlined />}
+            //   type="link"
+            //   onClick={() => handleEdit(record)}
+            // />
             <Button
-              icon={<EditOutlined />}
-              type="link"
+              type="primary"
+              style={{ padding: "10px" }}
               onClick={() => handleEdit(record)}
-            />
+            >
+              Edit
+            </Button>
           )}
-          <Button
+          {/* <Button
             icon={<DeleteOutlined />}
             type="link"
             danger
             onClick={() => handleDelete(record.key)}
-          />
+          /> */}
+          <Button
+            type="primary"
+            danger
+            style={{ padding: "10px", marginLeft: "10px" }}
+            onClick={() => handleDelete(record.key)}
+          >
+            Delete
+          </Button>
         </Space>
       ),
     },
@@ -322,6 +361,15 @@ const GeneralTimeOff = (props) => {
   }, [props.generalTimeOffData.getGeneralTimeOffResponse]);
 
   const handleAddNewPolicy = () => {
+    setIsModalVisible(true); // Show modal
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false); // Close modal on Cancel
+  };
+
+  const createPolicyButton = () => {
+    handleModalCancel();
     const newRow = {
       key: Date.now().toString(),
       icon: (
@@ -334,11 +382,11 @@ const GeneralTimeOff = (props) => {
           }}
         />
       ),
-      leavePolicy: "",
+      leavePolicy: selectedPolicyType,
       code: "",
-      type: "Paid", // Default value
-      units: "Hours",
-      selectUnitsPer: "Yearly",
+      type: "",
+      units: "",
+      selectUnitsPer: "",
     };
     setData([...data, newRow]);
     setEditingKey(newRow.key); // Set the new row as editable
@@ -355,12 +403,6 @@ const GeneralTimeOff = (props) => {
             gap: "20px",
           }}
         >
-          {/* <div className="filter_container">
-            <div>
-              <FilterIcon />
-            </div>
-            <span>Filter</span>
-          </div> */}
           <Input
             placeholder="Search"
             prefix={<SearchOutlined />}
@@ -382,6 +424,48 @@ const GeneralTimeOff = (props) => {
           bordered={false} // Avoid double borders from Ant Design default styles
           scroll={{ x: "max-content" }}
         />
+        {/* Modal  */}
+        <Modal
+          title="Add Leave Policy"
+          visible={isModalVisible}
+          footer={null} // Removed footer
+          onCancel={handleModalCancel}
+          okText="Save"
+          cancelText="Cancel"
+          className="add_leave_policy_modal"
+        >
+          <div className="add_leave_policy_modal_content">
+            <div className="add_leave_policy_modal_title">
+              Select policy type
+            </div>
+            <div className="add_leave_policy_modal_desc">
+              Select your policy type or create custom policy
+            </div>
+            <Select
+              placeholder="Select a policy"
+              style={{ width: "100%", height: "46px" }}
+              className="add_leave_policy_dropdown"
+              value={selectedPolicyType || undefined} // Bind state to the dropdown
+              onChange={(value) => setSelectedPolicyType(value)} // Update state on change
+            >
+              <Select.Option value="Paid Time Off">Paid Time Off</Select.Option>
+              <Select.Option value="Vacation">Vacation</Select.Option>
+              <Select.Option value="Casual Leave">Casual Leave</Select.Option>
+              <Select.Option value="Sick Leave">Sick Leave</Select.Option>
+              <Select.Option value="Custom">Custom</Select.Option>
+            </Select>
+          </div>
+          <div className="add_leave_policy_modal_button">
+            <Button
+              type="primary"
+              onClick={createPolicyButton}
+              style={{ width: "250px", height: "48px", borderRadius: "22px" }}
+              disabled={!selectedPolicyType}
+            >
+              Create Policy
+            </Button>
+          </div>
+        </Modal>
       </div>
     </>
   );

@@ -5,6 +5,7 @@
     font-family: Inter;
     border-right: 1px solid #e6e6e6;
     height: 100vh;
+    background-color: var(--background-color);
 }
 
 .sidebar_icon_container {

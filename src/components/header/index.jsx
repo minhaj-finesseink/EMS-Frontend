@@ -4,10 +4,11 @@ import { DownOutlined, MenuOutlined } from "@ant-design/icons";
 import SettingsIcon from "../../assets/IoSettings.png";
 import BellIcon from "../../assets/bell-icon.svg";
 import UsitiveLogo from "../../assets/usitive-logo-with-text.png";
-import "./style.css";
 import Sidebar from "../sideBar";
+import "./style.css";
 
 function Header() {
+  const [theme, setTheme] = useState("light");
   const [isMobileView, setIsMobileView] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
 
@@ -44,6 +45,32 @@ function Header() {
       <Menu.Item key="3">Logout</Menu.Item>
     </Menu>
   );
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme); // Save the selected theme in localStorage
+  };
+
+  useEffect(() => {
+    // Retrieve the theme from localStorage when the component mounts
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme) {
+      setTheme(storedTheme); // Set the theme from localStorage
+    }
+  }, []);
+
+  useEffect(() => {
+    // Apply the theme class to the body element after the theme is set
+    if (theme === "dark") {
+      document.body.classList.add("dark-theme");
+      document.body.classList.remove("light-theme");
+    } else {
+      document.body.classList.add("light-theme");
+      document.body.classList.remove("dark-theme");
+    }
+  }, [theme]);
+
   return (
     <div className="header_container">
       {isMobileView ? (
@@ -102,9 +129,11 @@ function Header() {
             {/* Light/Dark Mode Toggle */}
             <div style={{ display: "flex", alignItems: "center" }}>
               <Switch
+                checked={theme === "dark"}
                 checkedChildren="🌞"
                 unCheckedChildren="🌙"
                 style={{ backgroundColor: "#ffc107" }}
+                onClick={toggleTheme}
               />
             </div>
             {/* Settings Icon */}

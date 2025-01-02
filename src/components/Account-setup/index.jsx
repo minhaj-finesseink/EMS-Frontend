@@ -42,6 +42,9 @@ const AccountSetup = (props) => {
     },
   ]);
 
+  const [states, setStates] = useState([]);
+  const [phonePrefix, setPhonePrefix] = useState("");
+
   const handleCancel = () => {
     setIsModalVisible(false);
     setFormValues({
@@ -70,10 +73,18 @@ const AccountSetup = (props) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name === "phoneNumber") {
+      // Append the prefix to the phone number
+      setFormValues((prev) => ({
+        ...prev,
+        [name]: phonePrefix + value,
+      }));
+    } else {
+      setFormValues((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSelectChange = (value, field) => {
@@ -83,6 +94,12 @@ const AccountSetup = (props) => {
     }));
     if (field === "industryType") {
       setIsOtherIndustry(value === "other");
+    }
+    if (field === "country") {
+      const countryInfo = countryStateMapping[value];
+      // console.log("countryInfo", countryInfo);
+      setStates(countryInfo ? countryInfo.states : []);
+      setPhonePrefix(countryInfo ? countryInfo.phoneCode : "");
     }
   };
 
@@ -128,6 +145,8 @@ const AccountSetup = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // console.log("formValues.phoneNumber", formValues.phoneNumber);
+
   return (
     <div className="company-setup-main-container">
       <Modal
@@ -154,9 +173,7 @@ const AccountSetup = (props) => {
             {/* Company Name */}
             <Form.Item
               name="companyName"
-              rules={[
-                { required: true, message: "Enter your company name!" },
-              ]}
+              rules={[{ required: true, message: "Enter your company name!" }]}
             >
               <Input
                 placeholder="Company Name"
@@ -248,9 +265,7 @@ const AccountSetup = (props) => {
               <Col span={12}>
                 <Form.Item
                   name="city"
-                  rules={[
-                    { required: true, message: "Enter your city!" },
-                  ]}
+                  rules={[{ required: true, message: "Enter your city!" }]}
                 >
                   <Input
                     placeholder="City"
@@ -299,13 +314,18 @@ const AccountSetup = (props) => {
                     onChange={(value) => handleSelectChange(value, "state")}
                     disabled={!formValues.country} // Disable if no country selected
                   >
-                    {(countryStateMapping[formValues.country] || []).map(
+                    {/* {(countryStateMapping[formValues.country] || []).map(
                       (state) => (
                         <Option key={state} value={state}>
                           {state}
                         </Option>
                       )
-                    )}
+                    )} */}
+                    {states.map((state) => (
+                      <Option key={state} value={state}>
+                        {state}
+                      </Option>
+                    ))}
                   </Select>
                 </Form.Item>
               </Col>
@@ -382,6 +402,7 @@ const AccountSetup = (props) => {
                 name="phoneNumber"
                 value={formValues.phoneNumber}
                 onChange={handleInputChange}
+                addonBefore={phonePrefix}
               />
             </Form.Item>
 
