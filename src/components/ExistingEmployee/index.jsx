@@ -431,6 +431,7 @@ function ExistingEmployee(props) {
             <div className="form-checkbox-button">
               {/* Single-Selectable Checkboxes */}
               <Form.Item
+              name="employmentType"
                 rules={[
                   {
                     required: true,
@@ -459,10 +460,10 @@ function ExistingEmployee(props) {
                   </Checkbox>
                   {/* Helper Text */}
                   {/* {!form.getFieldValue("employmentType") && (
-                <div style={{ color: "red", marginTop: "5px" }}>
-                  Please select an employment type!
-                </div>
-              )} */}
+                    <div style={{ color: "red", marginTop: "5px" }}>
+                     Please select an employment type!
+                    </div>
+                  )} */}
                 </div>
               </Form.Item>
 
@@ -608,45 +609,6 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* DOB */}
-              {/* <Form.Item
-                name="dob"
-                label={<span className="employee-custom-label">DOB</span>}
-              >
-                <DatePicker
-                  className="employee-input"
-                  name="dob"
-                  value={formValues.dob}
-                  onChange={(date, dateString) =>
-                    handleDateChange(date, dateString, "dob")
-                  }
-                  style={{ width: "100%" }}
-                />
-              </Form.Item> */}
-
-              {/* Gender */}
-              {/* <Form.Item
-                name="sex"
-                label={<span className="employee-custom-label">Gender</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select gender!",
-                  },
-                ]}
-              >
-                <Select
-                  className="employee-input"
-                  placeholder="Select Gender"
-                  value={formValues.gender}
-                  onChange={(value) => handleSelectChange(value, "sex")}
-                >
-                  <Option value="Male">Male</Option>
-                  <Option value="Female">Female</Option>
-                  <Option value="Other">Other</Option>
-                </Select>
-              </Form.Item> */}
-
               {/* ID Number */}
               <Form.Item
                 name="idNumber"
@@ -671,109 +633,6 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* Address1 */}
-              {/* <Form.Item
-                name="address1"
-                label={<span className="employee-custom-label">Address 1</span>}
-              >
-                <Input
-                  className="employee-input"
-                  name="address1"
-                  value={formValues.address}
-                  onChange={handleChange}
-                  placeholder="Address 1"
-                />
-              </Form.Item> */}
-
-              {/* Address2 */}
-              {/* <Form.Item
-                name="address2"
-                label={<span className="employee-custom-label">Address 2</span>}
-              >
-                <Input
-                  className="employee-input"
-                  name="address2"
-                  value={formValues.address}
-                  onChange={handleChange}
-                  placeholder="Address 2"
-                />
-              </Form.Item> */}
-
-              {/* Country */}
-              {/* <Form.Item
-                name="country"
-                label={<span className="employee-custom-label">Country</span>}
-              >
-                <Select
-                  className="employee-input"
-                  value={formValues.country}
-                  onChange={(value) => handleSelectChange(value, "country")}
-                  placeholder="Country / Region"
-                >
-                  {Object.keys(countryStateMapping).map((country) => (
-                    <Option key={country} value={country}>
-                      {country}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item> */}
-
-              {/* State */}
-              {/* <Form.Item
-                name="state"
-                label={<span className="employee-custom-label">State</span>}
-              >
-                <Select
-                  className="employee-input"
-                  placeholder="Select State"
-                  value={formValues.state}
-                  onChange={(value) => handleSelectChange(value, "state")}
-                  disabled={!formValues.country} // Disable if no country selected
-                >
-                  {(countryStateMapping[formValues.country] || []).map(
-                    (state) => (
-                      <Option key={state} value={state}>
-                        {state}
-                      </Option>
-                    )
-                  )}
-                </Select>
-              </Form.Item> */}
-
-              {/* City */}
-              {/* <Form.Item
-                name="city"
-                label={<span className="employee-custom-label">City</span>}
-              >
-                <Input
-                  className="employee-input"
-                  name="city"
-                  value={formValues.city}
-                  onChange={handleChange}
-                  placeholder="City"
-                />
-              </Form.Item> */}
-
-              {/* Zip */}
-              {/* <Form.Item
-                name="zip"
-                label={<span className="employee-custom-label">ZIP</span>}
-                rules={[
-                  {
-                    pattern: /^\d{5}(-\d{4})?$/, // Regex for US ZIP codes (5 digits, optional 4 digits)
-                    message: "Please enter a valid ZIP code!",
-                  },
-                ]}
-              >
-                <Input
-                  className="employee-input"
-                  name="zip"
-                  value={formValues.zip}
-                  onChange={handleChange}
-                  placeholder="Ward"
-                />
-              </Form.Item> */}
-
               {/* Job Title */}
               <Form.Item
                 name="jobTitle"
@@ -787,43 +646,6 @@ function ExistingEmployee(props) {
                   placeholder="Job Title"
                 />
               </Form.Item>
-
-              {/* Shift */}
-              {/* <Form.Item
-                name="employeeShift"
-                label={
-                  <span className="employee-custom-label">Employee Shift</span>
-                }
-              >
-                <Input
-                  className="employee-input"
-                  name="employeeShift"
-                  value={formValues.address}
-                  onChange={handleChange}
-                  placeholder="Employee Shift"
-                />
-              </Form.Item> */}
-
-              {/* Department */}
-              {/* <Form.Item
-                name="department"
-                label={
-                  <span className="employee-custom-label">Department Name</span>
-                }
-              >
-                <Select
-                  className="employee-input"
-                  value={formValues.department}
-                  onChange={(value) => handleSelectChange(value, "department")}
-                  placeholder="Select department"
-                >
-                  {departmentList.map((dept, index) => (
-                    <Option key={index} value={dept}>
-                      {dept}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item> */}
 
               {/* Reporting */}
               <Form.Item
@@ -840,10 +662,6 @@ function ExistingEmployee(props) {
                   onChange={(value) => handleSelectChange(value, "reporting")}
                   placeholder="Select reporter"
                 >
-                  {/* <Option value="admin1">Admin 1</Option>
-                  <Option value="admin2">Admin 2</Option>
-                  <Option value="admin3">Admin 3</Option>
-                  <Option value="admin4">Admin 4</Option> */}
                   {usersList.map((user) => (
                     <Select.Option key={user._id} value={user._id}>
                       {`${user.firstName} ${user.middleName || ""} ${
