@@ -88,7 +88,7 @@ function AddCompany(props) {
           label="Company Name"
           name="companyName"
           rules={[
-            { required: true, message: "Enter your company name!" },
+            { required: true, message: "Enter your company name" },
           ]}
         >
           <Input
@@ -103,7 +103,7 @@ function AddCompany(props) {
           label="Industry Type"
           name="industryType"
           rules={[
-            { required: true, message: "Please select your industry type!" },
+            { required: true, message: "Select your industry type" },
           ]}
         >
           <Select
@@ -124,7 +124,7 @@ function AddCompany(props) {
           label="Company Address 1"
           name="address1"
           rules={[
-            { required: true, message: "Enter your company address!" },
+            { required: true, message: "Enter your company address" },
           ]}
         >
           <Input
@@ -148,7 +148,7 @@ function AddCompany(props) {
             <Form.Item
               label="City"
               name="city"
-              rules={[{ required: true, message: "Enter your city!" }]}
+              rules={[{ required: true, message: "Enter your city" }]}
             >
               <Input
                 name="city"
@@ -161,7 +161,7 @@ function AddCompany(props) {
             <Form.Item
               label="State"
               name="state"
-              rules={[{ required: true, message: "Enter your state!" }]}
+              rules={[{ required: true, message: "Enter your state" }]}
             >
               <Input
                 name="state"
@@ -175,7 +175,7 @@ function AddCompany(props) {
               label="Zipcode"
               name="zipcode"
               rules={[
-                { required: true, message: "Enter your zipcode!" },
+                { required: true, message: "Enter your zipcode" },
               ]}
             >
               <Input
@@ -192,7 +192,7 @@ function AddCompany(props) {
           label="Phone Number"
           name="phoneNumber"
           rules={[
-            { required: true, message: "Enter your phone number!" },
+            { required: true, message: "Enter your phone number" },
           ]}
         >
           <Input
@@ -215,7 +215,7 @@ function AddCompany(props) {
           label="Business Size"
           name="businessSize"
           rules={[
-            { required: true, message: "Please select your business size!" },
+            { required: true, message: "Select your business size" },
           ]}
         >
           <Select

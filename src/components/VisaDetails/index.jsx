@@ -173,7 +173,7 @@ function VisaDetails(props) {
               rules={[
                 {
                   required: true,
-                  message: "Please select a date!",
+                  message: "Select a date",
                 },
               ]}
             >
@@ -190,7 +190,7 @@ function VisaDetails(props) {
               rules={[
                 {
                   required: true,
-                  message: "Please select a visa type!",
+                  message: "Select a visa type",
                 },
               ]}
             >
@@ -215,7 +215,7 @@ function VisaDetails(props) {
               rules={[
                 {
                   required: true,
-                  message: "Please enter issuing country!",
+                  message: "Enter issuing country",
                 },
               ]}
             >
@@ -233,7 +233,7 @@ function VisaDetails(props) {
               rules={[
                 {
                   required: true,
-                  message: "Please select issued date!",
+                  message: "Select issued date",
                 },
               ]}
             >
@@ -252,7 +252,7 @@ function VisaDetails(props) {
               rules={[
                 {
                   required: true,
-                  message: "Please select expiration date!",
+                  message: "Select expiration date",
                 },
               ]}
             >
@@ -271,7 +271,7 @@ function VisaDetails(props) {
               rules={[
                 {
                   required: true,
-                  message: "Please enter a note!",
+                  message: "Enter a note",
                 },
               ]}
             >

@@ -64,6 +64,55 @@
     grid-template-columns: repeat(3, 1fr);
 }
 
+.add_visa_modal .ant-modal-content {
+    padding: 0;
+    border-radius: 20px;
+}
+
+.add_visa_modal .ant-modal-header {
+    border-radius: 20px;
+}
+
+.add_visa_modal .ant-modal-title {
+    background-color: #007DC5;
+    color: #FFFF;
+    padding: 40px;
+    border-radius: 20px 20px 0 0;
+    font-size: 24px;
+    font-family: 'Inter';
+}
+
+.add_visa_modal .ant-modal-body {
+    padding: 40px;
+}
+
+.add_visa_modal .ant-modal-close-icon {
+    color: #FFFFFF;
+    font-size: 20px;
+}
+
+.add_visa_modal_input {
+    height: 46px;
+}
+
+.add_visa_modal_input .ant-select-selector {
+    border-radius: 18px;
+}
+
+.add_visa_file_upload_button {
+    padding: 20px;
+    background-color: #F4F5F9;
+    min-width: 250px;
+    border-radius: 18px;
+    height: 46px;
+}
+
+.add_visa_button {
+    width: 200px;
+    height: 40px;
+    border-radius: 18px;
+}
+
 @media (max-width: 767px) {
     .personal_details_container {
         margin-bottom: 100px;

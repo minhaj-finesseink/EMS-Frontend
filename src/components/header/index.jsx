@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Badge, Switch, Menu, Popover, Drawer } from "antd";
 import { DownOutlined, MenuOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import SettingsIcon from "../../assets/IoSettings.png";
 import BellIcon from "../../assets/bell-icon.svg";
 import UsitiveLogo from "../../assets/usitive-logo-with-text.png";
 import Sidebar from "../sideBar";
 import "./style.css";
+import { toSentenceCase } from "../../utils/sentenceCase";
 
 function Header() {
+  const navigate = useNavigate(); // Initialize navigation
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [theme, setTheme] = useState("light");
   const [isMobileView, setIsMobileView] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -38,11 +42,18 @@ function Header() {
     };
   }, []);
 
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all local storage
+    navigate("/sign-in"); // Redirect to login page
+  };
+
   const menu = (
     <Menu>
       <Menu.Item key="1">Profile</Menu.Item>
       <Menu.Item key="2">Settings</Menu.Item>
-      <Menu.Item key="3">Logout</Menu.Item>
+      <Menu.Item key="3" onClick={handleLogout}>
+        Logout
+      </Menu.Item>
     </Menu>
   );
 
@@ -167,10 +178,14 @@ function Header() {
                     }}
                   >
                     <span style={{ fontWeight: "bold", marginBottom: "5px" }}>
-                      John Reese
+                      {toSentenceCase(
+                        `${userInfo.firstName} ${userInfo.middleName || ""} ${
+                          userInfo.lastName || ""
+                        }`.trim()
+                      )}
                     </span>
                     <span style={{ color: "gray", fontSize: "12px" }}>
-                      Admin
+                      {toSentenceCase(userInfo.role)}
                     </span>
                   </div>
                   <DownOutlined className="header_dropdown_down_iocn" />

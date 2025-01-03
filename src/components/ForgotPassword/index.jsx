@@ -77,8 +77,8 @@ function ForgotPassword(props) {
                 <Form.Item
                   name="email"
                   rules={[
-                    { required: true, message: "Please enter your email!" },
-                    { type: "email", message: "Please enter a valid email!" },
+                    { required: true, message: "Enter your email" },
+                    { type: "email", message: "Enter a valid email" },
                   ]}
                 >
                   <Input

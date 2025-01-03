@@ -68,12 +68,12 @@ function AddEmployee(props) {
       const response = props.userData.addUserResponse;
       if (response.success) {
         // Show success message
-        toast.success("Employee added successfully!");
+        toast.success("Employee added successfully");
         setTimeout(() => {
           props.onClose();
         }, 3000);
       } else {
-        toast.error(response.message || "Failed to add employee!");
+        toast.error(response.message || "Failed to add employee");
       }
       props.userData.addUserResponse = null;
     }
@@ -115,7 +115,7 @@ function AddEmployee(props) {
           rules={[
             {
               required: true,
-              message: "Enter your employee first name!",
+              message: "Enter your employee first name",
             },
           ]}
         >
@@ -132,7 +132,7 @@ function AddEmployee(props) {
           rules={[
             {
               required: true,
-              message: "Enter your employee last name!",
+              message: "Enter your employee last name",
             },
           ]}
         >
@@ -146,7 +146,7 @@ function AddEmployee(props) {
         <Form.Item
           label="Department Name"
           name="departmentName"
-          rules={[{ required: true, message: "Please select a department!" }]}
+          rules={[{ required: true, message: "Select a department" }]}
         >
           <Select
             placeholder="Select Department"
@@ -165,7 +165,7 @@ function AddEmployee(props) {
           label="Employee Type"
           name="employeeType"
           rules={[
-            { required: true, message: "Please select a employee type!" },
+            { required: true, message: "Select a employee type" },
           ]}
         >
           <Select
@@ -181,7 +181,7 @@ function AddEmployee(props) {
         <Form.Item
           label="Phone Number"
           name="phoneNumber"
-          rules={[{ required: true, message: "Enter phone number!" }]}
+          rules={[{ required: true, message: "Enter phone number" }]}
         >
           <Input
             name="phoneNumber"
@@ -192,7 +192,7 @@ function AddEmployee(props) {
         <Form.Item
           label="Email Address"
           name="emailAddress"
-          rules={[{ required: true, message: "Enter email address!" }]}
+          rules={[{ required: true, message: "Enter email address" }]}
         >
           <Input
             name="email"
@@ -204,7 +204,7 @@ function AddEmployee(props) {
           label="Employement Start Date"
           name="employementStartDate"
           rules={[
-            { required: true, message: "Please enter employement start date!" },
+            { required: true, message: "Enter employement start date" },
           ]}
         >
           <DatePicker
@@ -219,7 +219,7 @@ function AddEmployee(props) {
           label="Employee ID number"
           name="idNumber"
           rules={[
-            { required: true, message: "Please enter employee ID number!" },
+            { required: true, message: "Enter employee ID number" },
           ]}
         >
           <Input

@@ -124,7 +124,7 @@ function AddressDetails(props) {
               label={
                 <span className="address_details_input_label">Country</span>
               }
-              rules={[{ required: true, message: "Please select a country!" }]}
+              rules={[{ required: true, message: "Select a country" }]}
             >
               <Select
                 className="address_details_input"
@@ -143,7 +143,7 @@ function AddressDetails(props) {
             <Form.Item
               name="state"
               label={<span className="address_details_input_label">State</span>}
-              rules={[{ required: true, message: "Please select a state!" }]}
+              rules={[{ required: true, message: "Select a state" }]}
             >
               <Select
                 className="address_details_input"

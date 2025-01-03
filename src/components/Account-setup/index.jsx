@@ -173,7 +173,7 @@ const AccountSetup = (props) => {
             {/* Company Name */}
             <Form.Item
               name="companyName"
-              rules={[{ required: true, message: "Enter your company name!" }]}
+              rules={[{ required: true, message: "Enter your company name" }]}
             >
               <Input
                 placeholder="Company Name"
@@ -190,7 +190,7 @@ const AccountSetup = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please select your industry type!",
+                  message: "Select your industry type",
                 },
               ]}
             >
@@ -216,7 +216,7 @@ const AccountSetup = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: "Please specify your industry!",
+                    message: "Specify your industry",
                   },
                 ]}
               >
@@ -236,7 +236,7 @@ const AccountSetup = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Enter your company address!",
+                  message: "Enter your company address",
                 },
               ]}
             >
@@ -265,7 +265,7 @@ const AccountSetup = (props) => {
               <Col span={12}>
                 <Form.Item
                   name="city"
-                  rules={[{ required: true, message: "Enter your city!" }]}
+                  rules={[{ required: true, message: "Enter your city" }]}
                 >
                   <Input
                     placeholder="City"
@@ -282,7 +282,7 @@ const AccountSetup = (props) => {
                 <Form.Item
                   name="country"
                   rules={[
-                    { required: true, message: "Please select a country!" },
+                    { required: true, message: "Select a country" },
                   ]}
                 >
                   <Select
@@ -304,7 +304,7 @@ const AccountSetup = (props) => {
                 <Form.Item
                   name="state"
                   rules={[
-                    { required: true, message: "Please select a state!" },
+                    { required: true, message: "Select a state" },
                   ]}
                 >
                   <Select
@@ -337,7 +337,7 @@ const AccountSetup = (props) => {
                   rules={[
                     {
                       required: true,
-                      message: "Enter your ZIP/Postal Code!",
+                      message: "Enter your Zip Code",
                     },
                     {
                       validator: (_, value) => {
@@ -364,7 +364,7 @@ const AccountSetup = (props) => {
                         if (pattern && !pattern.test(value)) {
                           return Promise.reject(
                             new Error(
-                              `Please enter a valid ZIP/Postal Code for ${selectedCountry}!`
+                              `Enter a valid Zip Code for ${selectedCountry}`
                             )
                           );
                         }
@@ -389,10 +389,10 @@ const AccountSetup = (props) => {
             <Form.Item
               name="phoneNumber"
               rules={[
-                { required: true, message: "Enter your phone number!" },
+                { required: true, message: "Enter the Phone Number" },
                 {
                   pattern: /^[0-9]{8,15}$/, // Allows only digits with a length of 10 to 15
-                  message: "Please enter a valid phone number (10-15 digits)!",
+                  message: "Enter a valid phone number (10-15 digits)",
                 },
               ]}
             >
@@ -423,7 +423,7 @@ const AccountSetup = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please select your business size!",
+                  message: "Select your business size",
                 },
               ]}
             >

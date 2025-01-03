@@ -435,7 +435,7 @@ function ExistingEmployee(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Please select employment type!",
+                    message: "Select employment type",
                   },
                 ]}
               >
@@ -458,12 +458,6 @@ function ExistingEmployee(props) {
                   >
                     Internship
                   </Checkbox>
-                  {/* Helper Text */}
-                  {/* {!form.getFieldValue("employmentType") && (
-                    <div style={{ color: "red", marginTop: "5px" }}>
-                     Please select an employment type!
-                    </div>
-                  )} */}
                 </div>
               </Form.Item>
 
@@ -492,7 +486,7 @@ function ExistingEmployee(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Enter employee first name!",
+                    message: "Enter employee first name",
                   },
                 ]}
               >
@@ -528,7 +522,7 @@ function ExistingEmployee(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Enter employee last name!",
+                    message: "Employee last name",
                   },
                 ]}
               >
@@ -549,7 +543,7 @@ function ExistingEmployee(props) {
                   {
                     pattern: /^[0-9]{10,15}$/, // Allows only digits with a length of 10 to 15
                     message:
-                      "Please enter a valid phone number (10-15 digits)!",
+                      "Enter a valid phone number (10-15 digits)",
                   },
                 ]}
               >
@@ -569,7 +563,7 @@ function ExistingEmployee(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter employee email!",
+                    message: "Enter employee email",
                   },
                 ]}
               >
@@ -593,7 +587,7 @@ function ExistingEmployee(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter employee start date!",
+                    message: "Enter employee start date",
                   },
                 ]}
               >
@@ -620,7 +614,7 @@ function ExistingEmployee(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter employee ID number!",
+                    message: "Enter employee ID number",
                   },
                 ]}
               >

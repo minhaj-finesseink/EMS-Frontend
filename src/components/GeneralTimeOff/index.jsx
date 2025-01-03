@@ -37,7 +37,7 @@ const GeneralTimeOff = (props) => {
 
     // Validate the fields (leavePolicy and code)
     if (!editedRecord.leavePolicy || !editedRecord.code) {
-      toast.error("Leave Policy and Code are required!");
+      toast.error("Leave Policy and Code are required");
       return; // Do not save if validation fails
     }
 
@@ -77,6 +77,29 @@ const GeneralTimeOff = (props) => {
   const handleDelete = (key) => {
     const updatedData = data.filter((item) => item.key !== key);
     setData(updatedData);
+
+    const allData = updatedData.map((item) => ({
+      leavePolicy: item.leavePolicy,
+      code: item.code,
+      type: item.type,
+      units: item.units,
+      selectUnitsPer: item.selectUnitsPer,
+    }));
+
+    // console.log("all data", allData);
+
+    const payload = {
+      userId: userInfo._id,
+      companyId: userInfo.companyId,
+      timeOff: allData.map((x) => ({
+        policyName: x.leavePolicy,
+        policyCode: x.code,
+        policyType: x.type,
+        units: x.units,
+        per: x.selectUnitsPer,
+      })),
+    };
+    props.addGeneralTimeOff(payload);
   };
 
   const columns = [
@@ -161,11 +184,9 @@ const GeneralTimeOff = (props) => {
           <Select
             value={record.type || undefined}
             onChange={(value) => handleChange(record.key, "type", value)}
-            style={
-              {
-                // width: "85px", // Adjust width as needed
-              }
-            }
+            style={{
+              minWidth: "80px", // Adjust width as needed
+            }}
             placeholder="Select policy type"
           >
             <Select.Option value="Paid">Paid</Select.Option>
@@ -174,7 +195,7 @@ const GeneralTimeOff = (props) => {
         ) : (
           <div
             style={{
-              // width: "85px", // Adjust width as needed
+              minWidth: "80px", // Adjust width as needed
               display: "flex",
               alignItems: "center",
               whiteSpace: "nowrap", // Ensures the text doesn't wrap
@@ -231,11 +252,9 @@ const GeneralTimeOff = (props) => {
             onChange={(value) =>
               handleChange(record.key, "selectUnitsPer", value)
             }
-            style={
-              {
-                // width: "85px", // Adjust width as needed
-              }
-            }
+            style={{
+              minWidth: "90px", // Adjust width as needed
+            }}
             placeholder="Select units per"
           >
             <Select.Option value="Monthly">Monthly</Select.Option>
@@ -244,7 +263,7 @@ const GeneralTimeOff = (props) => {
         ) : (
           <div
             style={{
-              // width: "85px", // Adjust width as needed
+              minWidth: "90px", // Adjust width as needed
               display: "flex",
               alignItems: "center",
               whiteSpace: "nowrap", // Ensures the text doesn't wrap

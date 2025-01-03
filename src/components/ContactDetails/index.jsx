@@ -96,7 +96,7 @@ function ContactDetails(props) {
               label={
                 <span className="contact_details_input_label">Work Phone</span>
               }
-              rules={[{ required: true, message: "Please enter work phone!" }]}
+              rules={[{ required: true, message: "Enter work phone" }]}
             >
               <Input
                 className="contact_details_input"
@@ -116,7 +116,7 @@ function ContactDetails(props) {
                 </span>
               }
               rules={[
-                { required: true, message: "Please enter Extension Number!" },
+                { required: true, message: "Enter Extension Number" },
               ]}
             >
               <Input
@@ -137,7 +137,7 @@ function ContactDetails(props) {
                 </span>
               }
               rules={[
-                { required: true, message: "Please enter mobile phone!" },
+                { required: true, message: "Enter mobile phone" },
               ]}
             >
               <Input
@@ -174,7 +174,7 @@ function ContactDetails(props) {
                   Work Email Address
                 </span>
               }
-              rules={[{ required: true, message: "Please enter work email!" }]}
+              rules={[{ required: true, message: "Enter work email" }]}
             >
               <Input
                 className="contact_details_input"
@@ -205,7 +205,7 @@ function ContactDetails(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter Emergency contact name!",
+                    message: "Enter Emergency contact name",
                   },
                 ]}
               >
@@ -229,7 +229,7 @@ function ContactDetails(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter Emergency contact number!",
+                    message: "Enter Emergency contact number",
                   },
                 ]}
               >
@@ -253,7 +253,7 @@ function ContactDetails(props) {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter Emergency contact relation!",
+                    message: "Enter Emergency contact relation",
                   },
                 ]}
               >

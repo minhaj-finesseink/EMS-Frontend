@@ -56,6 +56,7 @@ function SignIn(props) {
 
         if (data.responseCode === "LOGIN_SUCCESS") {
           localStorage.setItem("token", data.token); // Store token in localStorage
+          localStorage.setItem("userInfo", JSON.stringify(data.user));
           navigate("/admin-dashboard"); // Redirect to dashboard after successful login
           setLoading(true);
         }
@@ -99,8 +100,8 @@ function SignIn(props) {
                 <Form.Item
                   name="email"
                   rules={[
-                    { required: true, message: "Please enter your email!" },
-                    { type: "email", message: "Please enter a valid email!" },
+                    { required: true, message: "Enter your email" },
+                    { type: "email", message: "Enter a valid email" },
                   ]}
                 >
                   <Input
@@ -117,7 +118,7 @@ function SignIn(props) {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter your password!",
+                      message: "Enter your password",
                     },
                     // {
                     //   validator: (_, value) => {

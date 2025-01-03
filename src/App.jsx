@@ -8,6 +8,7 @@ import ResetPassword from "./components/ResetPassword";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import NewDash from "./pages/newDash";
+import PrivateRoute from "./components/PrivateRoute/privateRoute";
 
 function App() {
   return (
@@ -21,13 +22,21 @@ function App() {
           path="/setup-password/:token"
           element={<EmployeeCreatePass />}
         ></Route>
-        <Route path="/admin-dashboard" element={<Dashboard />}></Route>
+        {/* Protected Route */}
+        <Route
+          path="/admin-dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        ></Route>
         <Route path="/forgot-password" element={<ForgotPassword />}></Route>
         <Route
           path="/reset-password/:token"
           element={<ResetPassword />}
         ></Route>
-        <Route path="/new-page" element={<NewDash/>}></Route>
+        <Route path="/new-page" element={<NewDash />}></Route>
       </Routes>
     </BrowserRouter>
   );

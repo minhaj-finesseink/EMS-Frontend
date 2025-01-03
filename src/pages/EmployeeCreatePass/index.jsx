@@ -48,7 +48,7 @@ const SetNewPasswordPage = (props) => {
 
   const handleSubmit = () => {
     if (newPassword !== confirmPassword) {
-      setMessage("Passwords do not match!");
+      setMessage("Passwords do not match");
       setIsError(true);
       return;
     }
@@ -61,7 +61,7 @@ const SetNewPasswordPage = (props) => {
         passwordStrength.hasSymbol
       )
     ) {
-      setMessage("Password does not meet all requirements!");
+      setMessage("Password does not meet all requirement");
       return;
     }
 
@@ -69,11 +69,6 @@ const SetNewPasswordPage = (props) => {
       token: token,
       newPassword: newPassword,
     });
-
-    // setMessage("Password updated successfully!");
-    // setTimeout(() => {
-    //   navigate("/sign-in"); // Redirect to login page
-    // }, 1500);
   };
 
   useEffect(() => {
@@ -137,7 +132,7 @@ const SetNewPasswordPage = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please enter your new password!",
+                  message: "Enter your new password",
                 },
               ]}
             >
@@ -159,7 +154,7 @@ const SetNewPasswordPage = (props) => {
               rules={[
                 {
                   required: true,
-                  message: "Please confirm your password!",
+                  message: "Confirm your password",
                 },
               ]}
             >

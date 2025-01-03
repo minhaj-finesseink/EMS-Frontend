@@ -173,7 +173,7 @@ function EducationDetails(props) {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter the college/institute!",
+                      message: "Enter the college/institute",
                     },
                   ]}
                 >
@@ -192,7 +192,7 @@ function EducationDetails(props) {
                     <span className="address_details_input_label">Degree</span>
                   }
                   rules={[
-                    { required: true, message: "Please select a degree!" },
+                    { required: true, message: "Select a degree" },
                   ]}
                 >
                   <Select
@@ -221,7 +221,7 @@ function EducationDetails(props) {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter your major or specialization!",
+                      message: "Enter your major or specialization",
                     },
                   ]}
                 >
@@ -240,7 +240,7 @@ function EducationDetails(props) {
                     <span className="address_details_input_label">GPA</span>
                   }
                   rules={[
-                    { required: true, message: "Please enter your GPA!" },
+                    { required: true, message: "Enter your GPA" },
                   ]}
                 >
                   <Input
@@ -260,7 +260,7 @@ function EducationDetails(props) {
                     </span>
                   }
                   rules={[
-                    { required: true, message: "Please select a start date!" },
+                    { required: true, message: "Select a start date" },
                   ]}
                 >
                   <DatePicker
@@ -282,7 +282,7 @@ function EducationDetails(props) {
                     </span>
                   }
                   rules={[
-                    { required: true, message: "Please select an end date!" },
+                    { required: true, message: "Select an end date" },
                   ]}
                 >
                   <DatePicker

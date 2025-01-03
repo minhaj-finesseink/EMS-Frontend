@@ -110,11 +110,11 @@ function SignUpPage(props) {
                       rules={[
                         {
                           required: true,
-                          message: "Please enter your first name!",
+                          message: "Enter your first name",
                         },
                         {
                           max: 50,
-                          message: "Name cannot exceed 50 characters!",
+                          message: "Name cannot exceed 50 characters",
                         },
                       ]}
                     >
@@ -134,11 +134,11 @@ function SignUpPage(props) {
                       rules={[
                         {
                           required: true,
-                          message: "Please enter your last name!",
+                          message: "Enter your last name",
                         },
                         {
                           max: 50,
-                          message: "Name cannot exceed 50 characters!",
+                          message: "Name cannot exceed 50 characters",
                         },
                       ]}
                     >
@@ -157,11 +157,11 @@ function SignUpPage(props) {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter your company name!",
+                      message: "Enter your company name",
                     },
                     {
                       max: 100,
-                      message: "Company name cannot exceed 100 characters!",
+                      message: "Company name cannot exceed 100 characters",
                     },
                   ]}
                 >
@@ -178,7 +178,7 @@ function SignUpPage(props) {
                 <Form.Item
                   name="referral"
                   rules={[
-                    { required: true, message: "Please select an option!" },
+                    { required: true, message: "Select an option" },
                   ]}
                 >
                   <Select
@@ -201,11 +201,11 @@ function SignUpPage(props) {
                 <Form.Item
                   name="email"
                   rules={[
-                    { required: true, message: "Please enter your email!" },
-                    { type: "email", message: "Please enter a valid email!" },
+                    { required: true, message: "Enter your email" },
+                    { type: "email", message: "Enter a valid email" },
                   ]}
                   validateStatus={isEmailError ? "error" : ""}
-                  help={isEmailError ? "This email already exists!" : ""}
+                  help={isEmailError ? "This email already exists" : ""}
                 >
                   <Input
                     className="sign-up-input"
@@ -221,7 +221,7 @@ function SignUpPage(props) {
                   rules={[
                     {
                       required: true,
-                      message: "Please enter your password!",
+                      message: "Enter your password",
                     },
                     {
                       validator: (_, value) => {
