@@ -36,7 +36,7 @@ educationEpic.getEducation = (action$) =>
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                url: `${BaseUrl}/get-education/${action.payload.accountId}/${action.payload.userId}`,
+                url: `${BaseUrl}/get-education/${action.payload.companyId}/${action.payload.userId}`,
                 method: 'GET',
             }).pipe(
                 map((response) => getEducationResponse(response.response)), // Extract and pass response data

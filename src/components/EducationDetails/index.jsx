@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import "./style.css";
 import { Form, Input, DatePicker, Select, Button } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
@@ -11,6 +10,7 @@ import {
   addEducation,
   getEducation,
 } from "../../redux/Education/education.action";
+import "./style.css";
 
 const { Option } = Select;
 
@@ -90,11 +90,9 @@ function EducationDetails(props) {
   // Handle form submission
   const handleSubmit = () => {
     const payload = {
-      accountId: userInfo.accountId,
+      companyId: userInfo.companyId,
       userId: userInfo._id,
       education: educationFields.map((field) => ({
-        accountId: userInfo.accountId,
-        userId: userInfo._id,
         college: field.college,
         degree: field.degree,
         specialization: field.specialization,
@@ -107,43 +105,43 @@ function EducationDetails(props) {
   };
 
   useEffect(() => {
-    // props.getEducation({
-    //   accountId: userInfo.accountId,
-    //   userId: userInfo._id,
-    // });
+    props.getEducation({
+      companyId: userInfo.companyId,
+      userId: userInfo._id,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (props.educationData.getEducationResponse) {
-      const data = props.educationData.getEducationResponse.education;
+      const data = props.educationData.getEducationResponse;
+      if (data.success) {
+        // Map through the data and set it into educationFields
+        const educationData = data.education.map((item) => ({
+          id: item._id, // use unique id from the response
+          college: item.college,
+          degree: item.degree,
+          specialization: item.specialization,
+          gpa: item.gpa,
+          startDate: moment(item.startDate),
+          endDate: moment(item.endDate),
+        }));
 
-      // Map through the data and set it into educationFields
-      const educationData = data.map((item) => ({
-        id: item._id, // use unique id from the response
-        college: item.college,
-        degree: item.degree,
-        specialization: item.specialization,
-        gpa: item.gpa,
-        startDate: moment(item.startDate),
-        endDate: moment(item.endDate),
-      }));
+        setEducationFields(educationData);
 
-      setEducationFields(educationData);
-
-      // Set the form fields values dynamically
-      const formValues = educationData.reduce((values, field) => {
-        values[`college_${field.id}`] = field.college;
-        values[`degree_${field.id}`] = field.degree;
-        values[`major_${field.id}`] = field.specialization;
-        values[`gpa_${field.id}`] = field.gpa;
-        values[`startDate_${field.id}`] = field.startDate;
-        values[`endDate_${field.id}`] = field.endDate;
-        return values;
-      }, {});
-
-      // Set form values
-      form.setFieldsValue(formValues);
+        // Set the form fields values dynamically
+        const formValues = educationData.reduce((values, field) => {
+          values[`college_${field.id}`] = field.college;
+          values[`degree_${field.id}`] = field.degree;
+          values[`major_${field.id}`] = field.specialization;
+          values[`gpa_${field.id}`] = field.gpa;
+          values[`startDate_${field.id}`] = field.startDate;
+          values[`endDate_${field.id}`] = field.endDate;
+          return values;
+        }, {});
+        // Set form values
+        form.setFieldsValue(formValues);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.educationData.getEducationResponse]);
@@ -191,9 +189,7 @@ function EducationDetails(props) {
                   label={
                     <span className="address_details_input_label">Degree</span>
                   }
-                  rules={[
-                    { required: true, message: "Select a degree" },
-                  ]}
+                  rules={[{ required: true, message: "Select a degree" }]}
                 >
                   <Select
                     className="address_details_input"
@@ -239,9 +235,7 @@ function EducationDetails(props) {
                   label={
                     <span className="address_details_input_label">GPA</span>
                   }
-                  rules={[
-                    { required: true, message: "Enter your GPA" },
-                  ]}
+                  rules={[{ required: true, message: "Enter your GPA" }]}
                 >
                   <Input
                     className="address_details_input"
@@ -259,9 +253,7 @@ function EducationDetails(props) {
                       Start Date
                     </span>
                   }
-                  rules={[
-                    { required: true, message: "Select a start date" },
-                  ]}
+                  rules={[{ required: true, message: "Select a start date" }]}
                 >
                   <DatePicker
                     className="address_details_input"
@@ -281,9 +273,7 @@ function EducationDetails(props) {
                       End Date
                     </span>
                   }
-                  rules={[
-                    { required: true, message: "Select an end date" },
-                  ]}
+                  rules={[{ required: true, message: "Select an end date" }]}
                 >
                   <DatePicker
                     className="address_details_input"
@@ -298,14 +288,17 @@ function EducationDetails(props) {
               </div>
 
               {educationFields.length > 1 && (
-                <Button
-                  type="text"
-                  danger
-                  icon={<DeleteOutlined />}
-                  onClick={() => removeEducationField(field.id)}
-                >
-                  Delete
-                </Button>
+                <div>
+                  <Button
+                    type="text"
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() => removeEducationField(field.id)}
+                    style={{ marginBottom: "50px" }}
+                  >
+                    Delete
+                  </Button>
+                </div>
               )}
             </div>
           ))}

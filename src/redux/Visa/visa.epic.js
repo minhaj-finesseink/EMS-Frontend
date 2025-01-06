@@ -36,7 +36,7 @@ visaEpic.getVisa = (action$) =>
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                url: `${BaseUrl}/get-visa/${action.payload.accountId}/${action.payload.userId}`,
+                url: `${BaseUrl}/get-visa/${action.payload.companyId}/${action.payload.userId}`,
                 method: 'GET',
             }).pipe(
                 map((response) => getVisaResponse(response.response)), // Extract and pass response data

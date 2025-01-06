@@ -13,6 +13,7 @@ const { Option } = Select;
 function AddressDetails(props) {
   const [form] = Form.useForm();
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+  const [states, setStates] = useState([]);
 
   const [formValue, setFormValue] = useState({
     address1: "",
@@ -42,12 +43,12 @@ function AddressDetails(props) {
     if (props.userData.getUserByIdResponse) {
       let data = props.userData.getUserByIdResponse.user.address;
       const updatedFormValue = {
-        address: data.address || "",
-        street: data.street || "",
+        address1: data.address1 || "",
+        address2: data.address2 || "",
         city: data.city || "",
-        state: data.state || "",
+        state: data.state || undefined,
         zip: data.zip || "",
-        country: data.country || "",
+        country: data.country || undefined,
       };
       setFormValue(updatedFormValue);
       // Set form values
@@ -60,14 +61,18 @@ function AddressDetails(props) {
       ...prev,
       [field]: value,
     }));
+    if (field === "country") {
+      const countryInfo = countryStateMapping[value];
+      setStates(countryInfo ? countryInfo.states : []);
+    }
   };
 
   const handleSubmit = () => {
     props.userUpdate({
       userId: userInfo._id,
       address: {
-        address: formValue.address ? formValue.address : "",
-        street: formValue.street ? formValue.street : "",
+        address1: formValue.address1 ? formValue.address1 : "",
+        address2: formValue.address2 ? formValue.address2 : "",
         city: formValue.city ? formValue.city : "",
         state: formValue.state ? formValue.state : "",
         zip: formValue.zip ? formValue.zip : "",
@@ -93,6 +98,7 @@ function AddressDetails(props) {
               label={
                 <span className="address_details_input_label">Address 1</span>
               }
+              rules={[{ required: true, message: "Enter Address 1" }]}
             >
               <Input
                 className="address_details_input"
@@ -108,6 +114,7 @@ function AddressDetails(props) {
               label={
                 <span className="address_details_input_label">Address 2</span>
               }
+              rules={[{ required: true, message: "Enter Address 2" }]}
             >
               <Input
                 className="address_details_input"
@@ -128,7 +135,7 @@ function AddressDetails(props) {
             >
               <Select
                 className="address_details_input"
-                placeholder="Country"
+                placeholder="Select Country"
                 value={formValue.country}
                 onChange={(value) => handleSelectChange(value, "country")}
               >
@@ -147,12 +154,12 @@ function AddressDetails(props) {
             >
               <Select
                 className="address_details_input"
-                placeholder="State"
+                placeholder="Select State"
                 value={formValue.state}
                 onChange={(value) => handleSelectChange(value, "state")}
                 disabled={!formValue.country} // Disable if no country selected
               >
-                {(countryStateMapping[formValue.country] || []).map((state) => (
+                {states.map((state) => (
                   <Option key={state} value={state}>
                     {state}
                   </Option>
@@ -163,6 +170,7 @@ function AddressDetails(props) {
             <Form.Item
               name="city"
               label={<span className="address_details_input_label">City</span>}
+              rules={[{ required: true, message: "Enter your city" }]}
             >
               <Input
                 className="address_details_input"
@@ -176,6 +184,7 @@ function AddressDetails(props) {
             <Form.Item
               name="zip"
               label={<span className="address_details_input_label">Zip</span>}
+              rules={[{ required: true, message: "Enter your zip code" }]}
             >
               <Input
                 className="address_details_input"

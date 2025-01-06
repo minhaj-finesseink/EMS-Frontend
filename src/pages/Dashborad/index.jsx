@@ -45,6 +45,13 @@ function Dashboard(props) {
   const [isTabView, setIsTabView] = useState(false); // Track if tablet view
   const [isDesktopView, setIsDesktopView] = useState(false); // Track if desktop view
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState("1"); // Track active tab
+  const [tabsDisabled, setTabsDisabled] = useState({
+    1: false,
+    2: true,
+    3: true,
+    4: true,
+  });
 
   useEffect(() => {
     const checkDeviceType = () => {
@@ -127,6 +134,18 @@ function Dashboard(props) {
     }
   }, []);
 
+  const handleTabChange = (key) => {
+    setActiveTab(key); // Update the active tab key
+  };
+
+  // Function to enable the next tab (to be called from child components)
+  const enableNextTab = (tabKey) => {
+    setTabsDisabled((prevState) => ({
+      ...prevState,
+      [tabKey]: false,
+    }));
+  };
+
   return (
     <Layout style={layoutStyle}>
       {/* Sidebar for Desktop View */}
@@ -195,18 +214,43 @@ function Dashboard(props) {
             >
               {role === "user" ? (
                 <div className="user_tabs_container">
-                  <Tabs>
+                  <Tabs activeKey={activeTab} onChange={handleTabChange}>
                     <TabPane tab="Personal Details" key="1">
-                      <PeronalDetails />
+                      <PeronalDetails
+                        tabKey={activeTab}
+                        handleTabChange={handleTabChange}
+                        enableNextTab={enableNextTab} // Passing function to enable next tab
+                      />
                     </TabPane>
-                    <TabPane tab="Contact Details" key="2">
-                      <ContactDetails />
+                    <TabPane
+                      tab="Contact Details"
+                      key="2"
+                      disabled={tabsDisabled[2]}
+                    >
+                      <ContactDetails
+                        tabKey={activeTab}
+                        handleTabChange={handleTabChange}
+                      />
                     </TabPane>
-                    <TabPane tab="Address Details" key="3">
-                      <AddressDetails />
+                    <TabPane
+                      tab="Address Details"
+                      key="3"
+                      disabled={tabsDisabled[3]}
+                    >
+                      <AddressDetails
+                        tabKey={activeTab}
+                        handleTabChange={handleTabChange}
+                      />
                     </TabPane>
-                    <TabPane tab="Education Details" key="4">
-                      <EducationDetails />
+                    <TabPane
+                      tab="Education Details"
+                      key="4"
+                      disabled={tabsDisabled[4]}
+                    >
+                      <EducationDetails
+                        tabKey={activeTab}
+                        handleTabChange={handleTabChange}
+                      />
                     </TabPane>
                   </Tabs>
                 </div>

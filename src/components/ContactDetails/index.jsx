@@ -12,12 +12,11 @@ const { Option } = Select;
 function ContactDetails(props) {
   const [form] = Form.useForm();
   const [formValue, setFormValue] = useState({
-    workPhone: "",
+    phone: "",
     extensionNumber: "",
     mobilePhone: "",
     homePhone: "",
     workEmail: "",
-    homeEmail: "",
     emergencyContactName: "",
     emergencyContactPhone: "",
     emergencyContactRelation: "",
@@ -44,11 +43,11 @@ function ContactDetails(props) {
     if (props.userData.getUserByIdResponse) {
       let data = props.userData.getUserByIdResponse.user;
       const updatedFormValue = {
-        workPhone: data.workPhone || "",
+        phone: data.phone || "",
+        extensionNumber: data.extensionNumber,
         mobilePhone: data.phoneNumber || "",
         homePhone: data.homePhone || "",
         workEmail: data.email || "",
-        homeEmail: data.homeEmail || "",
         emergencyContactName: data.emergencyContactName || "",
         emergencyContactPhone: data.emergencyContactPhone || "",
         emergencyContactRelation: data.emergencyContactRelation || "",
@@ -62,11 +61,13 @@ function ContactDetails(props) {
   const handleSubmit = () => {
     props.userUpdate({
       userId: userInfo._id,
-      workPhone: formValue.workPhone ? formValue.workPhone : "",
+      phone: formValue.phone ? formValue.phone : "",
+      extensionNumber: formValue.extensionNumber
+        ? formValue.extensionNumber
+        : "",
       mobilePhone: formValue.mobilePhone ? formValue.mobilePhone : "",
       homePhone: formValue.homePhone ? formValue.homePhone : "",
       workEmail: formValue.workEmail ? formValue.workEmail : "",
-      homeEmail: formValue.homeEmail ? formValue.homeEmail : "",
       emergencyContactName: formValue.emergencyContactName
         ? formValue.emergencyContactName
         : "",
@@ -92,18 +93,18 @@ function ContactDetails(props) {
           <div className="contact_details_form_container">
             {/* Work Phone */}
             <Form.Item
-              name="workPhone"
+              name="phone"
               label={
                 <span className="contact_details_input_label">Work Phone</span>
               }
-              rules={[{ required: true, message: "Enter work phone" }]}
+              rules={[{ required: true, message: "Enter your phone number" }]}
             >
               <Input
                 className="contact_details_input"
-                name="workPhone"
-                value={formValue.workPhone}
+                name="phone"
+                value={formValue.phone}
                 onChange={handleChange}
-                placeholder="Enter work phone"
+                placeholder="Enter phone"
               />
             </Form.Item>
 
@@ -115,9 +116,7 @@ function ContactDetails(props) {
                   Extension Number
                 </span>
               }
-              rules={[
-                { required: true, message: "Enter Extension Number" },
-              ]}
+              rules={[{ required: true, message: "Enter Extension Number" }]}
             >
               <Input
                 className="contact_details_input"
@@ -136,9 +135,9 @@ function ContactDetails(props) {
                   Mobile Phone
                 </span>
               }
-              rules={[
-                { required: true, message: "Enter mobile phone" },
-              ]}
+              // rules={[
+              //   { required: true, message: "Enter mobile phone" },
+              // ]}
             >
               <Input
                 className="contact_details_input"
@@ -219,7 +218,7 @@ function ContactDetails(props) {
               </Form.Item>{" "}
               {/* Emergency contact Number */}
               <Form.Item
-                name="emergencyContactNumber"
+                name="emergencyContactPhone"
                 label={
                   <span className="contact_details_input_label">
                     {" "}
@@ -235,7 +234,7 @@ function ContactDetails(props) {
               >
                 <Input
                   className="contact_details_input"
-                  name="emergencyContactNumber"
+                  name="emergencyContactPhone"
                   value={formValue.emergencyContactPhone}
                   onChange={handleChange}
                   placeholder="Emergency Contact Number"

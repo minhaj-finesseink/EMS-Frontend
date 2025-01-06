@@ -18,8 +18,9 @@ import { connect } from "react-redux";
 import moment from "moment";
 import toast from "react-hot-toast";
 import { getUserById, userUpdate } from "../../redux/User/user.action";
-import "./style.css";
 import { SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import { addVisa, getVisa } from "../../redux/Visa/visa.action";
+import "./style.css";
 
 const { Option } = Select;
 
@@ -46,19 +47,32 @@ function PersonalDetails(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [data, setData] = useState([]);
 
+  const [visaForm, setVisaForm] = useState({
+    visaType: "",
+    issuingCountry: "",
+    issueDate: null,
+    expiryDate: null,
+    visaStatus: "",
+    notes: "",
+  });
+
   const columns = [
-    { title: "" },
-    { title: "Date" },
-    { title: "Visa" },
-    { title: "Issuing Country" },
-    { title: "Issued" },
-    { title: "Expiry" },
-    { title: "Status" },
-    { title: "Notes" },
+    // { title: "Date", dataIndex: "date", key: "date" },
+    { title: "Visa", dataIndex: "visaType", key: "visaType" },
+    {
+      title: "Issuing Country",
+      dataIndex: "issuingCountry",
+      key: "issuingCountry",
+    },
+    { title: "Issued", dataIndex: "issueDate", key: "issueDate" },
+    { title: "Expiry", dataIndex: "expiryDate", key: "expiryDate" },
+    { title: "Status", dataIndex: "visaStatus", key: "visaStatus" },
+    { title: "Notes", dataIndex: "notes", key: "notes" },
   ];
 
   useEffect(() => {
     props.getUserById(userInfo._id);
+    props.getVisa({ companyId: userInfo.companyId, userId: userInfo._id });
   }, []);
 
   useEffect(() => {
@@ -68,15 +82,15 @@ function PersonalDetails(props) {
         firstName: data.firstName || "",
         middleName: data.middleName || "",
         lastName: data.lastName || "",
-        employeeStartDate: data.employementStartDate
-          ? moment(data.employementStartDate)
+        employeeStartDate: data.employmentStartDate
+          ? moment(data.employmentStartDate)
           : null,
         dob: data.dob ? moment(data.dob) : null,
-        sex: data.sex || "",
-        employeeId: data.idNumber || "",
+        sex: data.gender || null,
+        employeeId: data.employeeIdNumber || "",
         phone: data.phoneNumber || "",
         ssn: data.ssn || "",
-        maritalStatus: data.maritalStatus || "",
+        maritalStatus: data.maritalStatus || null,
         taxNumber: data.taxNumber || "",
         nin: data.nin || "",
         size: data.size || "",
@@ -89,35 +103,54 @@ function PersonalDetails(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.getUserByIdResponse]);
 
-  const handleChange = (e) => {
+  const handleChange = (e, formType = "formValue") => {
     const { name, value } = e.target;
-    setFormValue({
-      ...formValue,
-      [name]: value,
-    });
-  };
+    // console.log("name", name, "value", value);
 
-  const handleDateChange = (date, fieldName) => {
-    // Ensure valid moment object
-    const momentDate = moment(date);
-    if (date && momentDate.isValid()) {
-      setFormValue({
-        ...formValue,
-        [fieldName]: momentDate,
+    if (formType === "visaForm") {
+      setVisaForm({
+        ...visaForm,
+        [name]: value,
       });
     } else {
       setFormValue({
         ...formValue,
-        [fieldName]: null,
+        [name]: value,
       });
     }
   };
 
-  const handleSelectChange = (value, fieldName) => {
-    setFormValue({
-      ...formValue,
-      [fieldName]: value,
-    });
+  const handleDateChange = (
+    date,
+    dateString,
+    fieldName,
+    formType = "formValue"
+  ) => {
+    if (formType === "visaForm") {
+      setVisaForm({
+        ...visaForm,
+        [fieldName]: dateString,
+      });
+    } else {
+      setFormValue({
+        ...formValue,
+        [fieldName]: dateString,
+      });
+    }
+  };
+
+  const handleSelectChange = (value, fieldName, formType = "formValue") => {
+    if (formType === "visaForm") {
+      setVisaForm({
+        ...visaForm,
+        [fieldName]: value,
+      });
+    } else {
+      setFormValue({
+        ...formValue,
+        [fieldName]: value,
+      });
+    }
   };
 
   const handleSubmit = () => {
@@ -130,7 +163,7 @@ function PersonalDetails(props) {
         ? formValue.employeeStartDate
         : null,
       dob: formValue.dob ? formValue.dob : null,
-      sex: formValue.sex ? formValue.sex : "",
+      gender: formValue.sex ? formValue.sex : "",
       employeeId: formValue.employeeId ? formValue.employeeId : "",
       ssn: formValue.ssn ? formValue.ssn : "",
       phone: formValue.phone ? formValue.phone : "",
@@ -152,19 +185,23 @@ function PersonalDetails(props) {
         if (props.tabKey === "1") {
           toast.success("Personal Details Updated Successfully");
           props.handleTabChange("2");
+          props.enableNextTab("2");
         } else if (props.tabKey === "2") {
           toast.success("Contact Details Updated Successfully");
           props.handleTabChange("3");
+          props.enableNextTab("3");
         } else if (props.tabKey === "3") {
           toast.success("Address Details Updated Successfully");
           props.handleTabChange("4");
+          props.enableNextTab("4");
         } else if (props.tabKey === "4") {
           toast.success("Education Details Updated Successfully");
-          props.handleTabChange("5");
-        } else if (props.tabKey === "5") {
-          toast.success("Visa Details Updated Successfully");
           // props.handleTabChange("5");
         }
+        // else if (props.tabKey === "5") {
+        //   toast.success("Visa Details Updated Successfully");
+        //   // props.handleTabChange("5");
+        // }
         props.userData.userUpdateResponse = null;
       }
     }
@@ -179,6 +216,86 @@ function PersonalDetails(props) {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
+  const handleVisaSubmit = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        // Handle form submission
+        props.addVisa({
+          userId: userInfo._id,
+          companyId: userInfo.companyId,
+          visa: [
+            {
+              visaType: visaForm.visaType,
+              issuingCountry: visaForm.issuingCountry,
+              issueDate: visaForm.issueDate,
+              expiryDate: visaForm.expiryDate,
+              visaStatus: visaForm.visaStatus,
+              notes: visaForm.notes,
+            },
+          ],
+        });
+      })
+      .catch((errorInfo) => {
+        // Handle validation errors
+        console.log("Validation Failed:", errorInfo);
+      });
+  };
+
+  useEffect(() => {
+    if (props.visaData.addVisaResponse) {
+      let data = props.visaData.addVisaResponse;
+      // console.log("visa data - ", data);
+      if (data.success) {
+        toast.success(data.message);
+        // Close the modal
+        setTimeout(() => {
+          setIsModalVisible(false);
+          setVisaForm({
+            visaType: "",
+            issuingCountry: "",
+            issueDate: null,
+            expiryDate: null,
+            visaStatus: "",
+            notes: "",
+          });
+          form.setFieldsValue({
+            visaType: "",
+            issuingCountry: "",
+            issueDate: null,
+            expiryDate: null,
+            visaStatus: "",
+            notes: "",
+          });
+        }, 2000);
+        props.getVisa({ companyId: userInfo.companyId, userId: userInfo._id });
+      }
+      props.visaData.addVisaResponse = null;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.visaData.addVisaResponse]);
+
+  useEffect(() => {
+    if (props.visaData.getVisaResponse) {
+      let data = props.visaData.getVisaResponse;
+      // console.log("visa data -", data);
+      if (data.success) {
+        let visa = data.visa;
+        const formattedData = visa.map((visa, index) => ({
+          key: visa._id, // Using _id as the unique key for each row
+          // date: `${visa.issueDate} - ${visa.expiryDate}`, // Format the date column as a range
+          visaType: visa.visaType,
+          issuingCountry: visa.issuingCountry,
+          issueDate: visa.issueDate,
+          expiryDate: visa.expiryDate,
+          visaStatus: visa.visaStatus,
+          notes: visa.notes,
+        }));
+        setData(formattedData);
+      }
+    }
+  }, [props.visaData.getVisaResponse]);
 
   return (
     <div className="personal_details_container">
@@ -254,9 +371,10 @@ function PersonalDetails(props) {
                 className="patient_details_input"
                 name="employeeStartDate"
                 value={formValue.employeeStartDate}
-                onChange={(date) => handleDateChange(date, "employeeStartDate")}
+                // onChange={(date) => handleDateChange(date, "employeeStartDate")}
                 style={{ width: "100%" }}
                 placeholder="Select start date"
+                disabled
               />
             </Form.Item>
 
@@ -272,7 +390,9 @@ function PersonalDetails(props) {
                 className="patient_details_input"
                 name="dob"
                 value={formValue.dob}
-                onChange={(date) => handleDateChange(date, "dob")}
+                onChange={(date, dateString) =>
+                  handleDateChange(date, dateString, "dob")
+                }
                 style={{ width: "100%" }}
                 placeholder="Select date of birth"
               />
@@ -311,12 +431,13 @@ function PersonalDetails(props) {
                 className="patient_details_input"
                 name="employeeId"
                 value={formValue.employeeId}
-                onChange={handleChange}
+                // onChange={handleChange}
                 placeholder="Enter employee ID"
+                disabled
               />
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
               name="phone"
               label={
                 <span className="patient_details_input_label">
@@ -332,7 +453,7 @@ function PersonalDetails(props) {
                 onChange={handleChange}
                 placeholder="Enter phone number"
               />
-            </Form.Item>
+            </Form.Item> */}
 
             <Form.Item
               name="maritalStatus"
@@ -354,27 +475,40 @@ function PersonalDetails(props) {
                 <Option value="single">Single</Option>
                 <Option value="married">Married</Option>
                 <Option value="divorced">Divorced</Option>
-                <Option value="widowed">Widowed</Option>
+                {/* <Option value="widowed">Widowed</Option> */}
               </Select>
             </Form.Item>
           </div>
           <div className="visa_details">
-            <div style={{ margin: "30px 0" }}>
-              <div className="personal_details_title">Visa Details</div>
-              <div className="personal_details_desc">
-                Kindly provide your visa particulars if any
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                margin: "30px 0",
+              }}
+            >
+              <div>
+                <div className="personal_details_title">Visa Details</div>
+                <div className="personal_details_desc">
+                  Kindly provide your visa particulars if any
+                </div>
               </div>
-            </div>
 
-            <div className="visa_deatils_header">
-              <Input
-                placeholder="Search"
-                prefix={<SearchOutlined />}
-                style={{ width: "200px", height: "34px", borderRadius: "28px" }}
-              />
-              <Button className="add_policy_button" onClick={showModal}>
-                Add Entry
-              </Button>
+              <div className="visa_deatils_header">
+                <Input
+                  placeholder="Search"
+                  prefix={<SearchOutlined />}
+                  style={{
+                    width: "200px",
+                    height: "34px",
+                    borderRadius: "28px",
+                  }}
+                />
+                <Button className="add_policy_button" onClick={showModal}>
+                  Add Entry
+                </Button>
+              </div>
             </div>
             <div className="visa_details_table">
               <Table
@@ -415,6 +549,10 @@ function PersonalDetails(props) {
                       <Select
                         placeholder="Select visa"
                         className="add_visa_modal_input"
+                        value={visaForm.visaType}
+                        onChange={(value) =>
+                          handleSelectChange(value, "visaType", "visaForm")
+                        }
                       >
                         <Option value="tourist">Tourist</Option>
                         <Option value="work">Work</Option>
@@ -436,6 +574,14 @@ function PersonalDetails(props) {
                       <Select
                         placeholder="Select country"
                         className="add_visa_modal_input"
+                        value={visaForm.issuingCountry}
+                        onChange={(value) =>
+                          handleSelectChange(
+                            value,
+                            "issuingCountry",
+                            "visaForm"
+                          )
+                        }
                       >
                         <Option value="usa">USA</Option>
                         <Option value="uk">UK</Option>
@@ -457,6 +603,15 @@ function PersonalDetails(props) {
                       <DatePicker
                         className="add_visa_modal_input"
                         style={{ width: "100%", borderRadius: "18px" }}
+                        value={visaForm.issueDate}
+                        onChange={(date, dateString) =>
+                          handleDateChange(
+                            date,
+                            dateString,
+                            "issueDate",
+                            "visaForm"
+                          )
+                        }
                       />
                     </Form.Item>
                   </Col>
@@ -474,6 +629,15 @@ function PersonalDetails(props) {
                       <DatePicker
                         className="add_visa_modal_input"
                         style={{ width: "100%", borderRadius: "18px" }}
+                        value={visaForm.expiryDate}
+                        onChange={(date, dateString) =>
+                          handleDateChange(
+                            date,
+                            dateString,
+                            "expiryDate",
+                            "visaForm"
+                          )
+                        }
                       />
                     </Form.Item>
                   </Col>
@@ -494,6 +658,10 @@ function PersonalDetails(props) {
                       <Select
                         placeholder="Select status"
                         className="add_visa_modal_input"
+                        value={visaForm.visaStatus}
+                        onChange={(value) =>
+                          handleSelectChange(value, "visaStatus", "visaForm")
+                        }
                       >
                         <Option value="active">Active</Option>
                         <Option value="expired">Expired</Option>
@@ -508,8 +676,11 @@ function PersonalDetails(props) {
                       rules={[{ required: false }]}
                     >
                       <Input.TextArea
+                        name="notes"
                         style={{ borderRadius: "18px" }}
                         placeholder="Enter notes"
+                        value={visaForm.notes}
+                        onChange={(e) => handleChange(e, "visaForm")}
                       />
                     </Form.Item>
                   </Col>
@@ -543,7 +714,11 @@ function PersonalDetails(props) {
                       marginTop: "40px",
                     }}
                   >
-                    <Button type="primary" className="add_visa_button">
+                    <Button
+                      type="primary"
+                      className="add_visa_button"
+                      onClick={handleVisaSubmit}
+                    >
                       Done
                     </Button>
                   </Col>
@@ -594,18 +769,24 @@ function PersonalDetails(props) {
 const mapStateToProps = (state) => ({
   userData: state.user,
   userUpdateData: state.addEmployee,
+  visaData: state.visa,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getUserById: (values) => dispatch(getUserById(values)),
   userUpdate: (values) => dispatch(userUpdate(values)),
+  addVisa: (values) => dispatch(addVisa(values)),
+  getVisa: (values) => dispatch(getVisa(values)),
 });
 
 PersonalDetails.propTypes = {
   getUserById: PropTypes.func,
   userUpdate: PropTypes.func,
+  addVisa: PropTypes.func,
+  getVisa: PropTypes.func,
   userData: PropTypes.object,
   userUpdateData: PropTypes.object,
+  visaData: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PersonalDetails);
