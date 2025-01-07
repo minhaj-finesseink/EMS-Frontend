@@ -243,7 +243,7 @@
 }
 
 .user_tabs_container {
-  padding: 20px 50px;
+  padding: 0 40px 40px;
 }
 
 @media (max-width: 767px) {

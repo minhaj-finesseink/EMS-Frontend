@@ -21,6 +21,8 @@ import { addUserTimeOff } from "../../redux/UserTimeOff/userTimeOff.action";
 import toast from "react-hot-toast";
 import MailIcon from "../../assets/mail-open.svg";
 import GeneralTimeOff from "../GeneralTimeOff";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import DragIcon from "../../assets/drag-icon.svg";
 import "./style.css";
 
 const { Option } = Select;
@@ -31,26 +33,26 @@ function ExistingEmployee(props) {
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [activeTab, setActiveTab] = useState("1"); // Track active tab
   const [formValues, setFormValues] = useState({
-    employementType: "",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    employmentStartDate: "",
-    dob: "",
-    sex: "",
-    idNumber: "",
-    phoneNumber: "",
-    email: "",
-    address1: "",
-    address2: "",
-    country: "",
-    state: "",
-    city: "",
-    zip: "",
-    jobTitle: "",
-    employeeShift: "",
-    department: "",
-    reporting: "",
+    // employementType: "",
+    // firstName: "",
+    // middleName: "",
+    // lastName: "",
+    // employmentStartDate: "",
+    // dob: "",
+    // sex: "",
+    // idNumber: "",
+    // phoneNumber: "",
+    // email: "",
+    // address1: "",
+    // address2: "",
+    // country: "",
+    // state: "",
+    // city: "",
+    // zip: "",
+    // jobTitle: "",
+    // employeeShift: "",
+    // department: "",
+    // reporting: "",
   });
   const [timeOffList, setTimeOffList] = useState([]); // Time-off policies list
   const [selectedTimeOffId, setSelectedTimeOffId] = useState(null); // Selected policy ID
@@ -125,37 +127,61 @@ function ExistingEmployee(props) {
     form.setFieldsValue({ employmentType: value });
   };
 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   console.log("name-", name, "value-", value);
+
+  //   setFormValues({
+  //     ...formValues,
+  //     [name]: value,
+  //   });
+  // };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
+    setFormValues((prevValues) => ({
+      ...prevValues,
       [name]: value,
-    });
+    }));
   };
 
-  const handleSelectChange = (value, fieldName) => {
-    setFormValues({
-      ...formValues,
-      [fieldName]: value,
-    });
-
-    switch (value) {
-      case "monthly":
-        // setResetValue("On last day of month");
-        break;
-      case "yearly":
-        // setResetValue("On 31st on Dec");
-        break;
-      default:
-    }
+  const handleSelectChange = (value, fieldId) => {
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [fieldId]: value,
+    }));
   };
 
-  const handleDateChange = (date, dateString, fieldName) => {
-    setFormValues({
-      ...formValues,
-      [fieldName]: dateString,
-    });
+  const handleDateChange = (date, dateString, fieldId) => {
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [fieldId]: dateString,
+    }));
   };
+
+  // const handleSelectChange = (value, fieldName) => {
+  //   setFormValues({
+  //     ...formValues,
+  //     [fieldName]: value,
+  //   });
+
+  //   switch (value) {
+  //     case "monthly":
+  //       // setResetValue("On last day of month");
+  //       break;
+  //     case "yearly":
+  //       // setResetValue("On 31st on Dec");
+  //       break;
+  //     default:
+  //   }
+  // };
+
+  // const handleDateChange = (date, dateString, fieldName) => {
+  //   setFormValues({
+  //     ...formValues,
+  //     [fieldName]: dateString,
+  //   });
+  // };
 
   useEffect(() => {
     props.getGeneralTimeOff(userInfo.companyId);
@@ -213,28 +239,7 @@ function ExistingEmployee(props) {
     const payload = {
       companyId: userInfo.companyId,
       companyName: userInfo.companyName,
-      employementType: formValues.employementType,
-      firstName: formValues.firstName,
-      middleName: formValues.middleName,
-      lastName: formValues.lastName,
-      employmentStartDate: formValues.employmentStartDate,
-      dob: formValues.dob,
-      gender: formValues.sex,
-      employeeIdNumber: formValues.idNumber,
-      phone: formValues.phoneNumber,
-      email: formValues.email,
-      address: {
-        address1: formValues.address1,
-        address2: formValues.address2,
-        country: formValues.country,
-        state: formValues.state,
-        city: formValues.city,
-        zip: formValues.zip,
-      },
-      jobTitle: formValues.jobTitle,
-      employeeShift: formValues.employeeShift,
-      departmentName: formValues.department,
-      reporting: formValues.reporting,
+      ...formValues,
     };
     props.addUser(payload);
   };
@@ -366,6 +371,162 @@ function ExistingEmployee(props) {
     }));
   };
 
+  const [fields, setFields] = useState([
+    { id: "firstName", label: "First Name", type: "input", required: true },
+    { id: "middleName", label: "Middle Name", type: "input" },
+    { id: "lastName", label: "Last Name", type: "input", required: true },
+    { id: "phoneNumber", label: "Phone", type: "input" },
+    { id: "email", label: "Email", type: "input", required: true },
+    {
+      id: "employmentStartDate",
+      label: "Employment Start Date",
+      type: "date",
+      required: true,
+    },
+    {
+      id: "idNumber",
+      label: "Employee ID Number",
+      type: "input",
+      required: true,
+    },
+    { id: "jobTitle", label: "Job Title", type: "input" },
+    { id: "reporting", label: "Employee Reporting To", type: "select" },
+  ]);
+
+  const [predefinedOptions] = useState([
+    { id: "dob", label: "DOB", type: "date" },
+    {
+      id: "gender",
+      label: "Gender",
+      type: "select",
+      options: [
+        { label: "Male", value: "male" },
+        { label: "Female", value: "female" },
+        { label: "Other", value: "other" },
+        { label: "Prefer not to say", value: "prefer_not_to_say" },
+      ],
+    },
+    { id: "address1", label: "Address 1", type: "input" },
+    { id: "address2", label: "Address 2", type: "input" },
+    { id: "city", label: "City", type: "input" },
+    { id: "state", label: "State", type: "input" },
+    { id: "country", label: "Country", type: "input" },
+    { id: "zip", label: "Zip", type: "input" },
+    {
+      id: "maritalStatus",
+      label: "Marital Status",
+      type: "select",
+      options: [
+        { label: "Single", value: "single" },
+        { label: "Married", value: "married" },
+        { label: "Divorced", value: "divorced" },
+        // { label: "Widowed", value: "widowed" },
+      ],
+    },
+    { id: "homePhone", label: "Home Phone", type: "input" },
+    {
+      id: "emergencyContactName",
+      label: "Emergency Contact Name",
+      type: "input",
+    },
+    {
+      id: "emergencyContactPhone",
+      label: "Emergency Contact Phone",
+      type: "input",
+    },
+    {
+      id: "emergencyContactRelation",
+      label: "Emergency Contact Relation",
+      type: "input",
+    },
+  ]);
+
+  // // Dynamically add predefined options to fields and initialize formValues
+  // useEffect(() => {
+  //   // Merge fields and predefined options
+  //   const allFields = [...fields, ...predefinedOptions];
+
+  //   // Initialize formValues with empty strings for each field
+  //   const initialFormValues = allFields.reduce((acc, field) => {
+  //     acc[field.id] = ""; // Default value for all fields
+  //     return acc;
+  //   }, {});
+
+  //   setFields(allFields);
+  //   setFormValues(initialFormValues);
+  // }, []);
+
+  useEffect(() => {
+    // Filter to include only the predefined fields that are currently selected in 'fields'
+    const selectedPredefinedFields = predefinedOptions.filter(
+      (field) => fields.some((f) => f.id === field.id) // Only include fields already added to 'fields'
+    );
+
+    // Initialize formValues for all selected fields (both predefined and dynamically added)
+    const initialFormValues = selectedPredefinedFields.reduce((acc, field) => {
+      acc[field.id] = ""; // Initialize with an empty string (or default value)
+      return acc;
+    }, {});
+
+    // Ensure that the dynamic fields are also included
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      ...initialFormValues, // Merge new fields with existing values (if any)
+    }));
+  }, [fields, predefinedOptions]); // Runs when 'fields' or 'predefinedOptions' change
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // Handle drag-and-drop reordering
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const reorderedFields = Array.from(fields);
+    const [removed] = reorderedFields.splice(result.source.index, 1);
+    reorderedFields.splice(result.destination.index, 0, removed);
+
+    setFields(reorderedFields);
+  };
+
+  // Handle adding new fields from dropdown
+  // const handleAddField = (value) => {
+  //   const fieldToAdd = predefinedOptions.find((field) => field.id === value);
+  //   if (fieldToAdd && !fields.some((field) => field.id === fieldToAdd.id)) {
+  //     setFields([...fields, fieldToAdd]);
+  //   }
+  // };
+
+  const handleAddField = (value) => {
+    const fieldToAdd = predefinedOptions.find((field) => field.id === value);
+
+    if (fieldToAdd && !fields.some((field) => field.id === fieldToAdd.id)) {
+      setFields((prevFields) => {
+        const newFields = [...prevFields, fieldToAdd];
+        return newFields;
+      });
+
+      // Update formValues to initialize the new field with an empty string
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        [fieldToAdd.id]: "", // Initialize value for the newly added field
+      }));
+    }
+  };
+
+  // Handle value changes
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormValues({ ...formValues, [name]: value });
+  // };
+
+  // const handleDateChange = (date, dateString, name) => {
+  //   setFormValues({ ...formValues, [name]: dateString });
+  // };
+
+  // const handleSelectChange = (value, name) => {
+  //   setFormValues({ ...formValues, [name]: value });
+  // };
+
   return (
     <div className="existing-employee-container">
       <div className="existing-employee-header">
@@ -431,7 +592,7 @@ function ExistingEmployee(props) {
             <div className="form-checkbox-button">
               {/* Single-Selectable Checkboxes */}
               <Form.Item
-              name="employmentType"
+                name="employmentType"
                 rules={[
                   {
                     required: true,
@@ -470,14 +631,14 @@ function ExistingEmployee(props) {
                     width: "100%",
                     borderRadius: "18px",
                   }}
+                  onClick={() => setIsModalVisible(true)}
                 >
                   Add/Edit Fields
                 </Button>
               </div>
             </div>
 
-            <div className="existing_employee_form_container">
-              {/* First Name */}
+            {/* <div className="existing_employee_form_container">
               <Form.Item
                 name="firstName"
                 label={
@@ -499,7 +660,6 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* Middle Name */}
               <Form.Item
                 name="middleName"
                 label={
@@ -515,7 +675,6 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* Last Name */}
               <Form.Item
                 name="lastName"
                 label={<span className="employee-custom-label">Last Name</span>}
@@ -535,15 +694,13 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* Phone Number */}
               <Form.Item
                 name="phoneNumber"
                 label={<span className="employee-custom-label">Phone</span>}
                 rules={[
                   {
                     pattern: /^[0-9]{10,15}$/, // Allows only digits with a length of 10 to 15
-                    message:
-                      "Enter a valid phone number (10-15 digits)",
+                    message: "Enter a valid phone number (10-15 digits)",
                   },
                 ]}
               >
@@ -556,7 +713,6 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* Email */}
               <Form.Item
                 name="email"
                 label={<span className="employee-custom-label">Email</span>}
@@ -576,7 +732,6 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* Employement Start Date */}
               <Form.Item
                 name="employmentStartDate"
                 label={
@@ -603,7 +758,6 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* ID Number */}
               <Form.Item
                 name="idNumber"
                 label={
@@ -627,7 +781,6 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* Job Title */}
               <Form.Item
                 name="jobTitle"
                 label={<span className="employee-custom-label">Job Title</span>}
@@ -641,7 +794,6 @@ function ExistingEmployee(props) {
                 />
               </Form.Item>
 
-              {/* Reporting */}
               <Form.Item
                 name="reporting"
                 label={
@@ -665,7 +817,168 @@ function ExistingEmployee(props) {
                   ))}
                 </Select>
               </Form.Item>
+            </div> */}
+            {/* Main Form */}
+            <div className="existing_employee_form_container">
+              {/* <Form
+                layout="vertical"
+                style={{
+                  display: "grid",
+                  gap: "0 30px",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                }}
+              > */}
+              {fields.map((field) => (
+                <Form.Item
+                  key={field.id}
+                  name={field.id}
+                  label={
+                    <span className="employee-custom-label">{field.label}</span>
+                  }
+                  rules={
+                    field.required
+                      ? [
+                          {
+                            required: true,
+                            message: `Enter ${field.label.toLowerCase()}`,
+                          },
+                        ]
+                      : []
+                  }
+                >
+                  {field.type === "input" && (
+                    <Input
+                      className="employee-input"
+                      name={field.id}
+                      value={formValues[field.id]}
+                      onChange={handleChange}
+                      placeholder={`Enter ${field.label.toLowerCase()}`}
+                    />
+                  )}
+                  {field.type === "date" && (
+                    <DatePicker
+                      className="employee-input"
+                      name={field.id}
+                      value={formValues[field.id]}
+                      onChange={(date, dateString) =>
+                        handleDateChange(date, dateString, field.id)
+                      }
+                      placeholder={`Select ${field.label.toLowerCase()}`}
+                      style={{ width: "100%" }}
+                    />
+                  )}
+                  {field.type === "select" && (
+                    <Select
+                      className="employee-input"
+                      value={formValues[field.id]}
+                      onChange={(value) => handleSelectChange(value, field.id)}
+                      placeholder={`Select ${field.label.toLowerCase()}`}
+                    >
+                      {field.options
+                        ? field.options.map((option) => (
+                            <Option key={option.value} value={option.value}>
+                              {option.label}
+                            </Option>
+                          ))
+                        : usersList.map((user) => (
+                            <Option key={user._id} value={user._id}>
+                              {`${user.firstName} ${user.middleName || ""} ${
+                                user.lastName
+                              }`.trim()}
+                            </Option>
+                          ))}
+                    </Select>
+                  )}
+                </Form.Item>
+              ))}
+              {/* </Form> */}
             </div>
+
+            {/* Customization Modal */}
+            <Modal
+              className="add_employee_custon_field_modal"
+              title="Add or Edit Fields for Employees"
+              visible={isModalVisible}
+              onCancel={() => setIsModalVisible(false)}
+              footer={[
+                <Button
+                  style={{
+                    width: "150px",
+                    height: "40px",
+                    borderRadius: "18px",
+                  }}
+                  key="cancel"
+                  onClick={() => setIsModalVisible(false)}
+                >
+                  Cancel
+                </Button>,
+                <Button
+                  style={{
+                    width: "150px",
+                    height: "40px",
+                    borderRadius: "18px",
+                  }}
+                  key="submit"
+                  type="primary"
+                  onClick={() => setIsModalVisible(false)}
+                >
+                  Save
+                </Button>,
+              ]}
+              width={600}
+            >
+              <div className="add_employee_custon_field_modal_desc">
+                Drag to reorder information on Employee form
+              </div>
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="fields-list">
+                  {(provided) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      // style={{ maxHeight: "300px", overflowY: "auto" }}
+                      className="add_employee_draggable_items_container"
+                    >
+                      {fields.map((field, index) => (
+                        <Draggable
+                          key={field.id}
+                          draggableId={field.id}
+                          index={index}
+                        >
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className="add_employee_draggable_items"
+                            >
+                              <img src={DragIcon} alt="drag icon" />
+                              {field.label}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+
+              {/* Dropdown to add new fields */}
+              <div style={{ marginTop: "20px" }}>
+                <Select
+                  placeholder="Add a new field"
+                  onChange={handleAddField}
+                  className="add_employee_draggable_items_dropdown"
+                >
+                  {predefinedOptions.map((option) => (
+                    <Option key={option.id} value={option.id}>
+                      {option.label}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </Modal>
 
             <div className="existing_employee_buttons_container">
               <div>

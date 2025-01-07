@@ -11,6 +11,7 @@ import {
   getEducation,
 } from "../../redux/Education/education.action";
 import "./style.css";
+import toast from "react-hot-toast";
 
 const { Option } = Select;
 
@@ -145,6 +146,25 @@ function EducationDetails(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.educationData.getEducationResponse]);
+
+  useEffect(() => {
+    if (props.educationData.addEducationResponse) {
+      let data = props.educationData.addEducationResponse;
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      if (data.success) {
+        toast.success(data.message);
+        setTimeout(() => {
+          props.profileComplete(false);
+        }, 1000);
+      }
+      if (userInfo) {
+        userInfo.isProfileComplete = true; // Update the field
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+      }
+      props.educationData.addEducationResponse = null;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.educationData.addEducationResponse]);
 
   return (
     <div className="address_details_container">
@@ -315,19 +335,20 @@ function EducationDetails(props) {
             style={{
               display: "flex",
               justifyContent: "flex-end",
-              marginTop: "100px",
+              marginTop: "80px",
               gap: "20px",
             }}
           >
             <Button
               type="primary"
               style={{
-                width: "292px",
+                width: "200px",
                 backgroundColor: "#E0E5EB",
                 color: "#FFFFFF",
                 height: "50px",
                 borderRadius: "18px",
               }}
+              onClick={() => props.handleTabChange("3")}
             >
               Cancel
             </Button>{" "}
@@ -335,7 +356,7 @@ function EducationDetails(props) {
               type="primary"
               htmlType="submit"
               style={{
-                width: "292px",
+                width: "200px",
                 backgroundColor: "#007DC5",
                 color: "#FFFFFF",
                 height: "50px",

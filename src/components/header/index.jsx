@@ -1,15 +1,21 @@
+/* eslint-disable react/prop-types */
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import { Avatar, Badge, Switch, Menu, Popover, Drawer } from "antd";
-import { DownOutlined, MenuOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  DownOutlined,
+  MenuOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import SettingsIcon from "../../assets/IoSettings.png";
 import BellIcon from "../../assets/bell-icon.svg";
 import UsitiveLogo from "../../assets/usitive-logo-with-text.png";
 import Sidebar from "../sideBar";
-import "./style.css";
 import { toSentenceCase } from "../../utils/sentenceCase";
+import "./style.css";
 
-function Header() {
+function Header(props) {
   const navigate = useNavigate(); // Initialize navigation
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [theme, setTheme] = useState("light");
@@ -123,7 +129,19 @@ function Header() {
         </div>
       ) : (
         <>
-          <div className="header_title">Overview</div>
+          <div className="header_title">
+            <div
+              className="header_back_button_container"
+              onClick={() => {
+                props.profileComplete(false);
+                props.showAddEmployees(false);
+                props.showLeavePolicy(false);
+              }}
+            >
+              <ArrowLeftOutlined style={{ fontSize: "18px", color: "black" }} />
+            </div>
+            Overview
+          </div>
           <div className="header_right_section">
             {/* Notification Icon */}
             <div

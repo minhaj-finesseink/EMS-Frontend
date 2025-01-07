@@ -35,14 +35,7 @@ function PersonalDetails(props) {
     dob: null,
     sex: "",
     employeeId: "",
-    ssn: "",
-    phone: "",
     maritalStatus: "",
-    taxNumber: "",
-    nin: "",
-    size: "",
-    allergies: "",
-    dietary: "",
   });
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [data, setData] = useState([]);
@@ -88,14 +81,7 @@ function PersonalDetails(props) {
         dob: data.dob ? moment(data.dob) : null,
         sex: data.gender || null,
         employeeId: data.employeeIdNumber || "",
-        phone: data.phoneNumber || "",
-        ssn: data.ssn || "",
         maritalStatus: data.maritalStatus || null,
-        taxNumber: data.taxNumber || "",
-        nin: data.nin || "",
-        size: data.size || "",
-        allergies: data.allergies || "",
-        dietary: data.dietary || "",
       };
       setFormValue(updatedFormValue);
       form.setFieldsValue(updatedFormValue);
@@ -105,8 +91,6 @@ function PersonalDetails(props) {
 
   const handleChange = (e, formType = "formValue") => {
     const { name, value } = e.target;
-    // console.log("name", name, "value", value);
-
     if (formType === "visaForm") {
       setVisaForm({
         ...visaForm,
@@ -120,21 +104,16 @@ function PersonalDetails(props) {
     }
   };
 
-  const handleDateChange = (
-    date,
-    dateString,
-    fieldName,
-    formType = "formValue"
-  ) => {
+  const handleDateChange = (value, fieldName, formType = "formValue") => {
     if (formType === "visaForm") {
       setVisaForm({
         ...visaForm,
-        [fieldName]: dateString,
+        [fieldName]: value,
       });
     } else {
       setFormValue({
         ...formValue,
-        [fieldName]: dateString,
+        [fieldName]: value,
       });
     }
   };
@@ -159,22 +138,15 @@ function PersonalDetails(props) {
       firstName: formValue.firstName ? formValue.firstName : "",
       middleName: formValue.middleName ? formValue.middleName : "",
       lastName: formValue.lastName ? formValue.lastName : "",
-      employeeStartDate: formValue.employeeStartDate
+      employmentStartDate: formValue.employeeStartDate
         ? formValue.employeeStartDate
         : null,
       dob: formValue.dob ? formValue.dob : null,
       gender: formValue.sex ? formValue.sex : "",
-      employeeId: formValue.employeeId ? formValue.employeeId : "",
-      ssn: formValue.ssn ? formValue.ssn : "",
-      phone: formValue.phone ? formValue.phone : "",
+      employeeIdNumber: formValue.employeeId ? formValue.employeeId : "",
       maritalStatus: formValue.maritalStatus ? formValue.maritalStatus : "",
-      taxNumber: formValue.taxNumber ? formValue.taxNumber : "",
-      nin: formValue.nin ? formValue.nin : "",
-      size: formValue.size ? formValue.size : "",
-      allergies: formValue.allergies ? formValue.allergies : "",
-      dietary: formValue.dietary ? formValue.dietary : "",
     });
-    // props.handleTabChange("2");
+    // console.log("form values", formValue);
   };
 
   // Setting all tab changes and success message in here.
@@ -194,14 +166,7 @@ function PersonalDetails(props) {
           toast.success("Address Details Updated Successfully");
           props.handleTabChange("4");
           props.enableNextTab("4");
-        } else if (props.tabKey === "4") {
-          toast.success("Education Details Updated Successfully");
-          // props.handleTabChange("5");
-        }
-        // else if (props.tabKey === "5") {
-        //   toast.success("Visa Details Updated Successfully");
-        //   // props.handleTabChange("5");
-        // }
+        } 
         props.userData.userUpdateResponse = null;
       }
     }
@@ -220,7 +185,7 @@ function PersonalDetails(props) {
   const handleVisaSubmit = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(() => {
         // Handle form submission
         props.addVisa({
           userId: userInfo._id,
@@ -282,7 +247,7 @@ function PersonalDetails(props) {
       // console.log("visa data -", data);
       if (data.success) {
         let visa = data.visa;
-        const formattedData = visa.map((visa, index) => ({
+        const formattedData = visa.map((visa) => ({
           key: visa._id, // Using _id as the unique key for each row
           // date: `${visa.issueDate} - ${visa.expiryDate}`, // Format the date column as a range
           visaType: visa.visaType,
@@ -371,10 +336,12 @@ function PersonalDetails(props) {
                 className="patient_details_input"
                 name="employeeStartDate"
                 value={formValue.employeeStartDate}
-                // onChange={(date) => handleDateChange(date, "employeeStartDate")}
+                onChange={(date, dateString) =>
+                  handleDateChange(dateString, "employeeStartDate")
+                }
                 style={{ width: "100%" }}
                 placeholder="Select start date"
-                disabled
+                disabled={userInfo.role === "user" ? true : false}
               />
             </Form.Item>
 
@@ -391,7 +358,7 @@ function PersonalDetails(props) {
                 name="dob"
                 value={formValue.dob}
                 onChange={(date, dateString) =>
-                  handleDateChange(date, dateString, "dob")
+                  handleDateChange(dateString, "dob")
                 }
                 style={{ width: "100%" }}
                 placeholder="Select date of birth"
@@ -431,9 +398,9 @@ function PersonalDetails(props) {
                 className="patient_details_input"
                 name="employeeId"
                 value={formValue.employeeId}
-                // onChange={handleChange}
+                onChange={handleChange}
                 placeholder="Enter employee ID"
-                disabled
+                disabled={userInfo.role === "user" ? true : false}
               />
             </Form.Item>
 
@@ -462,7 +429,7 @@ function PersonalDetails(props) {
                   Marital Status
                 </span>
               }
-              rules={[{ required: true, message: "Enter marital status" }]}
+              // rules={[{ required: true, message: "Enter marital status" }]}
             >
               <Select
                 className="patient_details_input"
@@ -730,11 +697,11 @@ function PersonalDetails(props) {
             style={{
               display: "flex",
               justifyContent: "flex-end",
-              marginTop: "20px",
+              marginTop: "40px",
               gap: "20px",
             }}
           >
-            <Button
+            {/* <Button
               type="primary"
               style={{
                 width: "292px",
@@ -745,12 +712,12 @@ function PersonalDetails(props) {
               }}
             >
               Cancel
-            </Button>{" "}
+            </Button>{" "} */}
             <Button
               type="primary"
               htmlType="submit"
               style={{
-                width: "292px",
+                width: "200px",
                 backgroundColor: "#007DC5",
                 color: "#FFFFFF",
                 height: "50px",

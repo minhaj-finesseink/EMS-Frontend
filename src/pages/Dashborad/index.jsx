@@ -52,6 +52,7 @@ function Dashboard(props) {
     3: true,
     4: true,
   });
+  const [profileComplete, setProfileComplete] = useState(false);
 
   useEffect(() => {
     const checkDeviceType = () => {
@@ -195,10 +196,15 @@ function Dashboard(props) {
             // backgroundColor: "#FFFFFF",
             backgroundColor: "var(--background-color)",
             padding: 0,
-            height: isDesktopView && isTabView ? "100px" : "75px",
+            // height: isDesktopView && isTabView ? "100px" : "75px",
+            height: "fit-content",
           }}
         >
-          <HeaderBar />
+          <HeaderBar
+            profileComplete={setProfileComplete}
+            showAddEmployees={setShowAddEmployees}
+            showLeavePolicy={setLeavePolicy}
+          />
         </Header>
         <Content style={contentStyle}>
           <div
@@ -207,12 +213,15 @@ function Dashboard(props) {
           >
             <div
               className={`${
-                showAddEmployees || leavePolicy || role === "user"
+                showAddEmployees ||
+                leavePolicy ||
+                role === "user" ||
+                profileComplete
                   ? "dashboard_content_center_ful"
                   : "dashboard_content_center"
               }`}
             >
-              {role === "user" ? (
+              {role === "user" || profileComplete ? (
                 <div className="user_tabs_container">
                   <Tabs activeKey={activeTab} onChange={handleTabChange}>
                     <TabPane tab="Personal Details" key="1">
@@ -250,6 +259,7 @@ function Dashboard(props) {
                       <EducationDetails
                         tabKey={activeTab}
                         handleTabChange={handleTabChange}
+                        profileComplete={setProfileComplete}
                       />
                     </TabPane>
                   </Tabs>
@@ -350,7 +360,7 @@ function Dashboard(props) {
                         </div>
                       </div>
                     </div>
-                    <div style={{ marginTop: "50px" }}>
+                    {/* <div style={{ marginTop: "50px" }}>
                       <Button
                         className="create_employee_back_button"
                         onClick={() => {
@@ -359,13 +369,13 @@ function Dashboard(props) {
                       >
                         Back
                       </Button>
-                    </div>
+                    </div> */}
                   </div>
                 )
               ) : leavePolicy ? (
                 <div style={{ padding: "20px" }}>
                   <GeneralTimeOff />
-                  <div>
+                  {/* <div>
                     <Button
                       type="primary"
                       onClick={() => setLeavePolicy(false)}
@@ -378,9 +388,9 @@ function Dashboard(props) {
                         marginLeft: "20px",
                       }}
                     >
-                      Back
+                      Back1
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
               ) : (
                 <div>
@@ -388,25 +398,27 @@ function Dashboard(props) {
                     <OverviewCards
                       addEmployees={setShowAddEmployees}
                       leavePolicy={setLeavePolicy}
+                      profileComplete={setProfileComplete}
                     />
                   </div>
                 </div>
               )}
             </div>
-            {!showAddEmployees && !leavePolicy && role !== "user" && (
-              <div
-                // className="dashboard_content_right"
-                // style={{ width: "30%", marginRight: "20px" }}
-                className={`${
-                  showAddEmployees || leavePolicy || role === "user"
-                    ? "dashboard_content_right_ful"
-                    : "dashboard_content_right"
-                }`}
-              >
-                <Activity />
-                <Calender />
-              </div>
-            )}
+            {!showAddEmployees &&
+              !leavePolicy &&
+              role !== "user" &&
+              !profileComplete && (
+                <div
+                  className={`${
+                    showAddEmployees || leavePolicy || role === "user"
+                      ? "dashboard_content_right_ful"
+                      : "dashboard_content_right"
+                  }`}
+                >
+                  <Activity />
+                  <Calender />
+                </div>
+              )}
           </div>
         </Content>
       </Layout>

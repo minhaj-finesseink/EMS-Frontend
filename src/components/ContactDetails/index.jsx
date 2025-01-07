@@ -32,12 +32,12 @@ function ContactDetails(props) {
     });
   };
 
-  const handleSelectChange = (value, fieldName) => {
-    setFormValue({
-      ...formValue,
-      [fieldName]: value,
-    });
-  };
+  // const handleSelectChange = (value, fieldName) => {
+  //   setFormValue({
+  //     ...formValue,
+  //     [fieldName]: value,
+  //   });
+  // };
 
   useEffect(() => {
     if (props.userData.getUserByIdResponse) {
@@ -50,7 +50,7 @@ function ContactDetails(props) {
         workEmail: data.email || "",
         emergencyContactName: data.emergencyContactName || "",
         emergencyContactPhone: data.emergencyContactPhone || "",
-        emergencyContactRelation: data.emergencyContactRelation || "",
+        emergencyContactRelation: data.emergencyContactRelation || null,
       };
       setFormValue(updatedFormValue);
       // Set form values
@@ -116,7 +116,7 @@ function ContactDetails(props) {
                   Extension Number
                 </span>
               }
-              rules={[{ required: true, message: "Enter Extension Number" }]}
+              // rules={[{ required: true, message: "Enter Extension Number" }]}
             >
               <Input
                 className="contact_details_input"
@@ -213,7 +213,7 @@ function ContactDetails(props) {
                   name="emergencyContactName"
                   value={formValue.emergencyContactName}
                   onChange={handleChange}
-                  placeholder="Emergency Contact Name"
+                  placeholder="Contact Name"
                 />
               </Form.Item>{" "}
               {/* Emergency contact Number */}
@@ -237,7 +237,7 @@ function ContactDetails(props) {
                   name="emergencyContactPhone"
                   value={formValue.emergencyContactPhone}
                   onChange={handleChange}
-                  placeholder="Emergency Contact Number"
+                  placeholder="Contact Number"
                 />
               </Form.Item>{" "}
               {/* Emergency contact Relation */}
@@ -245,44 +245,59 @@ function ContactDetails(props) {
                 name="emergencyContactRelation"
                 label={
                   <span className="contact_details_input_label">
-                    {" "}
                     Relation with the contact
                   </span>
                 }
                 rules={[
                   {
                     required: true,
-                    message: "Enter Emergency contact relation",
+                    message: "Select Emergency contact relation",
                   },
                 ]}
               >
-                <Input
+                <Select
                   className="contact_details_input"
                   name="emergencyContactRelation"
                   value={formValue.emergencyContactRelation}
-                  onChange={handleChange}
-                  placeholder="Emergency Contact Relation"
-                />
-              </Form.Item>{" "}
+                  onChange={(value) =>
+                    handleChange({
+                      target: { name: "emergencyContactRelation", value },
+                    })
+                  }
+                  placeholder="Select Relation"
+                >
+                  {/* Common relations */}
+                  <Select.Option value="parent">Parent</Select.Option>
+                  <Select.Option value="sibling">Sibling</Select.Option>
+                  <Select.Option value="spouse">Spouse</Select.Option>
+                  <Select.Option value="child">Child</Select.Option>
+                  <Select.Option value="friend">Friend</Select.Option>
+                  <Select.Option value="relative">Relative</Select.Option>
+                  <Select.Option value="colleague">Colleague</Select.Option>
+                  <Select.Option value="guardian">Guardian</Select.Option>
+                  <Select.Option value="other">Other</Select.Option>
+                </Select>
+              </Form.Item>
             </div>
           </div>
           <div
             style={{
               display: "flex",
               justifyContent: "flex-end",
-              marginTop: "20px",
+              marginTop: "40px",
               gap: "20px",
             }}
           >
             <Button
               type="primary"
               style={{
-                width: "292px",
+                width: "200px",
                 backgroundColor: "#E0E5EB",
                 color: "#FFFFFF",
                 height: "50px",
                 borderRadius: "18px",
               }}
+              onClick={() => props.handleTabChange("1")}
             >
               Cancel
             </Button>{" "}
@@ -290,7 +305,7 @@ function ContactDetails(props) {
               type="primary"
               htmlType="submit"
               style={{
-                width: "292px",
+                width: "200px",
                 backgroundColor: "#007DC5",
                 color: "#FFFFFF",
                 height: "50px",

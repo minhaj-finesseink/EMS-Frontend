@@ -199,19 +199,20 @@ function AddressDetails(props) {
             style={{
               display: "flex",
               justifyContent: "flex-end",
-              marginTop: "100px",
+              marginTop: "80px",
               gap: "20px",
             }}
           >
             <Button
               type="primary"
               style={{
-                width: "292px",
+                width: "200px",
                 backgroundColor: "#E0E5EB",
                 color: "#FFFFFF",
                 height: "50px",
                 borderRadius: "18px",
               }}
+              onClick={() => props.handleTabChange("2")}
             >
               Cancel
             </Button>{" "}
@@ -219,7 +220,7 @@ function AddressDetails(props) {
               type="primary"
               htmlType="submit"
               style={{
-                width: "292px",
+                width: "200px",
                 backgroundColor: "#007DC5",
                 color: "#FFFFFF",
                 height: "50px",

@@ -21,6 +21,8 @@
     font-style: normal;
     font-weight: 500;
     line-height: normal;
+    display: flex;
+    gap: 20px;
 }
 
 .header_dropdown_down_iocn {
@@ -30,6 +32,20 @@
     color: #E6E6E6;
     font-size: 10px;
     padding: 5px;
+}
+
+.header_back_button_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.header_back_button_container:hover {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 767px) {
