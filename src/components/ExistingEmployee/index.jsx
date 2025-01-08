@@ -11,6 +11,7 @@ import {
   List,
   Modal,
   Select,
+  Spin,
   Switch,
 } from "antd";
 import PropTypes from "prop-types";
@@ -58,7 +59,7 @@ function ExistingEmployee(props) {
   const [selectedTimeOffId, setSelectedTimeOffId] = useState(null); // Selected policy ID
   const [policiesData, setPoliciesData] = useState([]); // Holds data for each policy
   const [userId, setUserId] = useState("");
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [usersList, setUsersList] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
 
@@ -75,7 +76,8 @@ function ExistingEmployee(props) {
   const [isCustomPolicyVisible, setIsCustompolicyVisible] = useState(false);
 
   const [selectedTimeOffDetails, setSelectedTimeOffDetails] = useState(null); // To store the full details
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [isEmailError, setIsEmailError] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
 
   useEffect(() => {
@@ -234,27 +236,70 @@ function ExistingEmployee(props) {
     }
   }, [props.generalTimeOffData.getGeneralTimeOffResponse]);
 
-  const handleSubmit = () => {
-    setLoading(true);
-    const payload = {
-      companyId: userInfo.companyId,
-      companyName: userInfo.companyName,
-      ...formValues,
-    };
-    props.addUser(payload);
+  const handleNextTab = () => {
+    setActiveTab("2"); // Navigate to Benefits tab on form submission
+    // setLoading(true);
+    // const payload = {
+    //   companyId: userInfo.companyId,
+    //   companyName: userInfo.companyName,
+    //   ...formValues,
+    // };
+    // props.addUser(payload);
   };
 
   useEffect(() => {
     if (props.userData.addUserResponse) {
       let data = props.userData.addUserResponse;
       if (data.success) {
-        setActiveTab("2"); // Navigate to Benefits tab on form submission
+        // setActiveTab("2"); // Navigate to Benefits tab on form submission
         setUserId(data.user._id);
-        setLoading(false);
-        toast.success(data.message);
+        // setLoading(false);
+        // toast.success(data.message);
+        const payload = {
+          companyId: data.user.companyId,
+          userId: data.user._id,
+          timeOff: policiesData.map((x) => {
+            let resetDate = "";
+            if (x.resetType === "monthly") {
+              // Get the last date of the current month
+              const now = new Date();
+              resetDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+                .toISOString()
+                .split("T")[0];
+            } else if (x.resetType === "yearly") {
+              // Set to 31st December of the current year
+              const now = new Date();
+              resetDate = new Date(now.getFullYear(), 11, 31)
+                .toISOString()
+                .split("T")[0];
+            }
+            return {
+              policyName: x.policyName,
+              policyCode: x.policyCode,
+              policyType: x.policyType,
+              units: x.units,
+              per: x.per,
+              creditsHours: x.creditsHours,
+              creditsUnits: x.creditsUnits,
+              carryForwardUnits: x.carryForwardUnits,
+              accuralUnits: x.accuralUnits,
+              EncashedUnusedLeaveUnits: x.EncashedUnusedLeaveUnits,
+              resetInd: x.resetInd,
+              resetType: x.resetType,
+              resetDate: resetDate, // Set dynamically
+            };
+          }),
+        };
+        props.addUserTimeOff(payload);
+        setIsEmailError(false);
       } else {
         toast.error(data.message);
-        setLoading(false);
+        setIsLoading(false);
+        setIsEmailError(true);
+        setTimeout(() => {
+          setActiveTab("1");
+          handleCancel();
+        }, 1000);
       }
     }
     props.userData.addUserResponse = null;
@@ -309,54 +354,62 @@ function ExistingEmployee(props) {
     );
   };
 
-  const handleSubmitTimeOff = () => {
+  const handleSubmit = () => {
+    // const payload = {
+    // companyId: userInfo.companyId,
+    // userId: userId,
+    // timeOff: policiesData.map((x) => {
+    //   let resetDate = "";
+    //   if (x.resetType === "monthly") {
+    //     // Get the last date of the current month
+    //     const now = new Date();
+    //     resetDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    //       .toISOString()
+    //       .split("T")[0];
+    //   } else if (x.resetType === "yearly") {
+    //     // Set to 31st December of the current year
+    //     const now = new Date();
+    //     resetDate = new Date(now.getFullYear(), 11, 31)
+    //       .toISOString()
+    //       .split("T")[0];
+    //   }
+    //   return {
+    //     policyName: x.policyName,
+    //     policyCode: x.policyCode,
+    //     policyType: x.policyType,
+    //     units: x.units,
+    //     per: x.per,
+    //     creditsHours: x.creditsHours,
+    //     creditsUnits: x.creditsUnits,
+    //     carryForwardUnits: x.carryForwardUnits,
+    //     accuralUnits: x.accuralUnits,
+    //     EncashedUnusedLeaveUnits: x.EncashedUnusedLeaveUnits,
+    //     resetInd: x.resetInd,
+    //     resetType: x.resetType,
+    //     resetDate: resetDate, // Set dynamically
+    //   };
+    // }),
+    // };
+    // // console.log("policy payload", payload);
+    // props.addUserTimeOff(payload);
+    setIsLoading(true);
     const payload = {
       companyId: userInfo.companyId,
-      userId: userId,
-      timeOff: policiesData.map((x) => {
-        let resetDate = "";
-        if (x.resetType === "monthly") {
-          // Get the last date of the current month
-          const now = new Date();
-          resetDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-            .toISOString()
-            .split("T")[0];
-        } else if (x.resetType === "yearly") {
-          // Set to 31st December of the current year
-          const now = new Date();
-          resetDate = new Date(now.getFullYear(), 11, 31)
-            .toISOString()
-            .split("T")[0];
-        }
-
-        return {
-          policyName: x.policyName,
-          policyCode: x.policyCode,
-          policyType: x.policyType,
-          units: x.units,
-          per: x.per,
-          creditsHours: x.creditsHours,
-          creditsUnits: x.creditsUnits,
-          carryForwardUnits: x.carryForwardUnits,
-          accuralUnits: x.accuralUnits,
-          EncashedUnusedLeaveUnits: x.EncashedUnusedLeaveUnits,
-          resetInd: x.resetInd,
-          resetType: x.resetType,
-          resetDate: resetDate, // Set dynamically
-        };
-      }),
+      companyName: userInfo.companyName,
+      ...formValues,
     };
-
-    // console.log("policy payload", payload);
-    props.addUserTimeOff(payload);
+    props.addUser(payload);
   };
 
   useEffect(() => {
     if (props.userTimeOffData.addUserTimeOffResponse) {
       let data = props.userTimeOffData.addUserTimeOffResponse;
       if (data.success) {
-        handleCancel();
-        props.existingEmployees(false);
+        setTimeout(() => {
+          handleCancel();
+          props.existingEmployees(false);
+          setIsLoading(false);
+        }, 1000);
       }
       props.userTimeOffData.addUserTimeOffResponse = null;
     }
@@ -384,7 +437,7 @@ function ExistingEmployee(props) {
       required: true,
     },
     {
-      id: "idNumber",
+      id: "employeeIdNumber",
       label: "Employee ID Number",
       type: "input",
       required: true,
@@ -586,7 +639,7 @@ function ExistingEmployee(props) {
           <Form
             form={form}
             layout="vertical"
-            onFinish={handleSubmit}
+            onFinish={handleNextTab}
             style={{ marginTop: "20px" }}
           >
             <div className="form-checkbox-button">
@@ -845,6 +898,14 @@ function ExistingEmployee(props) {
                         ]
                       : []
                   }
+                  validateStatus={
+                    field.id === "email" && isEmailError ? "error" : undefined
+                  }
+                  help={
+                    field.id === "email" && isEmailError
+                      ? "This email already exists"
+                      : undefined
+                  }
                 >
                   {field.type === "input" && (
                     <Input
@@ -1006,9 +1067,10 @@ function ExistingEmployee(props) {
                     borderRadius: "25px",
                   }}
                   className="existing_employee_buttons"
-                  loading={loading}
+                  // loading={loading}
                 >
-                  {loading ? "Continue ..." : "Continue"}
+                  {/* {loading ? "Continue ..." : "Continue"} */}
+                  Continue
                 </Button>
               </div>
             </div>
@@ -1320,7 +1382,7 @@ function ExistingEmployee(props) {
                                   <Form.Item
                                     label={
                                       <span className="policy-custom-label">
-                                        Carryforward Unused leave upto
+                                        Carry Forward Unused leave upto
                                       </span>
                                     }
                                   >
@@ -1379,7 +1441,7 @@ function ExistingEmployee(props) {
                                   <Form.Item
                                     label={
                                       <span className="policy-custom-label">
-                                        Maximum Anual Acrual limit
+                                        Maximum Annual Accrual Limit{" "}
                                       </span>
                                     }
                                   >
@@ -1435,7 +1497,7 @@ function ExistingEmployee(props) {
                                   <Form.Item
                                     label={
                                       <span className="policy-custom-label">
-                                        Cashout Unused Time limit
+                                        Cash out unused time
                                       </span>
                                     }
                                   >
@@ -1540,14 +1602,14 @@ function ExistingEmployee(props) {
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "center",
+                  justifyContent: "flex-end",
                   gap: "20px",
                   margin: "20px 0",
                 }}
               >
                 <Button
                   style={{
-                    width: "290px",
+                    width: "200px",
                     height: "50px",
                     backgroundColor: "#B1B1B1",
                     borderRadius: "22px",
@@ -1582,8 +1644,8 @@ function ExistingEmployee(props) {
                       style={{
                         display: "flex",
                         gap: "20px",
-                        width: "100%",
-                        marginTop: "20px",
+                        width: "85%",
+                        marginTop: "10px",
                       }}
                     >
                       <Button
@@ -1617,7 +1679,7 @@ function ExistingEmployee(props) {
                 </Modal>
                 <Button
                   style={{
-                    width: "290px",
+                    width: "200px",
                     height: "50px",
                     backgroundColor: "#0057FF",
                     borderRadius: "22px",
@@ -1634,59 +1696,61 @@ function ExistingEmployee(props) {
                   closable={false}
                   width={600}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      padding: "20px",
-                      gap: "20px",
-                    }}
-                  >
-                    <div>
-                      <img src={MailIcon} alt="Mail icon" />
-                    </div>
-                    <div>
-                      <div className="cancel_popup_title">
-                        An invitation will be send to
-                      </div>
-                      <div className="cancel_popup_desc">
-                        {formValues.email}
-                      </div>
-                    </div>
+                  <Spin spinning={isLoading}>
                     <div
                       style={{
                         display: "flex",
-                        flexDirection: "column-reverse",
-                        gap: "10px",
-                        width: "150px",
+                        justifyContent: "space-between",
+                        padding: "20px",
+                        gap: "20px",
                       }}
                     >
-                      <Button
+                      <div>
+                        <img src={MailIcon} alt="Mail icon" />
+                      </div>
+                      <div>
+                        <div className="cancel_popup_title">
+                          An invitation will be send to
+                        </div>
+                        <div className="cancel_popup_desc">
+                          {formValues.email}
+                        </div>
+                      </div>
+                      <div
                         style={{
-                          width: "100%",
-                          backgroundColor: "#C5CBD7",
-                          color: "#FFFFFF",
-                          borderRadius: "22px",
-                          height: "40px",
+                          display: "flex",
+                          flexDirection: "column-reverse",
+                          gap: "10px",
+                          width: "150px",
                         }}
-                        onClick={handleCancel}
                       >
-                        Cancel
-                      </Button>
-                      <Button
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#0057FF",
-                          color: "#FFFFFF",
-                          borderRadius: "22px",
-                          height: "40px",
-                        }}
-                        onClick={handleSubmitTimeOff}
-                      >
-                        Confirm
-                      </Button>
+                        <Button
+                          style={{
+                            width: "100%",
+                            backgroundColor: "#C5CBD7",
+                            color: "#FFFFFF",
+                            borderRadius: "22px",
+                            height: "40px",
+                          }}
+                          onClick={handleCancel}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          style={{
+                            width: "100%",
+                            backgroundColor: "#0057FF",
+                            color: "#FFFFFF",
+                            borderRadius: "22px",
+                            height: "40px",
+                          }}
+                          onClick={handleSubmit}
+                        >
+                          Confirm
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  </Spin>
                 </Modal>
               </div>
             </Layout>

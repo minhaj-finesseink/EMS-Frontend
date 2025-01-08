@@ -10,8 +10,8 @@ import {
   addEducation,
   getEducation,
 } from "../../redux/Education/education.action";
-import "./style.css";
 import toast from "react-hot-toast";
+import "./style.css";
 
 const { Option } = Select;
 
@@ -19,15 +19,15 @@ function EducationDetails(props) {
   const [form] = Form.useForm();
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [educationFields, setEducationFields] = useState([
-    {
-      id: Date.now(),
-      college: "",
-      degree: "",
-      specialization: "",
-      gpa: "",
-      startDate: null,
-      endDate: null,
-    },
+    // {
+    //   id: Date.now(),
+    //   college: "",
+    //   degree: "",
+    //   specialization: "",
+    //   gpa: "",
+    //   startDate: null,
+    //   endDate: null,
+    // },
   ]);
 
   const degrees = [
@@ -90,19 +90,24 @@ function EducationDetails(props) {
 
   // Handle form submission
   const handleSubmit = () => {
-    const payload = {
-      companyId: userInfo.companyId,
-      userId: userInfo._id,
-      education: educationFields.map((field) => ({
-        college: field.college,
-        degree: field.degree,
-        specialization: field.specialization,
-        gpa: field.gpa,
-        startDate: field.startDate ? field.startDate.toISOString() : "",
-        endDate: field.endDate ? field.endDate.toISOString() : "",
-      })),
-    };
-    props.addEducation(payload);
+    if (educationFields.length === 0) {
+      toast.error("Close");
+    } else {
+      const payload = {
+        companyId: userInfo.companyId,
+        userId: userInfo._id,
+        education: educationFields.map((field) => ({
+          college: field.college,
+          degree: field.degree,
+          specialization: field.specialization,
+          gpa: field.gpa,
+          startDate: field.startDate ? field.startDate.toISOString() : "",
+          endDate: field.endDate ? field.endDate.toISOString() : "",
+        })),
+      };
+      // Call the action to add education
+      props.addEducation(payload);
+    }
   };
 
   useEffect(() => {
@@ -307,19 +312,23 @@ function EducationDetails(props) {
                 </Form.Item>
               </div>
 
-              {educationFields.length > 1 && (
-                <div>
-                  <Button
-                    type="text"
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => removeEducationField(field.id)}
-                    style={{ marginBottom: "50px" }}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              )}
+              {/* {educationFields.length > 1 && ( */}
+              <div>
+                <Button
+                  type="primary"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => removeEducationField(field.id)}
+                  style={{
+                    marginBottom: "50px",
+                    width: "150px",
+                    height: "36px",
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+              {/* )} */}
             </div>
           ))}
           <Button

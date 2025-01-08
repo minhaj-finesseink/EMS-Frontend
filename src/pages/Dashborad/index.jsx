@@ -1,26 +1,27 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
-import { Layout, Button, Tabs, Drawer } from "antd";
+import { Layout, Drawer } from "antd";
 import { MenuUnfoldOutlined } from "@ant-design/icons";
 import SideBar from "../../components/sideBar";
 import HeaderBar from "../../components/header";
-import Activity from "../../components/activity";
-import Calender from "../../components/calender";
-import AccountSetup from "../../components/Account-setup";
-import GeneralTimeOff from "../../components/GeneralTimeOff";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import TabPane from "antd/es/tabs/TabPane";
-import PeronalDetails from "../../components/PeronalDetails";
-import ContactDetails from "../../components/ContactDetails";
-import AddressDetails from "../../components/AddressDetails";
-import EducationDetails from "../../components/EducationDetails";
-import ExistingEmployee from "../../components/ExistingEmployee";
-import OverviewCards from "../../components/OverviewCards";
-import AddExistingUser from "../../assets/add-existing-user.svg";
-import AddContactor from "../../assets/add-contactor.svg";
-import QuestionMark from "../../assets/question.svg";
+// import Activity from "../../components/activity";
+// import Calender from "../../components/calender";
+// import AccountSetup from "../../components/Account-setup";
+// import GeneralTimeOff from "../../components/GeneralTimeOff";
+// import TabPane from "antd/es/tabs/TabPane";
+// import PeronalDetails from "../../components/PeronalDetails";
+// import ContactDetails from "../../components/ContactDetails";
+// import AddressDetails from "../../components/AddressDetails";
+// import EducationDetails from "../../components/EducationDetails";
+// import ExistingEmployee from "../../components/ExistingEmployee";
+// import OverviewCards from "../../components/OverviewCards";
+// import AddExistingUser from "../../assets/add-existing-user.svg";
+// import AddContactor from "../../assets/add-contactor.svg";
+// import QuestionMark from "../../assets/question.svg";
+import OverView from "../OverviewPage";
 import "./style.css";
 
 const { Header, Sider, Content } = Layout;
@@ -34,24 +35,24 @@ const contentStyle = {
   color: "var(--text-color)",
 };
 
-function Dashboard(props) {
-  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+function Dashboard() {
+  // const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [showAddEmployees, setShowAddEmployees] = useState(false); // State to show/hide "Add Employees"
   const [leavePolicy, setLeavePolicy] = useState(false);
-  const [role, setRole] = useState("");
-  const [accountSetupComplete, setAccountSetupComplete] = useState(null); // Track active tab
-  const [addExistingEmployees, setAddExistingEmployees] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isTabView, setIsTabView] = useState(false); // Track if tablet view
   const [isDesktopView, setIsDesktopView] = useState(false); // Track if desktop view
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState("1"); // Track active tab
-  const [tabsDisabled, setTabsDisabled] = useState({
-    1: false,
-    2: true,
-    3: true,
-    4: true,
-  });
+  // const [role, setRole] = useState("");
+  // const [accountSetupComplete, setAccountSetupComplete] = useState(null); // Track active tab
+  // const [addExistingEmployees, setAddExistingEmployees] = useState(false);
+  // const [activeTab, setActiveTab] = useState("1"); // Track active tab
+  // const [tabsDisabled, setTabsDisabled] = useState({
+  // 1: false,
+  // 2: true,
+  // 3: true,
+  // 4: true,
+  // });
   const [profileComplete, setProfileComplete] = useState(false);
 
   useEffect(() => {
@@ -92,60 +93,60 @@ function Dashboard(props) {
     setDrawerVisible(!drawerVisible);
   };
 
-  useEffect(() => {
-    if (props.loginData.loginResponse) {
-      let data = props.loginData.loginResponse;
-      localStorage.setItem("userInfo", JSON.stringify(data.user));
-      setAccountSetupComplete(data.user.isSetupComplete);
-    } else if (props.userData.addUserResponse) {
-      let data = props.userData.addUserResponse;
-      if (data.user.role === "admin") {
-        localStorage.setItem("userInfo", JSON.stringify(data.user));
-        setAccountSetupComplete(data.user.isSetupComplete);
-      }
-    } else if (props.companyData.addCompanyResponse) {
-      let data = props.companyData.addCompanyResponse;
-      if (data.success) {
-        localStorage.setItem("userInfo", JSON.stringify(data.user));
-        setAccountSetupComplete(data.user.isSetupComplete);
-      }
-    } else if (userInfo) {
-      setAccountSetupComplete(userInfo.isSetupComplete);
-    }
-    props.loginData.loginResponse = null;
-    props.userData.addUserResponse = null;
-    // props.companyData.addCompanyResponse = null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    props.loginData.loginResponse,
-    props.userData.addUserResponse,
-    props.companyData.addCompanyResponse,
-    userInfo,
-  ]);
+  // useEffect(() => {
+  //   if (props.loginData.loginResponse) {
+  //     let data = props.loginData.loginResponse;
+  //     localStorage.setItem("userInfo", JSON.stringify(data.user));
+  //     setAccountSetupComplete(data.user.isSetupComplete);
+  //   } else if (props.userData.addUserResponse) {
+  //     let data = props.userData.addUserResponse;
+  //     if (data.user.role === "admin") {
+  //       localStorage.setItem("userInfo", JSON.stringify(data.user));
+  //       setAccountSetupComplete(data.user.isSetupComplete);
+  //     }
+  //   } else if (props.companyData.addCompanyResponse) {
+  //     let data = props.companyData.addCompanyResponse;
+  //     if (data.success) {
+  //       localStorage.setItem("userInfo", JSON.stringify(data.user));
+  //       setAccountSetupComplete(data.user.isSetupComplete);
+  //     }
+  //   } else if (userInfo) {
+  //     setAccountSetupComplete(userInfo.isSetupComplete);
+  //   }
+  //   props.loginData.loginResponse = null;
+  //   props.userData.addUserResponse = null;
+  //   // props.companyData.addCompanyResponse = null;
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [
+  //   props.loginData.loginResponse,
+  //   props.userData.addUserResponse,
+  //   props.companyData.addCompanyResponse,
+  //   userInfo,
+  // ]);
 
-  // New useEffect to fetch user info from localStorage
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-    if (userInfo) {
-      if (userInfo.role === "user") {
-        setRole("user");
-      } else {
-        setRole("admin");
-      }
-    }
-  }, []);
+  // // New useEffect to fetch user info from localStorage
+  // useEffect(() => {
+  //   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+  //   if (userInfo) {
+  //     if (userInfo.role === "user") {
+  //       setRole("user");
+  //     } else {
+  //       setRole("admin");
+  //     }
+  //   }
+  // }, []);
 
-  const handleTabChange = (key) => {
-    setActiveTab(key); // Update the active tab key
-  };
+  // const handleTabChange = (key) => {
+  //   setActiveTab(key); // Update the active tab key
+  // };
 
-  // Function to enable the next tab (to be called from child components)
-  const enableNextTab = (tabKey) => {
-    setTabsDisabled((prevState) => ({
-      ...prevState,
-      [tabKey]: false,
-    }));
-  };
+  // // Function to enable the next tab (to be called from child components)
+  // const enableNextTab = (tabKey) => {
+  //   setTabsDisabled((prevState) => ({
+  //     ...prevState,
+  //     [tabKey]: false,
+  //   }));
+  // };
 
   return (
     <Layout style={layoutStyle}>
@@ -185,7 +186,7 @@ function Dashboard(props) {
             onClose={toggleDrawer}
             visible={drawerVisible}
           >
-            <SideBar isDrawer={"drawer"} />
+            <SideBar isDrawer={"drawer"} /> 
           </Drawer>
         </>
       )}
@@ -207,7 +208,7 @@ function Dashboard(props) {
           />
         </Header>
         <Content style={contentStyle}>
-          <div
+          {/* <div
             className="dashboard_content_container"
             style={{ width: "100%", display: "flex" }}
           >
@@ -360,37 +361,11 @@ function Dashboard(props) {
                         </div>
                       </div>
                     </div>
-                    {/* <div style={{ marginTop: "50px" }}>
-                      <Button
-                        className="create_employee_back_button"
-                        onClick={() => {
-                          setShowAddEmployees(false);
-                        }}
-                      >
-                        Back
-                      </Button>
-                    </div> */}
                   </div>
                 )
               ) : leavePolicy ? (
                 <div style={{ padding: "20px" }}>
                   <GeneralTimeOff />
-                  {/* <div>
-                    <Button
-                      type="primary"
-                      onClick={() => setLeavePolicy(false)}
-                      style={{
-                        backgroundColor: "#1890ff",
-                        borderColor: "#1890ff",
-                        color: "#fff",
-                        width: "100px",
-                        marginTop: "20px",
-                        marginLeft: "20px",
-                      }}
-                    >
-                      Back1
-                    </Button>
-                  </div> */}
                 </div>
               ) : (
                 <div>
@@ -419,7 +394,15 @@ function Dashboard(props) {
                   <Calender />
                 </div>
               )}
-          </div>
+          </div> */}
+          <OverView
+            profileComplete={profileComplete}
+            setProfileComplete={setProfileComplete}
+            showAddEmployees={showAddEmployees}
+            setShowAddEmployees={setShowAddEmployees}
+            leavePolicy={leavePolicy}
+            setLeavePolicy={setLeavePolicy}
+          />
         </Content>
       </Layout>
     </Layout>

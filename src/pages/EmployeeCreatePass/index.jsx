@@ -150,7 +150,7 @@ const SetNewPasswordPage = (props) => {
 
             <Form.Item
               name="confirmPassword"
-              label={<span className="new_user_label">confirm Password</span>}
+              label={<span className="new_user_label">Confirm Password</span>}
               rules={[
                 {
                   required: true,

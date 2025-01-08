@@ -8,6 +8,17 @@ body,
   padding: 0;
 }
 
+/* Apply Inter font to the entire table */
+.ant-table {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Apply Inter font to all table headers and data cells */
+.ant-table th,
+.ant-table td {
+  font-family: 'Inter', sans-serif;
+}
+
 /* Define CSS variables for light and dark themes */
 :root {
   --light-background-color: #ffffff;
@@ -42,5 +53,6 @@ body {
 body.dark-theme .ant-btn,
 body.dark-theme .ant-menu-item {
   background-color: #333333;
-  color: var(--text-color); /* Use text color variable */
+  color: var(--text-color);
+  /* Use text color variable */
 }

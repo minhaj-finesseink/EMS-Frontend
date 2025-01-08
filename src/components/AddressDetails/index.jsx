@@ -114,7 +114,7 @@ function AddressDetails(props) {
               label={
                 <span className="address_details_input_label">Address 2</span>
               }
-              rules={[{ required: true, message: "Enter Address 2" }]}
+              // rules={[{ required: true, message: "Enter Address 2" }]}
             >
               <Input
                 className="address_details_input"

@@ -1,0 +1,104 @@
+/* Sidebar container */
+.sidebar-container {
+    padding: 20px;
+    font-family: Inter;
+    border-right: 1px solid #e6e6e6;
+    height: 100vh;
+    background-color: var(--background-color);
+    transition: width 0.3s ease;
+}
+
+/* Sidebar collapse icon */
+.sidebar_collapse_icon {
+    padding: 5px;
+    border-radius: 8px;
+    color: #a9a2a2;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Section title */
+.section-title {
+    color: #7F8FA6;
+    font-family: Inter;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Menu item container */
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Hover and selected effect */
+.menu-item:hover,
+.menu-item.selected {
+    color: #007dc5;
+    font-weight: bold;
+    transform: translateX(5px);
+}
+
+/* Icon in menu item */
+.menu-icon {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #7F8FA6;
+}
+
+/* Menu text */
+.menu-text {
+    font-size: 18px;
+    color: #7F8FA6;
+}
+
+/* Selected item */
+.menu-item.selected .menu-icon,
+.menu-item.selected .menu-text {
+    color: #007dc5 !important;
+}
+
+/* Hover effect for both icon and text */
+.menu-item:hover .menu-icon,
+.menu-item:hover .menu-text {
+    color: #007dc5;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .sidebar-container {
+        padding: 0;
+        border: 0;
+    }
+
+    /* Adjust text size on smaller screens */
+    .menu-text {
+        font-size: 14px;
+    }
+
+    /* Handle collapsed sidebar items */
+    .sidebar-container.collapsed {
+        width: 60px; /* Collapsed width */
+    }
+
+    /* Hide menu text when collapsed */
+    .sidebar-container.collapsed .menu-text {
+        display: none;
+    }
+
+    /* Adjust icon size in collapsed state */
+    .sidebar-container.collapsed .menu-icon {
+        font-size: 20px;
+    }
+
+    /* Hide section titles when collapsed */
+    .sidebar-container.collapsed .section-title {
+        display: none;
+    }
+}
