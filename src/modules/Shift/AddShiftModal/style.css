@@ -1,0 +1,64 @@
+.add-shift-reporting-period {
+    display: flex;
+    padding: 10px;
+    gap: 20px;
+    border: 1px solid #ddd;
+    border-radius: 18px;
+    margin-bottom: 35px;
+}
+
+.day-selector {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    gap: 10px;
+    max-width: 240px;
+    margin-top: 30px;
+}
+
+.day-button {
+    width: 38px;
+    height: 38px;
+    text-align: center;
+    padding: 0;
+    border: 1px solid #d9d9d9;
+}
+
+.day-button:hover {
+    background-color: #1890ff;
+    color: white;
+    border-color: #1890ff;
+}
+
+.add-shift-modal-input {
+    height: 38px;
+    border-radius: 18px;
+    color: var(--Type-Light, #89868D);
+    font-family: Inter;
+    font-size: 14.22px;
+}
+
+.add-shift-button {
+    height: 50px;
+    width: 166px;
+    border-radius: 28px;
+    /* background-color: #007DC5; */
+    font-size: 16px;
+}
+
+.delete-shift-modal-text {
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+.delete-shift-modal-content {
+    /* padding: 20px; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}

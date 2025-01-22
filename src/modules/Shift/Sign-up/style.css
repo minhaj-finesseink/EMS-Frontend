@@ -1,0 +1,66 @@
+.shift-sign-up-container {
+    display: flex;
+}
+
+.shift-sign-up-image-section {
+    width: 47%;
+    background: #15273A;
+}
+
+.shift-sign-up-image-section-conatiner {
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.shift-sign-up-logo-with-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.shift-sign-up-title {
+    color: var(--d-9-d-9-d-9, #E0E5EB);
+    font-family: Inter;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.shift-sign-up-image-container {
+    display: flex;
+    justify-content: center;
+}
+
+.shift-sign-up-image {
+    width: 80%;
+    border-radius: 38px;
+    height: 400px;
+}.shift-sign-up-form-section{width: 53%;
+    padding: 100px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    height: 100vh;}.shift-sign-up-form-title-desc{   display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;}.shift-sign-up-form-title {
+            color: var(--Greyscale-900, #121A26);
+            font-family: Inter;
+            font-size: 32px;
+            font-style: normal;
+            font-weight: 700;
+        }
+        
+        .shift-sign-up-form-desc {
+            color: rgba(64, 64, 64, 0.82);
+            font-family: Inter;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 300;
+        }

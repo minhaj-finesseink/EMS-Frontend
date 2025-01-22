@@ -8,6 +8,8 @@ import ResetPassword from "./components/ResetPassword";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import PrivateRoute from "./components/PrivateRoute/privateRoute";
+import ShiftSignIn from "./modules/Shift/Sign-in";
+import ShiftSignUp from "./modules/Shift/Sign-up";
 
 function App() {
   return (
@@ -21,6 +23,9 @@ function App() {
           path="/setup-password/:token"
           element={<EmployeeCreatePass />}
         ></Route>
+        {/* Shift Module Routes */}
+        <Route path="/shift-sign-in" element={<ShiftSignIn />} />
+        <Route path="/shift-sign-up" element={<ShiftSignUp />} />
         {/* Protected Route */}
         <Route
           path="/admin-dashboard"

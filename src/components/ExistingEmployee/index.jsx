@@ -33,33 +33,10 @@ function ExistingEmployee(props) {
   const [form] = Form.useForm();
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [activeTab, setActiveTab] = useState("1"); // Track active tab
-  const [formValues, setFormValues] = useState({
-    // employementType: "",
-    // firstName: "",
-    // middleName: "",
-    // lastName: "",
-    // employmentStartDate: "",
-    // dob: "",
-    // sex: "",
-    // idNumber: "",
-    // phoneNumber: "",
-    // email: "",
-    // address1: "",
-    // address2: "",
-    // country: "",
-    // state: "",
-    // city: "",
-    // zip: "",
-    // jobTitle: "",
-    // employeeShift: "",
-    // department: "",
-    // reporting: "",
-  });
+  const [formValues, setFormValues] = useState({});
   const [timeOffList, setTimeOffList] = useState([]); // Time-off policies list
   const [selectedTimeOffId, setSelectedTimeOffId] = useState(null); // Selected policy ID
   const [policiesData, setPoliciesData] = useState([]); // Holds data for each policy
-  const [userId, setUserId] = useState("");
-  // const [loading, setLoading] = useState(false);
   const [usersList, setUsersList] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
 
@@ -129,16 +106,6 @@ function ExistingEmployee(props) {
     form.setFieldsValue({ employmentType: value });
   };
 
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   console.log("name-", name, "value-", value);
-
-  //   setFormValues({
-  //     ...formValues,
-  //     [name]: value,
-  //   });
-  // };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevValues) => ({
@@ -161,30 +128,6 @@ function ExistingEmployee(props) {
     }));
   };
 
-  // const handleSelectChange = (value, fieldName) => {
-  //   setFormValues({
-  //     ...formValues,
-  //     [fieldName]: value,
-  //   });
-
-  //   switch (value) {
-  //     case "monthly":
-  //       // setResetValue("On last day of month");
-  //       break;
-  //     case "yearly":
-  //       // setResetValue("On 31st on Dec");
-  //       break;
-  //     default:
-  //   }
-  // };
-
-  // const handleDateChange = (date, dateString, fieldName) => {
-  //   setFormValues({
-  //     ...formValues,
-  //     [fieldName]: dateString,
-  //   });
-  // };
-
   useEffect(() => {
     props.getGeneralTimeOff(userInfo.companyId);
     props.getUserByCompanyId(userInfo.companyId);
@@ -195,7 +138,6 @@ function ExistingEmployee(props) {
     if (props.userData.getUserByCompanyIdResponse) {
       let data = props.userData.getUserByCompanyIdResponse;
       if (data.success) {
-        // console.log("user by company id", data.users);
         setUsersList(data.users);
       }
     }
@@ -213,7 +155,6 @@ function ExistingEmployee(props) {
           units: policy.units,
           per: policy.per,
         }));
-        // console.log("Extracted Policies:", policies);
         setTimeOffList(policies); // Set the time-off policies to state
         setSelectedTimeOffId(policies[0]?.code); // Set the first policy as selected by default
         setPoliciesData(
@@ -238,23 +179,72 @@ function ExistingEmployee(props) {
 
   const handleNextTab = () => {
     setActiveTab("2"); // Navigate to Benefits tab on form submission
-    // setLoading(true);
-    // const payload = {
-    //   companyId: userInfo.companyId,
-    //   companyName: userInfo.companyName,
-    //   ...formValues,
-    // };
-    // props.addUser(payload);
+  };
+
+  useEffect(() => {
+    if (props.generalTimeOffData.addGeneralTimeOffResponse) {
+      let data = props.generalTimeOffData.addGeneralTimeOffResponse;
+      if (data.success) {
+        props.getGeneralTimeOff(userInfo.companyId);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.generalTimeOffData.addGeneralTimeOffResponse]);
+
+  const handleSelectTimeOff = (timeOffId) => {
+    setSelectedTimeOffId(timeOffId); // Update selected policy
+    // Find the full details of the selected time-off
+    const selectedDetails = timeOffList.find(
+      (timeOff) => timeOff.code === timeOffId
+    );
+    setSelectedTimeOffDetails(selectedDetails); // Save the details in state
+  };
+
+  // Function to handle input changes for policiesData
+  const handleChangePolicy = (key, value, index) => {
+    setPoliciesData((prevPolicies) =>
+      prevPolicies.map((policy, i) =>
+        i === index
+          ? {
+              ...policy,
+              [key]: value, // Update the credits field for the matching index
+            }
+          : policy
+      )
+    );
+  };
+
+  // Function to handle select changes for policiesData
+  const handleSelectChangePolicy = (value, index, field) => {
+    setPoliciesData((prevPolicies) =>
+      prevPolicies.map((policy, i) =>
+        i === index
+          ? {
+              ...policy,
+              [field]: value, // Update the specified field for the matching index
+            }
+          : policy
+      )
+    );
+  };
+
+  const handleSubmit = () => {
+    setIsLoading(true);
+    const payload = {
+      companyId: userInfo.companyId,
+      companyName: userInfo.companyName,
+      ...formValues,
+      ...(props.module === "shift" && { isShiftActive: true }), // Spread conditionally
+    };
+    props.addUser(payload);
   };
 
   useEffect(() => {
     if (props.userData.addUserResponse) {
       let data = props.userData.addUserResponse;
+      console.log("data", data);
       if (data.success) {
-        // setActiveTab("2"); // Navigate to Benefits tab on form submission
-        setUserId(data.user._id);
-        // setLoading(false);
-        // toast.success(data.message);
+        console.log("1");
         const payload = {
           companyId: data.user.companyId,
           userId: data.user._id,
@@ -293,6 +283,7 @@ function ExistingEmployee(props) {
         props.addUserTimeOff(payload);
         setIsEmailError(false);
       } else {
+        console.log("2");
         toast.error(data.message);
         setIsLoading(false);
         setIsEmailError(true);
@@ -302,104 +293,15 @@ function ExistingEmployee(props) {
         }, 1000);
       }
     }
-    props.userData.addUserResponse = null;
+    // props.userData.addUserResponse = null;
+    // Cleanup function to reset addUserResponse
+    return () => {
+      props.userData.addUserResponse = null;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.addUserResponse]);
 
-  useEffect(() => {
-    if (props.generalTimeOffData.addGeneralTimeOffResponse) {
-      let data = props.generalTimeOffData.addGeneralTimeOffResponse;
-      if (data.success) {
-        props.getGeneralTimeOff(userInfo.companyId);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.generalTimeOffData.addGeneralTimeOffResponse]);
-
-  const handleSelectTimeOff = (timeOffId) => {
-    // console.log("timeOffId", timeOffId);
-    setSelectedTimeOffId(timeOffId); // Update selected policy
-    // Find the full details of the selected time-off
-    const selectedDetails = timeOffList.find(
-      (timeOff) => timeOff.code === timeOffId
-    );
-    setSelectedTimeOffDetails(selectedDetails); // Save the details in state
-  };
-
-  // Function to handle input changes for policiesData
-  const handleChangePolicy = (key, value, index) => {
-    setPoliciesData((prevPolicies) =>
-      prevPolicies.map((policy, i) =>
-        i === index
-          ? {
-              ...policy,
-              [key]: value, // Update the credits field for the matching index
-            }
-          : policy
-      )
-    );
-  };
-
-  // Function to handle select changes for policiesData
-  const handleSelectChangePolicy = (value, index, field) => {
-    setPoliciesData((prevPolicies) =>
-      prevPolicies.map((policy, i) =>
-        i === index
-          ? {
-              ...policy,
-              [field]: value, // Update the specified field for the matching index
-            }
-          : policy
-      )
-    );
-  };
-
-  const handleSubmit = () => {
-    // const payload = {
-    // companyId: userInfo.companyId,
-    // userId: userId,
-    // timeOff: policiesData.map((x) => {
-    //   let resetDate = "";
-    //   if (x.resetType === "monthly") {
-    //     // Get the last date of the current month
-    //     const now = new Date();
-    //     resetDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    //       .toISOString()
-    //       .split("T")[0];
-    //   } else if (x.resetType === "yearly") {
-    //     // Set to 31st December of the current year
-    //     const now = new Date();
-    //     resetDate = new Date(now.getFullYear(), 11, 31)
-    //       .toISOString()
-    //       .split("T")[0];
-    //   }
-    //   return {
-    //     policyName: x.policyName,
-    //     policyCode: x.policyCode,
-    //     policyType: x.policyType,
-    //     units: x.units,
-    //     per: x.per,
-    //     creditsHours: x.creditsHours,
-    //     creditsUnits: x.creditsUnits,
-    //     carryForwardUnits: x.carryForwardUnits,
-    //     accuralUnits: x.accuralUnits,
-    //     EncashedUnusedLeaveUnits: x.EncashedUnusedLeaveUnits,
-    //     resetInd: x.resetInd,
-    //     resetType: x.resetType,
-    //     resetDate: resetDate, // Set dynamically
-    //   };
-    // }),
-    // };
-    // // console.log("policy payload", payload);
-    // props.addUserTimeOff(payload);
-    setIsLoading(true);
-    const payload = {
-      companyId: userInfo.companyId,
-      companyName: userInfo.companyName,
-      ...formValues,
-    };
-    props.addUser(payload);
-  };
+  // console.log("props.userData", props.userData);
 
   useEffect(() => {
     if (props.userTimeOffData.addUserTimeOffResponse) {
@@ -408,6 +310,8 @@ function ExistingEmployee(props) {
         setTimeout(() => {
           handleCancel();
           props.existingEmployees(false);
+          //closing from shift
+          props.addIndividualMember(false);
           setIsLoading(false);
         }, 1000);
       }
@@ -494,21 +398,6 @@ function ExistingEmployee(props) {
     },
   ]);
 
-  // // Dynamically add predefined options to fields and initialize formValues
-  // useEffect(() => {
-  //   // Merge fields and predefined options
-  //   const allFields = [...fields, ...predefinedOptions];
-
-  //   // Initialize formValues with empty strings for each field
-  //   const initialFormValues = allFields.reduce((acc, field) => {
-  //     acc[field.id] = ""; // Default value for all fields
-  //     return acc;
-  //   }, {});
-
-  //   setFields(allFields);
-  //   setFormValues(initialFormValues);
-  // }, []);
-
   useEffect(() => {
     // Filter to include only the predefined fields that are currently selected in 'fields'
     const selectedPredefinedFields = predefinedOptions.filter(
@@ -541,14 +430,6 @@ function ExistingEmployee(props) {
     setFields(reorderedFields);
   };
 
-  // Handle adding new fields from dropdown
-  // const handleAddField = (value) => {
-  //   const fieldToAdd = predefinedOptions.find((field) => field.id === value);
-  //   if (fieldToAdd && !fields.some((field) => field.id === fieldToAdd.id)) {
-  //     setFields([...fields, fieldToAdd]);
-  //   }
-  // };
-
   const handleAddField = (value) => {
     const fieldToAdd = predefinedOptions.find((field) => field.id === value);
 
@@ -565,20 +446,6 @@ function ExistingEmployee(props) {
       }));
     }
   };
-
-  // Handle value changes
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormValues({ ...formValues, [name]: value });
-  // };
-
-  // const handleDateChange = (date, dateString, name) => {
-  //   setFormValues({ ...formValues, [name]: dateString });
-  // };
-
-  // const handleSelectChange = (value, name) => {
-  //   setFormValues({ ...formValues, [name]: value });
-  // };
 
   return (
     <div className="existing-employee-container">
@@ -691,196 +558,8 @@ function ExistingEmployee(props) {
               </div>
             </div>
 
-            {/* <div className="existing_employee_form_container">
-              <Form.Item
-                name="firstName"
-                label={
-                  <span className="employee-custom-label">First Name</span>
-                }
-                rules={[
-                  {
-                    required: true,
-                    message: "Enter employee first name",
-                  },
-                ]}
-              >
-                <Input
-                  className="employee-input"
-                  name="firstName"
-                  value={formValues.firstName}
-                  onChange={handleChange}
-                  placeholder="Enter first name"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="middleName"
-                label={
-                  <span className="employee-custom-label">Middle Name</span>
-                }
-              >
-                <Input
-                  className="employee-input"
-                  name="middleName"
-                  value={formValues.middleName}
-                  onChange={handleChange}
-                  placeholder="Enter middle name"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="lastName"
-                label={<span className="employee-custom-label">Last Name</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Employee last name",
-                  },
-                ]}
-              >
-                <Input
-                  className="employee-input"
-                  name="lastName"
-                  value={formValues.lastName}
-                  onChange={handleChange}
-                  placeholder="Enter last name"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="phoneNumber"
-                label={<span className="employee-custom-label">Phone</span>}
-                rules={[
-                  {
-                    pattern: /^[0-9]{10,15}$/, // Allows only digits with a length of 10 to 15
-                    message: "Enter a valid phone number (10-15 digits)",
-                  },
-                ]}
-              >
-                <Input
-                  className="employee-input"
-                  name="phoneNumber"
-                  value={formValues.phoneNumber}
-                  onChange={handleChange}
-                  placeholder="Phone"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="email"
-                label={<span className="employee-custom-label">Email</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Enter employee email",
-                  },
-                ]}
-              >
-                <Input
-                  className="employee-input"
-                  name="email"
-                  value={formValues.email}
-                  onChange={handleChange}
-                  placeholder="Email"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="employmentStartDate"
-                label={
-                  <span className="employee-custom-label">
-                    Employment Start Date
-                  </span>
-                }
-                rules={[
-                  {
-                    required: true,
-                    message: "Enter employee start date",
-                  },
-                ]}
-              >
-                <DatePicker
-                  className="employee-input"
-                  name="employementStartDate"
-                  value={formValues.employmentStartDate}
-                  onChange={(date, dateString) =>
-                    handleDateChange(date, dateString, "employmentStartDate")
-                  }
-                  placeholder="Select start date"
-                  style={{ width: "100%" }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="idNumber"
-                label={
-                  <span className="employee-custom-label">
-                    Employee ID Number
-                  </span>
-                }
-                rules={[
-                  {
-                    required: true,
-                    message: "Enter employee ID number",
-                  },
-                ]}
-              >
-                <Input
-                  className="employee-input"
-                  name="idNumber"
-                  value={formValues.idNumber}
-                  onChange={handleChange}
-                  placeholder="ID number"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="jobTitle"
-                label={<span className="employee-custom-label">Job Title</span>}
-              >
-                <Input
-                  className="employee-input"
-                  name="jobTitle"
-                  value={formValues.address}
-                  onChange={handleChange}
-                  placeholder="Job Title"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="reporting"
-                label={
-                  <span className="employee-custom-label">
-                    Employee reporting to
-                  </span>
-                }
-              >
-                <Select
-                  className="employee-input"
-                  value={formValues.department}
-                  onChange={(value) => handleSelectChange(value, "reporting")}
-                  placeholder="Select reporter"
-                >
-                  {usersList.map((user) => (
-                    <Select.Option key={user._id} value={user._id}>
-                      {`${user.firstName} ${user.middleName || ""} ${
-                        user.lastName
-                      }`.trim()}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </div> */}
             {/* Main Form */}
             <div className="existing_employee_form_container">
-              {/* <Form
-                layout="vertical"
-                style={{
-                  display: "grid",
-                  gap: "0 30px",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                }}
-              > */}
               {fields.map((field) => (
                 <Form.Item
                   key={field.id}
@@ -1053,7 +732,10 @@ function ExistingEmployee(props) {
                       "0px 2.757px 0.919px -1.838px rgba(0, 0, 0, 0.20), 0px 1.838px 1.838px 0px rgba(0, 0, 0, 0.14), 0px 0.919px 4.595px 0px rgba(0, 0, 0, 0.12)",
                   }}
                   className="existing_employee_buttons"
-                  onClick={() => props.existingEmployees(false)}
+                  onClick={() => {
+                    // props.existingEmployees(false);
+                    props.addIndividualMember(false);
+                  }}
                 >
                   Cancel
                 </Button>
@@ -1190,7 +872,6 @@ function ExistingEmployee(props) {
                   visible={isCustomPolicyVisible}
                   footer={null}
                   width={"80%"}
-                  // style={{ top: "20px" }}
                   onCancel={() => setIsCustompolicyVisible(false)}
                 >
                   <div style={{ padding: "10px" }}>
@@ -1303,7 +984,7 @@ function ExistingEmployee(props) {
                                 <Form.Item
                                   label={
                                     <span className="policy-custom-label">
-                                      Credit hours
+                                      Credit {policy.units}
                                     </span>
                                   }
                                   style={{ marginRight: "20px" }}
@@ -1311,7 +992,7 @@ function ExistingEmployee(props) {
                                   <Input
                                     className="leave-policy-input"
                                     value={policiesData[index]?.creditsHours}
-                                    placeholder="0.00 hours"
+                                    placeholder={`0.00 ${policy.units.toLowerCase()}`}
                                     onChange={(e) =>
                                       handleChangePolicy(
                                         "creditsHours",
@@ -1321,29 +1002,6 @@ function ExistingEmployee(props) {
                                     }
                                   />
                                 </Form.Item>
-                                {/* <Form.Item
-                                  label={
-                                    <span className="policy-custom-label">
-                                      Units
-                                    </span>
-                                  }
-                                >
-                                  <Input
-                                    style={{
-                                      width: !isMobileView ? "136px" : "", border:0
-                                    }}
-                                    className="leave-policy-input"
-                                    value={policiesData[index]?.units}
-                                    // placeholder="Hours"
-                                    onChange={(e) =>
-                                      handleChangePolicy(
-                                        "creditsUnits",
-                                        e.target.value,
-                                        index
-                                      )
-                                    }
-                                  />
-                                </Form.Item> */}
                                 <div
                                   className="policy-custom-label hours-div"
                                   style={{
@@ -1352,7 +1010,7 @@ function ExistingEmployee(props) {
                                     alignItems: "center",
                                   }}
                                 >
-                                  {policiesData[index]?.units}
+                                  {policy.units}
                                 </div>
                               </div>
 
@@ -1388,7 +1046,7 @@ function ExistingEmployee(props) {
                                   >
                                     <Input
                                       className="leave-policy-input"
-                                      placeholder="0.00 hours"
+                                      placeholder={`0.00 ${policy.units.toLowerCase()}`}
                                       disabled={!switchStates.carryforward}
                                       onChange={(e) =>
                                         handleChangePolicy(
@@ -1410,7 +1068,7 @@ function ExistingEmployee(props) {
                                       alignItems: "center",
                                     }}
                                   >
-                                    Hours
+                                    {policy.units}
                                   </div>
                                 </div>
                               </div>
@@ -1447,7 +1105,7 @@ function ExistingEmployee(props) {
                                   >
                                     <Input
                                       className="leave-policy-input"
-                                      placeholder="0.00 hours"
+                                      placeholder={`0.00 ${policy.units.toLowerCase()}`}
                                       disabled={!switchStates.accrualLimit}
                                       onChange={(e) =>
                                         handleChangePolicy(
@@ -1467,7 +1125,7 @@ function ExistingEmployee(props) {
                                       alignItems: "center",
                                     }}
                                   >
-                                    Hours
+                                    {policy.units}
                                   </div>
                                 </div>
                               </div>
@@ -1497,13 +1155,13 @@ function ExistingEmployee(props) {
                                   <Form.Item
                                     label={
                                       <span className="policy-custom-label">
-                                        Cash out unused time
+                                        Cash out unused time upto
                                       </span>
                                     }
                                   >
                                     <Input
                                       className="leave-policy-input"
-                                      placeholder="0.00 hours"
+                                      placeholder={`0.00 ${policy.units.toLowerCase()}`}
                                       disabled={!switchStates.cashoutLimit}
                                       onChange={(e) =>
                                         handleChangePolicy(
@@ -1526,7 +1184,7 @@ function ExistingEmployee(props) {
                                       alignItems: "center",
                                     }}
                                   >
-                                    Hours
+                                    {policy.units}
                                   </div>
                                 </div>
                               </div>
@@ -1620,7 +1278,6 @@ function ExistingEmployee(props) {
                   Cancel
                 </Button>
                 <Modal
-                  // title="Confirm Cancel"
                   visible={isCancelModalVisible}
                   onCancel={handleCancel}
                   footer={null}

@@ -8,6 +8,7 @@ import visaReducer from './Visa/visa.reducer';
 import generalTimeOffReducer from './GeneralTimeOff/generalTimeOff.reducer';
 import userReducer from './User/user.reducer'
 import userTimeOffReducer from './UserTimeOff/userTimeOff.reducer';
+import shiftReducer from './ShiftAPIs/Shift/shift.reducer';
 
 const rootReducer = combineReducers({
   login: loginReducer,
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   education: educationReducer,
   visa: visaReducer,
   generalTimeOff: generalTimeOffReducer,
-  userTimeOff: userTimeOffReducer
+  userTimeOff: userTimeOffReducer,
+  shift:shiftReducer
 });
 
 export default rootReducer;

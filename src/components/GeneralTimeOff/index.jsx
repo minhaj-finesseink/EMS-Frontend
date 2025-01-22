@@ -257,8 +257,8 @@ const GeneralTimeOff = (props) => {
             }}
             placeholder="Select units per"
           >
-            <Select.Option value="Monthly">Monthly</Select.Option>
-            <Select.Option value="Yearly">Yearly</Select.Option>
+            <Select.Option value="Month">Month</Select.Option>
+            <Select.Option value="Year">Year</Select.Option>
           </Select>
         ) : (
           <div

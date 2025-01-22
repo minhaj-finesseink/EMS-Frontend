@@ -63,22 +63,22 @@ function AddEmployee(props) {
     });
   };
 
-  useEffect(() => {
-    if (props.userData.addUserResponse) {
-      const response = props.userData.addUserResponse;
-      if (response.success) {
-        // Show success message
-        toast.success("Employee added successfully");
-        setTimeout(() => {
-          props.onClose();
-        }, 3000);
-      } else {
-        toast.error(response.message || "Failed to add employee");
-      }
-      props.userData.addUserResponse = null;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.userData.addUserResponse, props.onClose]);
+  // useEffect(() => {
+  //   if (props.userData.addUserResponse) {
+  //     const response = props.userData.addUserResponse;
+  //     if (response.success) {
+  //       // Show success message
+  //       toast.success("Employee added successfully");
+  //       setTimeout(() => {
+  //         props.onClose();
+  //       }, 3000);
+  //     } else {
+  //       toast.error(response.message || "Failed to add employee");
+  //     }
+  //     props.userData.addUserResponse = null;
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [props.userData.addUserResponse, props.onClose]);
 
   useEffect(() => {
     props.getDepartment(userInfo._id);

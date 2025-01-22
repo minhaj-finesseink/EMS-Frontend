@@ -8,6 +8,7 @@ import visaEpic from './Visa/visa.epic';
 import generalTimeOffEpic from './GeneralTimeOff/generalTimeOff.epic';
 import UserEpic from './User/user.epic';
 import userTimeOffEpic from './UserTimeOff/userTimeOff.epic';
+import ShiftEpic from './ShiftAPIs/Shift/shift.epic';
 
 const rootEpic = combineEpics(
   LoginEpic.login,
@@ -29,6 +30,10 @@ const rootEpic = combineEpics(
   generalTimeOffEpic.addGeneralTimeOff,
   generalTimeOffEpic.getGeneralTimeOff,
   userTimeOffEpic.addUserTimeOff,
+  ShiftEpic.addShift,
+  ShiftEpic.getAllShift,
+  ShiftEpic.deleteShiftById,
+  ShiftEpic.updateShiftById
 );
 
 export default rootEpic;

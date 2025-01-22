@@ -1,0 +1,373 @@
+    .shift-calendar-container {
+        padding: 20px 40px;
+    }
+
+    .calendar-title {
+        color: #696666;
+        font-family: Inter;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .calendar-desc {
+        color: var(--Greys-Blue-Grey-700, #737791);
+        font-family: Inter;
+        font-size: 14.4px;
+        font-style: normal;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .calendar-header-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 50px;
+    }
+
+    .toggle-buttons {
+        border: 1px solid #ddd;
+        height: 48px;
+        border-radius: 8px;
+        align-items: center;
+        display: flex;
+        padding: 10px;
+    }
+
+    .toggle-btn {
+        border: 0;
+        width: 100px;
+    }
+
+    .shift-add-employee-button {
+        border-radius: 10px;
+        border: 1px solid rgba(22, 21, 28, 0.20);
+        background: #009A4E;
+        color: #FFFFFF;
+        padding: 10px !important;
+    }
+
+    .calendar-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .calendar-filter-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .shift-filter-buttons-container {
+        gap: 20px;
+        display: flex;
+    }
+
+    .shift-filter-button {
+        border-radius: 10px;
+        border: 1px solid rgba(22, 21, 28, 0.20);
+        background: #F5FAFD;
+        padding: 20px !important;
+    }
+
+    .calendar-open-shift {
+        display: grid;
+        grid-template-columns: 150px repeat(7, 1fr);
+    }
+
+    .open-shifts {
+        grid-column: span 2;
+        display: flex;
+        align-items: center;
+        border-right: 1px solid #ddd;
+        padding: 20px;
+        background-color: #FBD2D333;
+        border-radius: 18px 0 0;
+        color: #555353;
+        font-family: Inter;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 38.4px;
+        justify-content: center;
+    }
+
+    .add-shift {
+        grid-column: span 6;
+        text-align: right;
+        padding-right: 10px;
+        padding: 20px 40px;
+        background-color: #CCE5F333;
+        border-radius: 0 18px 0 0;
+    }
+
+    .add-shift-btn {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        color: #007DC5;
+        text-align: center;
+        font-family: Inter;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 38.4px;
+    }
+
+    .add-shift-btn:hover {
+        color: #005bb5;
+    }
+
+
+    /* Calendar Styles */
+    .calendar {
+        font-family: Inter;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 18px;
+        display: grid;
+        grid-template-rows: auto 1fr;
+    }
+
+    .calendar-header,
+    .member-row {
+        display: grid;
+        grid-template-columns: 150px repeat(7, 1fr);
+        border-bottom: 1px solid #ddd;
+    }
+
+    .calendar-header {
+        border-top: 1px solid #ddd;
+    }
+
+    .calendar-cell {
+        border-right: 1px solid #ddd;
+        text-align: center;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .members-column {
+        color: #555353;
+        font-family: Inter;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 38.4px;
+        background: rgba(216, 216, 216, 0.36);
+    }
+
+    .today {
+        background-color: #d9fdd3;
+    }
+
+    .calendar-body {
+        width: 100%;
+        overflow: auto;
+    }
+
+    .member-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        text-align: left;
+        padding: 30px 10px 60px;
+    }
+
+    .week-days-date {
+        color: #110B1D;
+        font-family: Inter;
+        font-size: var(--fontSize-Title-fontSizeT1, 24px);
+        font-style: normal;
+        font-weight: 700;
+    }
+
+    .week-days-day {
+        color: #5D5669;
+        font-family: Inter;
+        font-size: var(--fontSize-Body-fontSizeB4, 10px);
+        font-style: normal;
+        font-weight: var(--fontWeight-fontWeightReg, 400);
+        text-transform: uppercase;
+    }
+
+    .week-days-cell {
+        text-align: left;
+        padding: 16px 28px;
+    }
+
+    .shift-slot {
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    /* .shift {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        border-radius: 8px;
+        gap: 5px;
+        
+    } */
+
+    .shift:hover {
+        cursor: pointer;
+    }
+
+    .time {
+        color: var(--text-textBase-textPrimary, #110B1D);
+        font-family: Inter;
+        font-size: var(--fontSize-Body-fontSizeB3, 12px);
+        font-style: normal;
+        font-weight: 500;
+    }
+
+    .hours {
+        color: var(--text-textBase-textSecondary, #5D5669);
+        font-family: Inter;
+        font-size: var(--fontSize-Body-fontSizeB3, 12px);
+        font-style: normal;
+        font-weight: 400;
+        display: flex;
+        gap: 5px;
+    }
+
+    .employee-shift-time {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .employee-name {
+        color: #110B1D;
+        font-family: Inter;
+        font-size: var(--fontSize-Body-fontSizeB1, 16px);
+        font-style: normal;
+        font-weight: 700;
+    }
+
+    .employee-shift-name {
+        color: #5D5669;
+        font-family: Inter;
+        font-size: var(--fontSize-Body-fontSizeB3, 12px);
+        font-style: normal;
+        font-weight: 700;
+    }
+
+    .employee-department {
+        color: var(--text-textBase-textSubtitle, #746C82);
+        font-family: Inter;
+        font-size: var(--fontSize-Body-fontSizeB3, 12px);
+        font-style: normal;
+        font-weight: 400;
+    }
+
+    .calendar-footer {
+        padding: 20px;
+    }
+
+    .no-shifts {
+        color: var(--Greys-Blue-Grey-700, #737791);
+        font-size: 16px;
+        font-weight: 500;
+        text-align: center;
+        padding: 30px;
+    }
+
+    .month-calendar-header {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        background-color: #f4f4f4;
+        font-weight: bold;
+        text-align: center;
+        border-top: 1px solid #ddd;
+        align-items: center;
+    }
+
+    .calendar-body.month-view {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .calendar-cell.month-day-cell {
+        padding: 10px;
+        border: 1px solid #ddd;
+        min-height: 100px;
+        position: relative;
+        text-align: end;
+    }
+
+    .calendar-cell.month-day-cell.today {
+        background-color: #e8f5e9;
+    }
+
+    .calendar-cell.month-day-cell.other-month {
+        background-color: #f9f9f9;
+        color: #aaa;
+    }
+
+    .month-day-number {
+        font-weight: 500;
+    }
+
+    .shift {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        margin: 5px 0;
+        padding: 5px;
+        border-radius: 4px;
+        font-size: 10px;
+        width: 100%;
+    }
+
+    /* add user modal styles */
+    .shift-add-user-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 25px;
+        padding: 20px;
+    }
+
+    .shift-add-user-box {
+        cursor: pointer;
+        flex: 1;
+        max-width: 48%;
+        padding: 30px 20px;
+        border-radius: 12px;
+        font-size: 20px;
+        font-family: 'Inter';
+        font-weight: 600;
+        gap: 20px;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+    /* On hover: slightly scale the box, add shadow, and adjust background */
+    .shift-add-user-box:hover {
+        transform: scale(1.01);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .shift-add-user-box-icon {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }

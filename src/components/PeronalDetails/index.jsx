@@ -173,8 +173,10 @@ function PersonalDetails(props) {
           props.handleTabChange("4");
           props.enableNextTab("4");
         }
-        props.userData.userUpdateResponse = null;
+        userInfo.isProfileComplete = true; // Update the field
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
       }
+      props.userData.userUpdateResponse = null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.userUpdateResponse]);
@@ -291,6 +293,8 @@ function PersonalDetails(props) {
                 value={formValue.firstName}
                 onChange={handleChange}
                 placeholder="Enter first name"
+                disabled={userInfo.role === "user" ? true : false}
+                style={{ backgroundColor: "#FFF" }}
               />
             </Form.Item>
 
@@ -306,6 +310,8 @@ function PersonalDetails(props) {
                 value={formValue.middleName}
                 onChange={handleChange}
                 placeholder="Enter middle name"
+                disabled={userInfo.role === "user" ? true : false}
+                style={{ backgroundColor: "#FFF" }}
               />
             </Form.Item>
 
@@ -322,6 +328,8 @@ function PersonalDetails(props) {
                 value={formValue.lastName}
                 onChange={handleChange}
                 placeholder="Enter last name"
+                disabled={userInfo.role === "user" ? true : false}
+                style={{ backgroundColor: "#FFF" }}
               />
             </Form.Item>
 
@@ -341,9 +349,9 @@ function PersonalDetails(props) {
                 onChange={(date, dateString) =>
                   handleDateChange(dateString, "employeeStartDate")
                 }
-                style={{ width: "100%" }}
                 placeholder="Select start date"
                 disabled={userInfo.role === "user" ? true : false}
+                style={{ backgroundColor: "#FFF", width: "100%" }}
               />
             </Form.Item>
 
@@ -403,6 +411,7 @@ function PersonalDetails(props) {
                 onChange={handleChange}
                 placeholder="Enter employee ID"
                 disabled={userInfo.role === "user" ? true : false}
+                style={{ backgroundColor: "#FFF" }}
               />
             </Form.Item>
 
@@ -513,8 +522,10 @@ function PersonalDetails(props) {
                         <Option value="tourist">Tourist</Option>
                         <Option value="work">Work</Option>
                         <Option value="student">Student</Option>
-                        <Option value="student">Permanent Resident</Option>
-                        <Option value="student">Citizen</Option>
+                        <Option value="permanent_resident">
+                          Permanent Resident
+                        </Option>
+                        <Option value="citizen">Citizen</Option>
                       </Select>
                     </Form.Item>
                   </Col>

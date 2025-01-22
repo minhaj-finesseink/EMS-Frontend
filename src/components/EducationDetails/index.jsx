@@ -91,7 +91,10 @@ function EducationDetails(props) {
   // Handle form submission
   const handleSubmit = () => {
     if (educationFields.length === 0) {
-      toast.error("Close");
+      // toast.error("Close");
+      setTimeout(() => {
+        props.profileComplete(false);
+      }, 1000);
     } else {
       const payload = {
         companyId: userInfo.companyId,
