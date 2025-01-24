@@ -33,7 +33,10 @@ const rootEpic = combineEpics(
   ShiftEpic.addShift,
   ShiftEpic.getAllShift,
   ShiftEpic.deleteShiftById,
-  ShiftEpic.updateShiftById
+  ShiftEpic.updateShiftById,
+  ShiftEpic.getUserByUsitiveHr,
+  ShiftEpic.addShiftBulkUser,
+  ShiftEpic.addShiftUserFromHr
 );
 
 export default rootEpic;

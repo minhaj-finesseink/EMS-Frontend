@@ -21,6 +21,7 @@ import { getUserById, userUpdate } from "../../redux/User/user.action";
 import { SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import { addVisa, getVisa } from "../../redux/Visa/visa.action";
 import "./style.css";
+import CustomDatePicker from "../CustomDatePicker";
 
 const { Option } = Select;
 
@@ -342,8 +343,7 @@ function PersonalDetails(props) {
               }
               rules={[{ required: true, message: "Select start date" }]}
             >
-              <DatePicker
-                className="patient_details_input"
+              <CustomDatePicker
                 name="employeeStartDate"
                 value={formValue.employeeStartDate}
                 onChange={(date, dateString) =>
@@ -351,7 +351,6 @@ function PersonalDetails(props) {
                 }
                 placeholder="Select start date"
                 disabled={userInfo.role === "user" ? true : false}
-                style={{ backgroundColor: "#FFF", width: "100%" }}
               />
             </Form.Item>
 
@@ -363,14 +362,12 @@ function PersonalDetails(props) {
                 </span>
               }
             >
-              <DatePicker
-                className="patient_details_input"
+              <CustomDatePicker
                 name="dob"
                 value={formValue.dob}
                 onChange={(date, dateString) =>
                   handleDateChange(dateString, "dob")
                 }
-                style={{ width: "100%" }}
                 placeholder="Select date of birth"
               />
             </Form.Item>

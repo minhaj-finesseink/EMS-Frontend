@@ -18,6 +18,9 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import AddShiftModal from "../AddShiftModal";
 import { getAllShift } from "../../../redux/ShiftAPIs/Shift/shift.action";
+import CustomButton from "../../../components/CustomButton";
+import PasteTable from "../ExcelPasteTable";
+import AddUsersUsitiveHr from "../AddUserUsitiveHR";
 import "./style.css";
 
 const Calendar = (props) => {
@@ -44,6 +47,13 @@ const Calendar = (props) => {
     employeeId: "",
     employeeName: "",
   });
+  const [addBulkEmployeeModal, setAddBulkEmployeeModal] = useState(false);
+  const [openExcelTableModal, setOpenExcelTableModal] = useState(false);
+  const [selectedFields, setSelectedFields] = useState([
+    "First Name",
+    "Last Name",
+    "Email",
+  ]); // Default checked fields
 
   const extractTime = (dateTime) => {
     const date = new Date(dateTime);
@@ -218,7 +228,7 @@ const Calendar = (props) => {
     activeView,
     props.shiftData.addShiftResponse,
     props.shiftData.deleteShiftByIdResponse,
-    props.shiftData.updateShiftByIdResponse
+    props.shiftData.updateShiftByIdResponse,
   ]);
 
   useEffect(() => {
@@ -234,6 +244,13 @@ const Calendar = (props) => {
     form.resetFields(); // Reset form fields
   };
 
+  // Update the state when checkboxes are toggled
+  const handleFieldSelectionChange = (field, checked) => {
+    setSelectedFields((prev) =>
+      checked ? [...prev, field] : prev.filter((f) => f !== field)
+    );
+  };
+
   return (
     <div className="shift-calendar-container">
       {addIndividualMember ? (
@@ -243,7 +260,8 @@ const Calendar = (props) => {
           module={"shift"}
         />
       ) : addUsitiveHr ? (
-        "add usitive HR"
+        // Add users - Usitive HR
+        <AddUsersUsitiveHr />
       ) : (
         <>
           <div className="calendar-header-section">
@@ -289,8 +307,10 @@ const Calendar = (props) => {
               onCancel={closeAddEmployeeModal}
               footer={null}
               className="shift-add-employee-modal"
+              width={750}
             >
               <div className="shift-add-user-container">
+                {/* Add individual team memeber */}
                 <div
                   className="shift-add-user-box"
                   style={{ backgroundColor: "#2A93CFCC", color: "#FFFFFF" }}
@@ -313,9 +333,230 @@ const Calendar = (props) => {
                     Add individual team member
                   </div>
                 </div>
+                {/* Add bulk */}
+                <>
+                  <div
+                    className="shift-add-user-box"
+                    style={{ backgroundColor: "#2AAB6C", color: "#FFFFFF" }}
+                    onClick={() => {
+                      // setAddEmployeeModal(false),
+                      setAddBulkEmployeeModal(true);
+                    }}
+                  >
+                    <div
+                      className="shift-add-user-box-icon"
+                      style={{ backgroundColor: "#007DC5" }}
+                    >
+                      {" "}
+                      <img
+                        style={{ height: "20px" }}
+                        src={AddUser}
+                        alt="add user icon"
+                      />
+                    </div>
+                    <div style={{ lineHeight: 1 }}>
+                      Add team members in bulk{" "}
+                    </div>
+                  </div>
+                  <Modal
+                    title="Add Employee"
+                    visible={addBulkEmployeeModal}
+                    onCancel={() => setAddBulkEmployeeModal(false)}
+                    footer={null}
+                  >
+                    <div className="add-bulk-employee-container">
+                      <div className="bulk-navigation">
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "5px",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: "#F3686D",
+                              borderRadius: "50%",
+                              height: "18px",
+                              width: "18px",
+                              color: "#FFFFFF",
+                              fontSize: "12px",
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            1
+                          </div>
+                          <div
+                            style={{
+                              fontFamily: "Inter",
+                              color: "#F3686D",
+                              fontWeight: 700,
+                            }}
+                          >
+                            Select fields
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            width: "70px",
+                            borderBottom: "1px solid #E0E5EB",
+                            height: 0,
+                            margin: "10px",
+                          }}
+                        ></div>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "5px",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: "#f9b3b6",
+                              borderRadius: "50%",
+                              height: "18px",
+                              width: "18px",
+                              color: "#FFFFFF",
+                              fontSize: "12px",
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            2
+                          </div>
+                          <div
+                            style={{
+                              fontFamily: "Inter",
+                              color: "#f9b3b6",
+                              fontWeight: 700,
+                            }}
+                          >
+                            Add data
+                          </div>
+                        </div>
+                      </div>
+                      <div className="add-shift-bulk-employee-title">
+                        Select the fields that you want to add in bulk
+                      </div>
+                      <div className="shift-add-bulk-employee-excel-items">
+                        <div className="shift-add-bulk-employee-items">
+                          <label>
+                            <Checkbox
+                              checked
+                              disabled
+                              onChange={(e) =>
+                                handleFieldSelectionChange(
+                                  "First Name",
+                                  e.target.checked
+                                )
+                              }
+                            />{" "}
+                            <span>First Name</span>
+                          </label>
+                          <label>
+                            <Checkbox
+                              checked
+                              disabled
+                              onChange={(e) =>
+                                handleFieldSelectionChange(
+                                  "Last Name",
+                                  e.target.checked
+                                )
+                              }
+                            />{" "}
+                            <span>Last Name</span>
+                          </label>
+                          <label>
+                            <Checkbox
+                              checked
+                              disabled
+                              onChange={(e) =>
+                                handleFieldSelectionChange(
+                                  "Email",
+                                  e.target.checked
+                                )
+                              }
+                            />{" "}
+                            <span>Email</span>
+                          </label>
+                          <label>
+                            <Checkbox
+                              onChange={(e) =>
+                                handleFieldSelectionChange(
+                                  "Phone",
+                                  e.target.checked
+                                )
+                              }
+                            />{" "}
+                            <span>Phone</span>
+                          </label>{" "}
+                          <label>
+                            <Checkbox
+                              onChange={(e) =>
+                                handleFieldSelectionChange(
+                                  "DOB",
+                                  e.target.checked
+                                )
+                              }
+                            />{" "}
+                            <span>DOB</span>
+                          </label>
+                          <label>
+                            <Checkbox
+                              onChange={(e) =>
+                                handleFieldSelectionChange(
+                                  "Date of Hiring",
+                                  e.target.checked
+                                )
+                              }
+                            />{" "}
+                            <span>Date of hiring</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="shift-bulk-employee-btn">
+                        <CustomButton
+                          color={"grey"}
+                          transparent
+                          onClick={() => setAddBulkEmployeeModal(false)}
+                        >
+                          Cancel
+                        </CustomButton>
+                        <CustomButton
+                          color={"blue"}
+                          onClick={() => setOpenExcelTableModal(true)}
+                        >
+                          Add
+                        </CustomButton>
+                      </div>
+                    </div>
+                  </Modal>
+                  {/* Excel paste table modal */}
+                  <Modal
+                    visible={openExcelTableModal}
+                    // onCancel={() => setOpenExcelTableModal(false)}
+                    footer={null}
+                    width={"80%"}
+                    closable={false}
+                  >
+                    <div className="shift-add-bulk-from-excel">
+                      <PasteTable
+                        onCancel={() => setOpenExcelTableModal(false)}
+                        selectedFields={selectedFields}
+                      />
+                    </div>
+                  </Modal>
+                </>
+                {/* Add with usitive */}
                 <div
                   className="shift-add-user-box"
                   style={{ backgroundColor: "#FFD42F" }}
+                  onClick={() => {
+                    setAddUsitiveHr(true), setAddEmployeeModal(false);
+                  }}
                 >
                   <div
                     className="shift-add-user-box-icon"
@@ -704,7 +945,6 @@ const Calendar = (props) => {
   );
 };
 
-// export default Calendar;
 const mapStateToProps = (state) => ({
   userData: state.user,
   shiftData: state.shift,

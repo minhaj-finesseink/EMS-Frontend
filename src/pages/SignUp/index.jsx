@@ -54,6 +54,7 @@ function SignUpPage(props) {
       companyName: company,
       role: "admin",
       referralSource: referralSource,
+      isHrActive: true,
     });
   };
 
@@ -63,12 +64,12 @@ function SignUpPage(props) {
       if (!data.success) {
         setError(data.message);
         setLoading(false);
-        setIsEmailError(true)
+        setIsEmailError(true);
       } else {
         navigate("/admin-dashboard");
         setLoading(true);
         // setCreated(true);
-        setIsEmailError(false)
+        setIsEmailError(false);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -177,9 +178,7 @@ function SignUpPage(props) {
                 {/* Dropdown for "How did you hear about us?" */}
                 <Form.Item
                   name="referral"
-                  rules={[
-                    { required: true, message: "Select an option" },
-                  ]}
+                  rules={[{ required: true, message: "Select an option" }]}
                 >
                   <Select
                     placeholder="How did you hear about us?"

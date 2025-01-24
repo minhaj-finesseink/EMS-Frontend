@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import LoginImage from "../../assets/sign-in-image.jpeg";
 import usitiveLogo from "../../assets/usitive-logo-with-text.png";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Alert, Button, Checkbox, Form, Input } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { login } from "../../redux/Login/login.action";
@@ -14,46 +14,34 @@ import microsoftIcon from "../../assets/microsoft-icon.png";
 import "./style.css";
 
 function SignIn(props) {
-  const navigate = useNavigate(); // Use useNavigate hook
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [passwordStrength, setPasswordStrength] = useState({
-  //   hasMinLength: false,
-  //   hasUppercase: false,
-  //   hasNumber: false,
-  //   hasSymbol: false,
-  // });
-
-  // const validatePassword = (value) => {
-  //   setPasswordStrength({
-  //     hasMinLength: value.length >= 8,
-  //     hasUppercase: /[A-Z]/.test(value),
-  //     hasNumber: /\d/.test(value),
-  //     hasSymbol: /[!@#$%^&*(),.?":{}|<>]/.test(value),
-  //   });
-  // };
+  const [isError, setIsError] = useState(false);
 
   const handleSubmit = () => {
     setLoading(true);
     props.login({
       email: email,
       password: password,
+      module: "HR",
     });
   };
-
+  
   useEffect(() => {
     if (props.loginData.loginResponse) {
       const data = props.loginData.loginResponse;
 
       // Check if there's an error message
       if (data.error) {
-        setMessage(data.error); // Display the error message if available
+        // setMessage(data.error); // Display the error message if available
         setLoading(false);
+        setIsError(true);
       } else {
-        setMessage(data.message); // Display the success message if no error
-
+        // setMessage(data.message); // Display the success message if no error
+        setIsError(false);
         if (data.responseCode === "LOGIN_SUCCESS") {
           localStorage.setItem("token", data.token); // Store token in localStorage
           localStorage.setItem("userInfo", JSON.stringify(data.user));
@@ -96,13 +84,16 @@ function SignIn(props) {
                 layout="vertical"
                 initialValues={{ remember: true }}
               >
-                {message ? <div className="error-message">{message}</div> : ""}
+                {/* {message ? <div className="error-message">{message}</div> : ""} */}
                 <Form.Item
                   name="email"
                   rules={[
                     { required: true, message: "Enter your email" },
                     { type: "email", message: "Enter a valid email" },
                   ]}
+                  // Trigger the error message
+                  validateStatus={isError ? "error" : ""}
+                  help={isError ? "User not found" : ""}
                 >
                   <Input
                     className="login-input"
@@ -120,24 +111,6 @@ function SignIn(props) {
                       required: true,
                       message: "Enter your password",
                     },
-                    // {
-                    //   validator: (_, value) => {
-                    //     if (!value) {
-                    //       return Promise.resolve(); // Skip validation if the field is empty
-                    //     }
-                    //     if (
-                    //       passwordStrength.hasMinLength &&
-                    //       passwordStrength.hasUppercase &&
-                    //       passwordStrength.hasNumber &&
-                    //       passwordStrength.hasSymbol
-                    //     ) {
-                    //       return Promise.resolve();
-                    //     }
-                    //     return Promise.reject(
-                    //       "Password must meet all requirements."
-                    //     );
-                    //   },
-                    // },
                   ]}
                 >
                   <Input.Password
@@ -167,48 +140,9 @@ function SignIn(props) {
                     onClick={() => navigate("/forgot-password")}
                   >
                     {" "}
-                    Forgot password/ username ?
+                    Forgot password
                   </div>
                 </div>
-
-                {/* <div className="password-requirements">
-                  <span
-                    className={
-                      passwordStrength.hasMinLength
-                        ? "requirement met"
-                        : "requirement"
-                    }
-                  >
-                    8 Characters
-                  </span>
-                  <span
-                    className={
-                      passwordStrength.hasUppercase
-                        ? "requirement met"
-                        : "requirement"
-                    }
-                  >
-                    1 Uppercase
-                  </span>
-                  <span
-                    className={
-                      passwordStrength.hasNumber
-                        ? "requirement met"
-                        : "requirement"
-                    }
-                  >
-                    1 Numeric
-                  </span>
-                  <span
-                    className={
-                      passwordStrength.hasSymbol
-                        ? "requirement met"
-                        : "requirement"
-                    }
-                  >
-                    1 Symbol
-                  </span>
-                </div> */}
 
                 {/* Sign Up Button */}
                 <Form.Item>
@@ -225,6 +159,17 @@ function SignIn(props) {
                 </Form.Item>
               </Form>
             </div>
+
+            {/* Display Message */}
+            {/* {message && (
+              <div style={{ marginBottom: "20px" }}>
+                <Alert
+                  message={message}
+                  type={isError ? "error" : "success"}
+                  showIcon
+                />
+              </div>
+            )} */}
 
             <div
               className="style-for-mobile"
@@ -286,6 +231,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 SignIn.propTypes = {
   login: PropTypes.func,
+  loginData: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

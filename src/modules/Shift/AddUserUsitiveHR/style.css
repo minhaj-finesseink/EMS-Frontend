@@ -1,0 +1,39 @@
+.add-users-usitive-container {
+    border: 1px solid #E0E5EB;
+    border-radius: 18px;
+    /* padding: 20px; */
+}
+
+.add-users-usitive-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.add-users-usitive-header-right {
+    display: flex;
+    gap: 10px;
+}
+
+.add-users-usitive-header-title {
+    color: #696666;
+    font-family: Inter;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.add-users-usitive-header-desc {
+    color: var(--Greys-Blue-Grey-700, #737791);
+    font-family: Inter;
+    font-size: 14.4px;
+    font-weight: 500;
+}
+
+.add-users-usitive-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 50px;
+    padding: 20px;
+}

@@ -25,6 +25,7 @@ function ShiftSignIn(props) {
     props.login({
       email: email,
       password: password,
+      module: "Shift",
     });
   };
 

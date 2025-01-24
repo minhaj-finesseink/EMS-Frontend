@@ -19,6 +19,18 @@ body,
   font-family: 'Inter', sans-serif;
 }
 
+/* Add this to your global stylesheet */
+.ant-modal {
+  font-family: 'Inter', sans-serif;
+  /* Sets font for the modal container */
+}
+
+.ant-modal-content {
+  font-family: 'Inter', sans-serif;
+  /* Ensures content inside modal uses Inter */
+}
+
+
 /* Define CSS variables for light and dark themes */
 :root {
   --light-background-color: #ffffff;
