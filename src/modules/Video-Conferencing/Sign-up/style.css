@@ -1,0 +1,80 @@
+.usitive-meet-container {
+    display: flex;
+}
+
+.usitive-meet-left-section {
+    width: 50%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.usitive-meet-left-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.usitive-meet-right-section {
+    width: 50%;
+    height: 100vh;
+}
+
+.usitive-meet-right-items {
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center;
+    justify-content: center; */
+}
+
+.usitive-meet-desc {
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.usitive-meet-title {
+    text-align: center;
+    font-family: Inter;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.usitive-meet-form {
+    margin: 40px 0 20px;
+}
+
+.terms-link {
+    color: #007DC5;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.terms-link:hover {
+    text-decoration: none;
+}
+
+.or-style {
+    color: rgba(18, 26, 38, 0.50);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.or-login-icon-div {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    padding: 6px;
+    align-items: center;
+    gap: 10px;
+    border-radius: 50%;
+    background: #EBEBEB;
+    box-shadow: 0px 2px 2.9px 0px rgba(0, 0, 0, 0.25);
+    justify-content: center;
+}

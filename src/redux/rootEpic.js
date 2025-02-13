@@ -1,6 +1,5 @@
 import { combineEpics } from 'redux-observable';
-import LoginEpic from './Login/login.epic';
-import registerEpic from './Register/register.epic';
+import AuthEpic from './Auth/auth.epic';
 import AddCompanyEpic from './Add-company/company.epic';
 import AddDepartmentEpic from './Add-department/department.epic';
 import educationEpic from './Education/education.epic';
@@ -9,10 +8,15 @@ import generalTimeOffEpic from './GeneralTimeOff/generalTimeOff.epic';
 import UserEpic from './User/user.epic';
 import userTimeOffEpic from './UserTimeOff/userTimeOff.epic';
 import ShiftEpic from './ShiftAPIs/Shift/shift.epic';
+import VideoConferenceEpic from './VideoConference/video.epic';
 
 const rootEpic = combineEpics(
-  LoginEpic.login,
-  registerEpic.register,
+  AuthEpic.login,
+  AuthEpic.forgotPassword,
+  AuthEpic.resetPassword,
+  AuthEpic.createVerificationCode,
+  AuthEpic.verifyCode,
+  AuthEpic.signUp,
   AddCompanyEpic.addCompany,
   AddDepartmentEpic.addDepartment,
   AddDepartmentEpic.getDepartment,
@@ -21,8 +25,6 @@ const rootEpic = combineEpics(
   UserEpic.getUserById,
   UserEpic.userUpdate,
   UserEpic.getUserByCompanyId,
-  LoginEpic.forgotPassword,
-  LoginEpic.resetPassword,
   educationEpic.addEducation,
   educationEpic.getEducation,
   visaEpic.addVisa,
@@ -36,7 +38,8 @@ const rootEpic = combineEpics(
   ShiftEpic.updateShiftById,
   ShiftEpic.getUserByUsitiveHr,
   ShiftEpic.addShiftBulkUser,
-  ShiftEpic.addShiftUserFromHr
+  ShiftEpic.addShiftUserFromHr,
+  VideoConferenceEpic.startInstantMeeting,
 );
 
 export default rootEpic;

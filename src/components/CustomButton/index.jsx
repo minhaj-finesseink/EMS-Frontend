@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React from "react";
 
 const COLORS = {
@@ -14,11 +16,12 @@ const CustomButton = ({
   children,
   onClick,
   disabledCondition,
+  loading,
+  block,
   style = {},
   ...props
 }) => {
-  const disabled = disabledCondition; // Apply the condition to determine if the button should be disabled
-
+  const disabled = disabledCondition || loading; // Disable if loading
   const buttonStyle = {
     backgroundColor: disabled
       ? COLORS.grey // Use grey color for disabled
@@ -32,13 +35,32 @@ const CustomButton = ({
       : "white", // Text color for other buttons
     border: transparent ? `2px solid ${COLORS.grey}` : "none", // Border for transparent buttons
     fontSize: "16px",
-    borderRadius: "18px",
+    borderRadius: "8px",
     cursor: disabled ? "not-allowed" : "pointer", // Change cursor for disabled
-    width: "150px",
-    height: "48px",
+    // width: block ? "100%" : "150px",
+    // height: "48px",
+    width: block ? "100%" : style.width || "150px", // Custom width if provided, else default
+    height: style.height || "48px", // Custom height if provided, else default
     fontFamily: "Inter",
     opacity: disabled ? 0.6 : 1, // Reduce opacity for disabled
+    display: "flex", // Flexbox for centering
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "8px", // Space between loader and text
     ...style, // Allows additional custom styles
+  };
+
+  const handleHover = (e) => {
+    if (!disabled) {
+      e.target.style.backgroundColor = COLORS[color] + "cc"; // Change background color on hover (lighter)
+    }
+  };
+
+  const handleMouseOut = (e) => {
+    if (!disabled) {
+      e.target.style.backgroundColor = buttonStyle.backgroundColor; // Revert background color
+      e.target.style.color = buttonStyle.color; // Revert text color
+    }
   };
 
   return (
@@ -46,16 +68,42 @@ const CustomButton = ({
       style={buttonStyle}
       onClick={disabled ? null : onClick} // Prevent click if disabled
       disabled={disabled}
+      onMouseEnter={handleHover}
+      onMouseLeave={handleMouseOut}
       {...props}
     >
+      {loading && (
+        <span
+          style={{
+            width: "14px",
+            height: "14px",
+            border: "2px solid #A9A9A9",
+            borderTop: `2px solid ${COLORS[color]}`,
+            borderRadius: "50%",
+            animation: "spin 1s linear infinite",
+          }}
+        ></span>
+      )}
       {children}
     </button>
   );
 };
 
+// Add a keyframe for loading spinner
+const styleSheet = document.styleSheets[0];
+styleSheet.insertRule(
+  `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`,
+  styleSheet.cssRules.length
+);
+
 export default CustomButton;
 
-// Usage
+// Usage Example
 
 // import React from 'react';
 // import CustomButton from './CustomButton';
@@ -63,7 +111,9 @@ export default CustomButton;
 // const App = () => {
 //   return (
 //     <div>
-//       <CustomButton color="red">Red Button</CustomButton>
+//       <CustomButton color="red" loading={true}>
+//         Submit
+//       </CustomButton>
 //       <CustomButton color="blue" onClick={() => alert('Clicked!')}>
 //         Blue Button
 //       </CustomButton>

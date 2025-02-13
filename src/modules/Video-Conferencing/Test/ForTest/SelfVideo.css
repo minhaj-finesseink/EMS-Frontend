@@ -1,0 +1,148 @@
+.video-lobby-container {
+  margin-top: 100px;
+}
+
+.lobby-video-and-form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+}
+
+.video-lobby-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 50px;
+}
+
+.video-lobby-logo-container>div {
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.lobby-form-container {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  min-width: 300px;
+  align-items: center;
+}
+
+.lobby-form-container>div:first-child {
+  color: #464454;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.lobby-video-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 600px;
+  /* Adjust width as needed */
+  aspect-ratio: 16 / 9;
+  /* Enforce 16:9 ratio */
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  position: relative;
+}
+
+.lobby-video-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lobby-video-self-video {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.lobby-video-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background-color: #272A32;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lobby-video-initials {
+  width: 80px;
+  height: 80px;
+  background-color: #007DC5;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.lobby-video-settings-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.lobby-video-controls {
+  display: flex;
+  margin-top: 15px;
+  gap: 15px;
+  position: absolute;
+  bottom: 10px;
+  width: calc(100% - 25px);
+  justify-content: space-between;
+  padding: 10px 10px;
+  align-items: center;
+}
+
+.lobby-video-controls>div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lobby-video-control-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  gap: 5px;
+}
+
+.lobby-video-control-button>div:first-child {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.lobby-video-control-button>div:first-child:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.01);
+}
+
+.lobby-video-control-button span {
+  font-size: 14px;
+}

@@ -208,6 +208,7 @@ function Dashboard(props) {
             profileComplete={setProfileComplete}
             showAddEmployees={setAddEmployeeCard}
             showLeavePolicy={setLeavePolicyCard}
+            showShift={setAddShift}
           />
         </Header>
         <Content style={contentStyle}>

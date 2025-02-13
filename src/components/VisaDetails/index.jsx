@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, DatePicker, Select, Button } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import "./style.css";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { addVisa, getVisa } from "../../redux/Visa/visa.action";
+import "./style.css";
 
 const { Option } = Select;
 

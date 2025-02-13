@@ -4,14 +4,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Form, Button, Input, Row, Col, Select } from "antd";
+import { Form, Input, Row, Col, Select } from "antd";
 import signUpImage from "../../assets/signup-image.jpeg";
 import usitiveLogo from "../../assets/usitive-logo-with-text.png";
 import googleIcon from "../../assets/google-icon.svg";
 import linkdinIcon from "../../assets/linkdin-icon.png";
 import microsoftIcon from "../../assets/microsoft-icon.png";
-import signUpAnimation from "../../assets/sign-up-animation.gif";
 import { addUser } from "../../redux/User/user.action";
+import CustomButton from "../../components/CustomButton";
 import "./style.css";
 
 function SignUpPage(props) {
@@ -121,7 +121,6 @@ function SignUpPage(props) {
                     >
                       <Input
                         placeholder="First Name"
-                        className="sign-up-input"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                       />
@@ -145,7 +144,7 @@ function SignUpPage(props) {
                     >
                       <Input
                         placeholder="Last Name"
-                        className="sign-up-input"
+                        // className="sign-up-input"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                       />
@@ -168,7 +167,7 @@ function SignUpPage(props) {
                 >
                   <Input
                     placeholder="Name of the company"
-                    className="sign-up-input"
+                    // className="sign-up-input"
                     //   prefix={<BankOutlined />}
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
@@ -207,7 +206,7 @@ function SignUpPage(props) {
                   help={isEmailError ? "This email already exists" : ""}
                 >
                   <Input
-                    className="sign-up-input"
+                    // className="sign-up-input"
                     //   prefix={<MailOutlined />}
                     placeholder="Email"
                     value={email}
@@ -245,7 +244,7 @@ function SignUpPage(props) {
                   <Input.Password
                     //   prefix={<KeyOutlined />}
                     placeholder="Password"
-                    className="sign-up-input"
+                    // className="sign-up-input"
                     value={password}
                     onChange={(e) => {
                       validatePassword(e.target.value);
@@ -295,16 +294,24 @@ function SignUpPage(props) {
 
                 {/* Sign Up Button */}
                 <Form.Item>
-                  <Button
+                  {/* <Button
                     type="primary"
                     htmlType="submit"
                     className="sign-up-button"
-                    block
+                    // block
                     loading={loading}
                     disabled={loading}
                   >
                     {loading ? "Signing Up..." : "Sign Up"}
-                  </Button>
+                  </Button> */}
+                  <CustomButton
+                    htmlType="submit"
+                    color={"blue"}
+                    block
+                    loading={loading}
+                  >
+                    {loading ? "Signing Up..." : "Sign Up"}
+                  </CustomButton>
                 </Form.Item>
               </Form>
             </div>

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Alert } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { resetPassword } from "../../redux/Login/login.action";
+import { resetPassword } from "../../redux/Auth/auth.action";
 import { useNavigate, useParams } from "react-router-dom";
 import "./style.css";
 

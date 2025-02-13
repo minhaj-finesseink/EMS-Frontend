@@ -27,7 +27,6 @@ function ShiftSignUp(props) {
   const [referralSource, setReferralSource] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isEmailError, setIsEmailError] = useState(false);
 
@@ -59,18 +58,18 @@ function ShiftSignUp(props) {
     if (props.userData.addUserResponse) {
       let data = props.userData.addUserResponse;
       if (!data.success) {
-        setError(data.message);
         setLoading(false);
         setIsEmailError(true);
       } else {
         navigate("/admin-dashboard");
         setLoading(true);
-        // setCreated(true);
         setIsEmailError(false);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.addUserResponse]);
+
+  console.log('props.userData.addUserResponse', props.userData.addUserResponse);
 
   return (
     <div className="shift-sign-up-container">

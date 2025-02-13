@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
-import loginReducer from './Login/login.reducer';
-import registerReducer from './Register/register.reducer';
+import authReducer from './Auth/auth.reducer';
 import addCompanyReducer from './Add-company/company.reducer';
 import addDepartmentReducer from './Add-department/department.reducer';
 import educationReducer from './Education/education.reducer';
@@ -9,10 +8,10 @@ import generalTimeOffReducer from './GeneralTimeOff/generalTimeOff.reducer';
 import userReducer from './User/user.reducer'
 import userTimeOffReducer from './UserTimeOff/userTimeOff.reducer';
 import shiftReducer from './ShiftAPIs/Shift/shift.reducer';
+import videoConferenceReducer from './VideoConference/video.reducer';
 
 const rootReducer = combineReducers({
-  login: loginReducer,
-  register: registerReducer,
+  login: authReducer,
   company: addCompanyReducer,
   department: addDepartmentReducer,
   user: userReducer,
@@ -20,7 +19,8 @@ const rootReducer = combineReducers({
   visa: visaReducer,
   generalTimeOff: generalTimeOffReducer,
   userTimeOff: userTimeOffReducer,
-  shift:shiftReducer
+  shift: shiftReducer,
+  videoConference: videoConferenceReducer
 });
 
 export default rootReducer;

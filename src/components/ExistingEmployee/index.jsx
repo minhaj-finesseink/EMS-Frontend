@@ -24,6 +24,7 @@ import MailIcon from "../../assets/mail-open.svg";
 import GeneralTimeOff from "../GeneralTimeOff";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DragIcon from "../../assets/drag-icon.svg";
+import CustomButton from "../CustomButton";
 import "./style.css";
 
 const { Option } = Select;
@@ -242,7 +243,6 @@ function ExistingEmployee(props) {
   useEffect(() => {
     if (props.userData.addUserResponse) {
       let data = props.userData.addUserResponse;
-      console.log("data", data);
       if (data.success) {
         console.log("1");
         const payload = {
@@ -300,8 +300,6 @@ function ExistingEmployee(props) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.userData.addUserResponse]);
-
-  // console.log("props.userData", props.userData);
 
   useEffect(() => {
     if (props.userTimeOffData.addUserTimeOffResponse) {
@@ -605,6 +603,7 @@ function ExistingEmployee(props) {
                       }
                       placeholder={`Select ${field.label.toLowerCase()}`}
                       style={{ width: "100%" }}
+                      format="MM/DD/YYYY"
                     />
                   )}
                   {field.type === "select" && (
@@ -722,38 +721,20 @@ function ExistingEmployee(props) {
 
             <div className="existing_employee_buttons_container">
               <div>
-                <Button
-                  type="primary"
-                  style={{
-                    height: "50px",
-                    borderRadius: "25px",
-                    backgroundColor: "#B1B1B1",
-                    boxShadow:
-                      "0px 2.757px 0.919px -1.838px rgba(0, 0, 0, 0.20), 0px 1.838px 1.838px 0px rgba(0, 0, 0, 0.14), 0px 0.919px 4.595px 0px rgba(0, 0, 0, 0.12)",
-                  }}
-                  className="existing_employee_buttons"
+                <CustomButton
+                  color={"grey"}
                   onClick={() => {
                     // props.existingEmployees(false);
                     props.addIndividualMember(false);
                   }}
                 >
                   Cancel
-                </Button>
+                </CustomButton>
               </div>
               <div>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{
-                    height: "50px",
-                    borderRadius: "25px",
-                  }}
-                  className="existing_employee_buttons"
-                  // loading={loading}
-                >
-                  {/* {loading ? "Continue ..." : "Continue"} */}
+                <CustomButton color={"blue"} htmlType="submit">
                   Continue
-                </Button>
+                </CustomButton>
               </div>
             </div>
           </Form>
@@ -1265,18 +1246,9 @@ function ExistingEmployee(props) {
                   margin: "20px 0",
                 }}
               >
-                <Button
-                  style={{
-                    width: "200px",
-                    height: "50px",
-                    backgroundColor: "#B1B1B1",
-                    borderRadius: "22px",
-                    color: "#FFF",
-                  }}
-                  onClick={showCancelModal}
-                >
+                <CustomButton color={"grey"} onClick={showCancelModal}>
                   Cancel
-                </Button>
+                </CustomButton>
                 <Modal
                   visible={isCancelModalVisible}
                   onCancel={handleCancel}
@@ -1300,52 +1272,34 @@ function ExistingEmployee(props) {
                     <div
                       style={{
                         display: "flex",
-                        gap: "20px",
+                        gap: "10px",
                         width: "85%",
                         marginTop: "10px",
+                        justifyContent: "center",
                       }}
                     >
-                      <Button
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#C5CBD7",
-                          color: "#FFFFFF",
-                          borderRadius: "22px",
-                          height: "40px",
-                        }}
+                      <CustomButton
+                        color={"grey"}
                         onClick={handleCancel}
+                        style={{ height: "40px" }}
                       >
                         Not Now
-                      </Button>
-                      <Button
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#0057FF",
-                          color: "#FFFFFF",
-                          borderRadius: "22px",
-                          height: "40px",
-                        }}
+                      </CustomButton>
+                      <CustomButton
+                        color={"blue"}
                         onClick={() => {
                           setActiveTab("1"), handleCancel();
                         }}
+                        style={{ height: "40px" }}
                       >
                         Cancel
-                      </Button>
+                      </CustomButton>
                     </div>
                   </div>
                 </Modal>
-                <Button
-                  style={{
-                    width: "200px",
-                    height: "50px",
-                    backgroundColor: "#0057FF",
-                    borderRadius: "22px",
-                    color: "#FFF",
-                  }}
-                  onClick={showConfirmModal}
-                >
+                <CustomButton color={"blue"} onClick={showConfirmModal}>
                   Finish
-                </Button>
+                </CustomButton>
                 <Modal
                   visible={isConfirmModalVisible}
                   onCancel={handleCancel}
@@ -1381,30 +1335,20 @@ function ExistingEmployee(props) {
                           width: "150px",
                         }}
                       >
-                        <Button
-                          style={{
-                            width: "100%",
-                            backgroundColor: "#C5CBD7",
-                            color: "#FFFFFF",
-                            borderRadius: "22px",
-                            height: "40px",
-                          }}
+                        <CustomButton
+                          color={"grey"}
+                          style={{ height: "40px" }}
                           onClick={handleCancel}
                         >
                           Cancel
-                        </Button>
-                        <Button
-                          style={{
-                            width: "100%",
-                            backgroundColor: "#0057FF",
-                            color: "#FFFFFF",
-                            borderRadius: "22px",
-                            height: "40px",
-                          }}
+                        </CustomButton>
+                        <CustomButton
+                          color={"blue"}
+                          style={{ height: "40px" }}
                           onClick={handleSubmit}
                         >
                           Confirm
-                        </Button>
+                        </CustomButton>
                       </div>
                     </div>
                   </Spin>

@@ -6,7 +6,7 @@ import usitiveLogo from "../../assets/usitive-logo-with-text.png";
 import { Alert, Button, Checkbox, Form, Input } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { login } from "../../redux/Login/login.action";
+import { login } from "../../redux/Auth/auth.action";
 import { useNavigate } from "react-router-dom";
 import googleIcon from "../../assets/google-icon.svg";
 import linkdinIcon from "../../assets/linkdin-icon.png";
@@ -17,9 +17,10 @@ function SignIn(props) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [moduleError, setModuleError] = useState("");
 
   const handleSubmit = () => {
     setLoading(true);
@@ -29,24 +30,30 @@ function SignIn(props) {
       module: "HR",
     });
   };
-  
+
   useEffect(() => {
     if (props.loginData.loginResponse) {
       const data = props.loginData.loginResponse;
-
       // Check if there's an error message
       if (data.error) {
-        // setMessage(data.error); // Display the error message if available
         setLoading(false);
-        setIsError(true);
+        if (data.error.includes("Incorrect password")) {
+          setPasswordError(true);
+          setEmailError(false);
+        } else if (data.error.includes("User not found")) {
+          setEmailError(true);
+          setPasswordError(false);
+        } else if (data.error.includes("Access denied")) {
+          setModuleError(data.error);
+        }
       } else {
         // setMessage(data.message); // Display the success message if no error
-        setIsError(false);
         if (data.responseCode === "LOGIN_SUCCESS") {
           localStorage.setItem("token", data.token); // Store token in localStorage
           localStorage.setItem("userInfo", JSON.stringify(data.user));
           navigate("/admin-dashboard"); // Redirect to dashboard after successful login
           setLoading(true);
+          setModuleError("");
         }
       }
     }
@@ -77,6 +84,15 @@ function SignIn(props) {
               SIGN IN
             </div>
             <div className="login-desc">Login to your Account</div>
+            {moduleError && (
+              <Alert
+                message={moduleError}
+                type="error"
+                showIcon
+                style={{ marginBottom: "20px" }}
+              />
+            )}
+
             <div className="login-form-items">
               <Form
                 name="signup"
@@ -92,8 +108,8 @@ function SignIn(props) {
                     { type: "email", message: "Enter a valid email" },
                   ]}
                   // Trigger the error message
-                  validateStatus={isError ? "error" : ""}
-                  help={isError ? "User not found" : ""}
+                  validateStatus={emailError ? "error" : ""}
+                  help={emailError ? "User not found" : ""}
                 >
                   <Input
                     className="login-input"
@@ -112,6 +128,9 @@ function SignIn(props) {
                       message: "Enter your password",
                     },
                   ]}
+                  // Trigger the error message
+                  validateStatus={passwordError ? "error" : ""}
+                  help={passwordError ? "Incorrect password" : ""}
                 >
                   <Input.Password
                     //   prefix={<KeyOutlined />}

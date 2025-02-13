@@ -1,0 +1,33 @@
+.poll-drawer .ant-drawer-header-title {
+    flex-direction: row-reverse;
+}
+
+.poll-drawer .ant-drawer-title {
+    text-align: center;
+}
+
+.poll-drawer-input {
+    height: 32px !important;
+    padding: 4px 0 !important;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #CCCCCC80;
+    border-radius: 0 !important;
+    color: white;
+    outline: none;
+    box-shadow: none;
+    font-size: 12px !important;
+}
+
+.poll-drawer-input::placeholder {
+    color: #CCCCCC82 !important;
+}
+
+.poll-drawer-input:hover,
+.poll-drawer-input:focus,
+.poll-drawer-input:active {
+    background-color: transparent !important;
+    border-bottom: 1px solid white !important;
+    color: white !important;
+    box-shadow: none !important;
+}

@@ -32,20 +32,20 @@
 }
 
 .company-setup-input {
-    height: 45px;
-    border-radius: 18px;
+    height: 48px;
+    border-radius: 8px;
     color: #92929d;
 }
 
 .company-setup-input .ant-select-selector {
-    height: 45px;
-    border-radius: 18px;
+    height: 48px;
+    border-radius: 8px;
     color: #92929d;
 }
 
 .company-setup-input .ant-input-group-addon {
-    height: 45px;
-    border-radius: 18px;
+    height: 48px;
+    border-radius: 8px;
     color: #92929d;
 }
 

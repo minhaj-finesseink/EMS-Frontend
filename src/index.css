@@ -68,3 +68,40 @@ body.dark-theme .ant-menu-item {
   color: var(--text-color);
   /* Use text color variable */
 }
+
+/* Ant Design Input styles */
+.ant-input,
+.ant-input-password {
+  border-radius: 8px;
+  /* height: 48px; */
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: #65686A;
+}
+
+.ant-input-password .ant-input {
+  /* height: 40px; */
+}
+
+.ant-select {
+  /* height: 48px; */
+}
+
+.ant-select-selection-wrap {
+  font-size: 16px;
+  font-family: 'Inter';
+}
+
+/* drawer */
+.ant-drawer {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.ant-drawer-title {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600;
+}
+
+.ant-drawer-body {
+  font-family: 'Inter', sans-serif !important;
+}

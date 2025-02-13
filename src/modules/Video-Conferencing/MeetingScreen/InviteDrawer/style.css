@@ -1,0 +1,7 @@
+.invite-drawer .ant-drawer-header-title {
+    flex-direction: row-reverse;
+}
+
+.invite-drawer .ant-drawer-title {
+    text-align: center;
+}

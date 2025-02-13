@@ -5,7 +5,7 @@ import LoginImage from "../../assets/sign-in-image.jpeg";
 import usitiveLogo from "../../assets/usitive-logo-with-text.png";
 import { Alert, Button, Form, Input } from "antd";
 import leftArrow from "../../assets/left-arrow.svg";
-import { forgotPassword } from "../../redux/Login/login.action";
+import { forgotPassword } from "../../redux/Auth/auth.action";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";

@@ -1,24 +1,26 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Alert, Button, Checkbox, Form, Input } from "antd";
 import SignInImage from "../../../assets/shift-sign-in-image.jpeg";
 import ShiftLogo from "../../../assets/usitive-shift-logo.png";
-import { Button, Checkbox, Form, Input } from "antd";
 import googleIcon from "../../../assets/google-icon.svg";
 import linkdinIcon from "../../../assets/linkdin-icon.png";
 import microsoftIcon from "../../../assets/microsoft-icon.png";
-import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { login } from "../../../redux/Login/login.action";
+import { login } from "../../../redux/Auth/auth.action";
 import "./style.css";
 
 function ShiftSignIn(props) {
   const navigate = useNavigate(); // Use useNavigate hook
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [moduleError, setModuleError] = useState("");
 
   const handleSubmit = () => {
     setLoading(true);
@@ -35,16 +37,23 @@ function ShiftSignIn(props) {
 
       // Check if there's an error message
       if (data.error) {
-        setMessage(data.error); // Display the error message if available
         setLoading(false);
+        if (data.error.includes("Incorrect password")) {
+          setPasswordError(true);
+          setEmailError(false);
+        } else if (data.error.includes("User not found")) {
+          setEmailError(true);
+          setPasswordError(false);
+        } else if (data.error.includes("Access denied")) {
+          setModuleError(data.error);
+        }
       } else {
-        setMessage(data.message); // Display the success message if no error
-
         if (data.responseCode === "LOGIN_SUCCESS") {
           localStorage.setItem("token", data.token); // Store token in localStorage
           localStorage.setItem("userInfo", JSON.stringify(data.user));
           navigate("/admin-dashboard"); // Redirect to dashboard after successful login
           setLoading(true);
+          setModuleError("");
         }
       }
     }
@@ -86,17 +95,26 @@ function ShiftSignIn(props) {
             layout="vertical"
             initialValues={{ remember: true }}
           >
-            {message ? <div className="error-message">{message}</div> : ""}
+            {moduleError && (
+              <Alert
+                message={moduleError}
+                type="error"
+                showIcon
+                style={{ marginBottom: "20px" }}
+              />
+            )}
             <Form.Item
               name="email"
               rules={[
                 { required: true, message: "Enter your email" },
                 { type: "email", message: "Enter a valid email" },
               ]}
+              // Trigger the error message
+              validateStatus={emailError ? "error" : ""}
+              help={emailError ? "User not found" : ""}
             >
               <Input
                 className="login-input"
-                //   prefix={<MailOutlined />}
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -111,9 +129,11 @@ function ShiftSignIn(props) {
                   message: "Enter your password",
                 },
               ]}
+              // Trigger the error message
+              validateStatus={passwordError ? "error" : ""}
+              help={passwordError ? "Incorrect password" : ""}
             >
               <Input.Password
-                //   prefix={<KeyOutlined />}
                 placeholder="Password"
                 className="login-input"
                 value={password}

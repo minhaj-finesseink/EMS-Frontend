@@ -15,6 +15,7 @@ import ShiftIcon from "../../assets/shift-icon.svg";
 import AddShiftIcon from "../../assets/add-shift-icon.svg";
 import MyShiftIcon from "../../assets/my-shift-icon.svg";
 import AddDeparment from "../AddDeparment";
+import { UserOutlined, ContactsOutlined } from "@ant-design/icons";
 import "./style.css";
 
 function OverviewCards(props) {
@@ -108,7 +109,7 @@ function OverviewCards(props) {
 
   const shiftCardData = [
     {
-      icon: AddShiftIcon, // Replace with correct icon
+      icon: <ContactsOutlined style={{ color: "#FFFFFF", fontSize: "20px" }} />, // Replace with correct icon
       backgoundColor: "#B29A2F",
       title: "Add/Edit Shift",
       description: "Add or edit Employee shifts",
@@ -123,7 +124,7 @@ function OverviewCards(props) {
       },
     },
     {
-      icon: MyShiftIcon, // Replace with correct icon
+      icon: <UserOutlined style={{ color: "#FFFFFF", fontSize: "20px" }} />, // Replace with correct icon
       backgoundColor: "#346F52",
       title: "My shift",
       description: "Manage your shift",
@@ -208,9 +209,14 @@ function OverviewCards(props) {
               <div className="card-items-wrapper">
                 <div
                   className="card-icon-container"
-                  style={{ backgroundColor: card.backgoundColor }}
+                  style={{
+                    backgroundColor: card.backgoundColor,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
                 >
-                  <img className="card-icon" src={card.icon} alt={card.title} />
+                  {/* <img className="card-icon" src={card.icon} alt={card.title} /> */}
+                  {card.icon}
                 </div>
                 <div>
                   <div

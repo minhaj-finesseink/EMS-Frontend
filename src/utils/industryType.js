@@ -25,7 +25,7 @@ export const industryTypes = [
   { value: "Healthcare", label: "Healthcare" },
   { value: "Healthtech", label: "Healthtech" },
   { value: "Hospitality", label: "Hospitality" },
-  { value: "Information Technology (IT)", label: "Information Technology (IT)" },
+  { value: "IT", label: "Information Technology (IT)" },
   { value: "Insurance", label: "Insurance" },
   { value: "Legal", label: "Legal" },
   { value: "Manufacturing", label: "Manufacturing" },

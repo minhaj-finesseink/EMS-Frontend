@@ -1,0 +1,18 @@
+.participants-drawer .ant-drawer-header-title {
+    flex-direction: row-reverse;
+}
+
+.participants-drawer .ant-drawer-title {
+    text-align: center;
+}
+
+.participant-search-input .ant-input {
+    height: 32px;
+}
+
+.participant-search-input input::placeholder {
+    color: #6D6D6D;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 600;
+} 

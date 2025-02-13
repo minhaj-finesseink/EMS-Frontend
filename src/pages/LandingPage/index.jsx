@@ -25,7 +25,7 @@ function LandingPage() {
           <div className="links">Testimonials</div>
           <div className="links">FAQ</div>
         </div>
-        <div className="nav-buttons large-screen">
+        {/* <div className="nav-buttons large-screen">
           <Button
             type="primary"
             className="nav-button"
@@ -40,7 +40,7 @@ function LandingPage() {
           >
             Shift
           </Button>
-        </div>
+        </div> */}
         <div className="hamburger-menu small-screen">
           <MenuOutlined onClick={showDrawer} />
         </div>
@@ -72,6 +72,13 @@ function LandingPage() {
             onClick={() => navigate("/shift-sign-in")}
           >
             Shift
+          </Button>{" "}
+          <Button
+            type="primary"
+            className="nav-button"
+            onClick={() => navigate("/video-sign-in")}
+          >
+            Video Conferencing{" "}
           </Button>
         </div>
       </Drawer>
@@ -85,12 +92,34 @@ function LandingPage() {
           <br /> track performance, and empower your team to succeed.
         </div>
         <div className="content-buttons">
-          <Button type="primary" className="content-btn">
-            Get Started
+          <Button
+            type="primary"
+            className="content-btn"
+            onClick={() => navigate("/sign-in")}
+          >
+            HR Module
           </Button>
-          <Button type="primary" className="content-btn">
-            Watch Demo
+          <Button
+            type="primary"
+            className="content-btn"
+            onClick={() => navigate("/shift-sign-in")}
+          >
+            Shift Module
           </Button>
+          <Button
+            type="primary"
+            className="content-btn"
+            onClick={() => navigate("/video-sign-in")}
+          >
+            Video Conferencing{" "}
+          </Button>
+          {/* <Button
+            type="primary"
+            className="content-btn"
+            onClick={() => navigate("/lobby")}
+          >
+            Lobby{" "}
+          </Button> */}
         </div>
       </div>
     </div>

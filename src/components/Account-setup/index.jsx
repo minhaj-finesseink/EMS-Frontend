@@ -10,11 +10,13 @@ import { addDepartment } from "../../redux/Add-department/department.action";
 import Image from "../../assets/company-details-image.jpeg";
 import countryStateMapping from "../../utils/countryStateMapping";
 import toast from "react-hot-toast";
+import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import "./style.css";
 
 const { Option } = Select;
 
 const AccountSetup = (props) => {
+  const [form] = Form.useForm();
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formValues, setFormValues] = useState({
@@ -32,15 +34,6 @@ const AccountSetup = (props) => {
     country: "",
   });
   const [isOtherIndustry, setIsOtherIndustry] = useState(false); // For 'Other' Industry Type
-  const [departmentValues, setDepartmentValues] = useState([
-    {
-      id: Date.now(),
-      departmentName: "",
-      customDepartment: "",
-      departmentCode: "",
-      isOther: false,
-    },
-  ]);
 
   const [states, setStates] = useState([]);
   const [phonePrefix, setPhonePrefix] = useState("");
@@ -60,15 +53,6 @@ const AccountSetup = (props) => {
       ein: "",
       businessSize: "",
     });
-    setDepartmentValues([
-      ...departmentValues,
-      {
-        id: Date.now(),
-        departmentName: "",
-        customDepartment: "",
-        departmentCode: "",
-      },
-    ]);
   };
 
   const handleInputChange = (e) => {
@@ -104,7 +88,7 @@ const AccountSetup = (props) => {
   };
 
   const handleAccountSubmit = () => {
-    props.addCompany({
+    const payload = {
       userId: userInfo._id,
       companyName: formValues.companyName,
       industryType:
@@ -120,7 +104,9 @@ const AccountSetup = (props) => {
       ein: formValues.ein,
       businessSize: formValues.businessSize,
       country: formValues.country,
-    });
+    };
+    // console.log("payload", payload);
+    props.addCompany(payload);
   };
 
   useEffect(() => {
@@ -145,7 +131,116 @@ const AccountSetup = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // console.log("formValues.phoneNumber", formValues.phoneNumber);
+  // Handler for the place selection
+  const handlePlaceSelect = async (place) => {
+    console.log('place', place);
+    
+    // Extract the place_id
+    const placeId = place.value.place_id;
+
+    // Use the Google Places API to fetch more details about the place
+    const service = new window.google.maps.places.PlacesService(
+      document.createElement("div")
+    );
+    service.getDetails({ placeId: placeId }, (details, status) => {
+      if (
+        status === window.google.maps.places.PlacesServiceStatus.OK &&
+        details
+      ) {
+        console.log("Place Details:", details);
+        extractAddressComponents(details);
+      } else {
+        console.error("Error fetching place details:", status);
+      }
+    });
+  };
+
+  // Function to extract address components
+  const extractAddressComponents = (details) => {
+    let intersection = "";
+    let sublocality = "";
+    let locality = "";
+    let streetNumber = "";
+    let route = "";
+    let address1 = "";
+    let address2 = "";
+    let city = "";
+    let state = "";
+    let country = "";
+    let zip = "";
+
+    details.address_components.forEach((component) => {
+      const types = component.types;
+
+      // address 1
+      if (types.includes("street_number")) {
+        streetNumber = component.long_name;
+      }
+      if (types.includes("route")) {
+        route = component.long_name;
+      }
+      if (types.includes("intersection")) {
+        intersection = component.long_name;
+      }
+      if (types.includes("sublocality")) {
+        sublocality = component.long_name;
+      }
+      if (types.includes("locality")) {
+        locality = component.long_name;
+      }
+      address1 =
+        streetNumber +
+        ", " +
+        route +
+        ", " +
+        intersection +
+        ", " +
+        sublocality +
+        ", " +
+        locality;
+
+      // address 2
+      // if (types.includes("sublocality_level_1")) {
+      //   address2 = component.long_name;
+      // }
+
+      // City
+      if (types.includes("administrative_area_level_3")) {
+        city = component.long_name;
+      }
+
+      // State
+      if (types.includes("administrative_area_level_1")) {
+        state = component.long_name;
+      }
+
+      // Country
+      if (types.includes("country")) {
+        country = component.long_name;
+      }
+
+      // Zip
+      if (types.includes("postal_code")) {
+        zip = component.long_name;
+      }
+    });
+
+    // Update the formValues state
+    const updatedValues = {
+      ...formValues,
+      address1,
+      address2,
+      city,
+      state,
+      country,
+      zipcode: zip,
+    };
+
+    setFormValues(updatedValues); // Updates local state
+
+    // **Ensure Ant Design Form updates with new values**
+    form.setFieldsValue(updatedValues);
+  };
 
   return (
     <div className="company-setup-main-container">
@@ -166,6 +261,7 @@ const AccountSetup = (props) => {
             />
           </div>
           <Form
+            form={form}
             layout="vertical"
             onFinish={handleAccountSubmit}
             className="company-setup-form-container"
@@ -197,8 +293,13 @@ const AccountSetup = (props) => {
               <Select
                 className="company-setup-input"
                 placeholder="Industry Type"
-                value={formValues.industryType}
+                value={formValues.industryType || ""}
                 onChange={(value) => handleSelectChange(value, "industryType")}
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option?.children?.toLowerCase().includes(input.toLowerCase())
+                }
               >
                 {industryTypes.map((industry) => (
                   <Option key={industry.value} value={industry.value}>
@@ -240,12 +341,63 @@ const AccountSetup = (props) => {
                 },
               ]}
             >
-              <Input
+              {/* <Input
                 placeholder="Company Address"
                 className="company-setup-input"
                 name="address1"
                 value={formValues.address1}
                 onChange={handleInputChange}
+              /> */}
+              <GooglePlacesAutocomplete
+                apiKey="AIzaSyDGHuVOTCL0gv5XUaaQxzm10BCN2SoeOMw"
+                selectProps={{
+                  placeholder: "Search Company Address",
+                  value: formValues.address1
+                    ? { label: formValues.address1, value: formValues.address1 }
+                    : null,
+                  onChange: handlePlaceSelect,
+                  styles: {
+                    control: (provided) => ({
+                      ...provided,
+                      borderRadius: "8px",
+                      borderColor: "#ccc",
+                      height: "48px",
+                    }),
+                    menu: (provided) => ({
+                      ...provided,
+                      borderRadius: "8px",
+                      overflow: "hidden",
+                      color: "#65686A",
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      borderRadius: "8px",
+                      backgroundColor: state.isFocused ? "#f0f0f0" : "white",
+                      fontSize: "16px",
+                      fontFamily: "Inter",
+                      color: "#65686A",
+                    }),
+                    singleValue: (provided) => ({
+                      ...provided,
+                      fontSize: "16px",
+                      fontFamily: "Inter",
+                      color: "#65686A",
+                    }),
+                    input: (provided) => ({
+                      ...provided,
+                      fontSize: "16px",
+                      fontFamily: "Inter",
+                      color: "#65686A",
+                    }),
+                    placeholder: (provided) => ({
+                      ...provided,
+                      fontSize: "16px",
+                      fontFamily: "Inter",
+                      color: "#65686A",
+                    }),
+                  },
+                }}
+                debounce={300} // Optional to debounce the API requests
               />
             </Form.Item>
 
@@ -281,9 +433,7 @@ const AccountSetup = (props) => {
               <Col span={12}>
                 <Form.Item
                   name="country"
-                  rules={[
-                    { required: true, message: "Select a country" },
-                  ]}
+                  rules={[{ required: true, message: "Select a country" }]}
                 >
                   <Select
                     className="company-setup-input"
@@ -303,9 +453,7 @@ const AccountSetup = (props) => {
               <Col span={12}>
                 <Form.Item
                   name="state"
-                  rules={[
-                    { required: true, message: "Select a state" },
-                  ]}
+                  rules={[{ required: true, message: "Select a state" }]}
                 >
                   <Select
                     className="company-setup-input"
@@ -430,7 +578,7 @@ const AccountSetup = (props) => {
               <Select
                 className="company-setup-input"
                 placeholder="Business Size"
-                value={formValues.businessSize}
+                value={formValues.businessSize || ""}
                 onChange={(value) => handleSelectChange(value, "businessSize")}
               >
                 <Option value="small">Up to 10 Employees</Option>

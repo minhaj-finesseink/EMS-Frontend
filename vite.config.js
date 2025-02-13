@@ -19,5 +19,8 @@ export default defineConfig({
   server: {
     historyApiFallback: true, // This ensures all routes go to index.html
   },
+  define: {
+    global: 'window', // Polyfill global as window object for browser environment
+  },
 });
  

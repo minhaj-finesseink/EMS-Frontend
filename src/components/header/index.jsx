@@ -50,7 +50,7 @@ function Header(props) {
 
   const handleLogout = () => {
     localStorage.clear(); // Clear all local storage
-    navigate("/sign-in"); // Redirect to login page
+    navigate("/"); // Redirect to login page
   };
 
   const menu = (
@@ -136,6 +136,7 @@ function Header(props) {
                 props.profileComplete(false);
                 props.showAddEmployees(false);
                 props.showLeavePolicy(false);
+                props.showShift(false);
               }}
             >
               <ArrowLeftOutlined style={{ fontSize: "18px", color: "black" }} />

@@ -1,0 +1,89 @@
+.instant-meeting-lobby-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: white;
+    text-align: center;
+}
+
+.meeting-logo-container {
+    color: black;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 32px;
+    font-weight: 500;
+}
+
+
+.video-container {
+    display: flex;
+    align-items: center;
+    margin-top: 50px;
+    gap: 50px;
+}
+
+.video-wrapper {
+    position: relative;
+}
+
+.video-preview {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.video-controls {
+    position: absolute;
+    bottom: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    width: calc(100% - 60px);
+    padding: 10px 30px;
+}
+
+.control-btn {
+    border: 1px solid;
+    border-radius: 50%;
+    height: 55px;
+    width: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /* Smooth transition */
+}
+
+.control-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    /* Light hover effect */
+}
+
+.camera-off-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.join-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: space-around;
+}
+
+.ant-form-item-explain-error {
+    text-align: start;
+    font-size: 12px;
+    font-family: Inter;
+}

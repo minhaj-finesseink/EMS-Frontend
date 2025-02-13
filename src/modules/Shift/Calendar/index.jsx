@@ -8,6 +8,9 @@ import {
   FilterOutlined,
   LeftOutlined,
   RightOutlined,
+  UserAddOutlined,
+  UsergroupAddOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 import AddShiftIcon from "../../../assets/add-shift-icon.svg";
 import MembersIcon from "../../../assets/members-icon.svg";
@@ -323,11 +326,12 @@ const Calendar = (props) => {
                     style={{ backgroundColor: "#007DC5" }}
                   >
                     {" "}
-                    <img
+                    {/* <img
                       style={{ height: "20px" }}
                       src={AddUser}
                       alt="add user icon"
-                    />
+                    /> */}
+                    <UserAddOutlined />
                   </div>
                   <div style={{ lineHeight: 1 }}>
                     Add individual team member
@@ -345,14 +349,15 @@ const Calendar = (props) => {
                   >
                     <div
                       className="shift-add-user-box-icon"
-                      style={{ backgroundColor: "#007DC5" }}
+                      style={{ backgroundColor: "#009A4E" }}
                     >
                       {" "}
-                      <img
+                      {/* <img
                         style={{ height: "20px" }}
                         src={AddUser}
                         alt="add user icon"
-                      />
+                      /> */}
+                      <UsergroupAddOutlined />
                     </div>
                     <div style={{ lineHeight: 1 }}>
                       Add team members in bulk{" "}
@@ -563,11 +568,12 @@ const Calendar = (props) => {
                     style={{ backgroundColor: "#E9C025" }}
                   >
                     {" "}
-                    <img
+                    {/* <img
                       style={{ height: "20px" }}
                       src={AddUser1}
                       alt="add user icon"
-                    />
+                    /> */}
+                    <UserSwitchOutlined />
                   </div>
                   <div style={{ lineHeight: 1 }}>
                     Add with <br /> USITIVE HR
@@ -656,53 +662,59 @@ const Calendar = (props) => {
                 </div>
                 {/* Calendar Body */}
                 <div className="calendar-body">
-                  {shifts.map((employee) => {
-                    // {
-                    //   console.log("employee", employee);
-                    // }
-                    const lastShiftDayIndex = employee.shifts.length
-                      ? Math.max(
-                          ...employee.shifts.map((shift) =>
-                            weekDates.findIndex(
-                              (day) =>
-                                day.fullDate === shift.startTime.split("T")[0]
+                  {shifts.length > 0 ? (
+                    <>
+                      {shifts.map((employee) => {
+                        const lastShiftDayIndex = employee.shifts.length
+                          ? Math.max(
+                              ...employee.shifts.map((shift) =>
+                                weekDates.findIndex(
+                                  (day) =>
+                                    day.fullDate ===
+                                    shift.startTime.split("T")[0]
+                                )
+                              )
                             )
-                          )
-                        )
-                      : -1; // Default value when shifts is empty
+                          : -1; // Default value when shifts is empty
 
-                    return (
-                      <div key={employee._id} className="member-row">
-                        <div className="calendar-cell member-info">
-                          <div className="employee-name">{employee.name}</div>
-                          <div className="employee-shift-name">
-                            {employee.shiftName}
+                        return (
+                          <div key={employee._id} className="member-row">
+                            <div className="calendar-cell member-info">
+                              <div className="employee-name">
+                                {employee.name}
+                              </div>
+                              <div className="employee-shift-name">
+                                {employee.shiftName}
+                              </div>
+                              <div className="employee-department">
+                                {employee.department}
+                              </div>
+                            </div>
+                            {weekDates.map((day, index) => (
+                              <div
+                                key={index}
+                                className={`calendar-cell employee-shift-time ${
+                                  index > lastShiftDayIndex
+                                    ? "add-shift-column"
+                                    : ""
+                                }`}
+                              >
+                                {getShiftForDay(
+                                  employee.shifts,
+                                  day.fullDate,
+                                  index,
+                                  index === lastShiftDayIndex + 1,
+                                  employee
+                                )}
+                              </div>
+                            ))}
                           </div>
-                          <div className="employee-department">
-                            {employee.department}
-                          </div>
-                        </div>
-                        {weekDates.map((day, index) => (
-                          <div
-                            key={index}
-                            className={`calendar-cell employee-shift-time ${
-                              index > lastShiftDayIndex
-                                ? "add-shift-column"
-                                : ""
-                            }`}
-                          >
-                            {getShiftForDay(
-                              employee.shifts,
-                              day.fullDate,
-                              index,
-                              index === lastShiftDayIndex + 1,
-                              employee
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  })}
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <div className="no-shifts">No shifts</div>
+                  )}
                 </div>
               </>
             ) : activeView === "Today" ? (
