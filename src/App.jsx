@@ -15,8 +15,7 @@ import VideoSignUp from "./modules/Video-Conferencing/Sign-up";
 import VideoDashboard from "./modules/Video-Conferencing/Dashboard";
 import VideoHomeScreen from "./modules/Video-Conferencing/MeetingScreen";
 // import MeetingRoom from "./modules/Video-Conferencing/MeetingLobby";
-// import Lobby from "./modules/Video-Conferencing/Test/Lobby";
-import Test from "./modules/Video-Conferencing/Test/ForTest";
+import Test from "./modules/Video-Conferencing/Test/Lobby";
 import Room from "./modules/Video-Conferencing/Test/Room";
 
 function App() {
@@ -42,7 +41,6 @@ function App() {
         {/* <Route path="/meeting/:meetingId" element={<MeetingRoom />} /> */}
         {/* <Route path="/meeting" element={<MeetingRoom />} /> */}
         {/* video test */}
-        {/* <Route path="/lobby" element={<Lobby />} /> */}
         <Route path="/lobby" element={<Test />} />
         <Route path="/room/:meetingId" element={<Room />} />
         {/* Protected Route */}

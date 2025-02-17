@@ -1,7 +1,6 @@
 .video-home-container {
     display: flex;
     width: 100%;
-    /* height: 100vh; */
 }
 
 .video-home-main-container {
@@ -41,29 +40,6 @@
     padding-bottom: 20px;
 }
 
-/* .video-home-menu {
-    color: #FFF;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-}
-
-.video-menu {
-    background-color: #272A32;
-    border-radius: 50%;
-    height: 54px;
-    width: 54px;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-} */
-
 .video-home-menu-items {
     height: 100%;
     display: flex;
@@ -91,7 +67,12 @@
 }
 
 .video-home-meeting-container {
-    padding: 0 20px 20px;
+    /* padding: 0 20px 20px; */
+    /* height: 75vh; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
 .video-header-title-container {
@@ -109,51 +90,3 @@
     font-size: 12px;
     font-weight: 600;
 }
-
-/* .meeting-participants-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    padding-left: 30px;
-}
-
-.meeting-members {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-.meeting-members img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.meeting-members div {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background-color: rgba(24, 26, 29, 0.47);
-    color: white;
-    padding: 0 20px;
-    font-weight: 600;
-    font-size: 14px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    height: 44px;
-    align-items: center;
-} */
-
-/* meeting actions container */
-/* .meeting-actions-container {
-    display: flex;
-    gap: 30px;
-    padding: 10px;
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-} */

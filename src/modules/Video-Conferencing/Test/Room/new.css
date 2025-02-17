@@ -1,0 +1,158 @@
+/* Global Reset */
+/* body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #1e1e1e;
+    color: white;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  } */
+  
+  /* Video Grid Container */
+  .video-container {
+    display: grid;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    height: 75vh;
+    width: 100%;
+  }
+  
+  /* Video Layout - Dynamic Grid */
+  .grid-1 {
+    grid-template-columns: 1fr; /* One participant takes full width */
+  }
+  .grid-2 {
+    grid-template-columns: 1fr 1fr; /* Two participants split screen */
+  }
+  .grid-3 {
+    grid-template-columns: 1fr 1fr 1fr; /* Three participants */
+  }
+  .grid-4 {
+    grid-template-columns: 1fr 1fr; /* Four participants (2x2) */
+    grid-template-rows: 1fr 1fr;
+  }
+  .grid-5,
+  .grid-6 {
+    grid-template-columns: repeat(3, 1fr); /* 5-6 participants in 3 columns */
+  }
+  .grid-7,
+  .grid-8,
+  .grid-9 {
+    grid-template-columns: repeat(3, 1fr); /* 7-9 participants */
+  }
+  .grid-more {
+    grid-template-columns: repeat(4, 1fr); /* More than 9 participants */
+  }
+  
+  /* Video Wrapper */
+  .video-wrapper {
+    position: relative;
+    background: black;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Video Player */
+  .video-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  
+  /* Placeholder for Video Off (Same Card Size) */
+  .lobby-video-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #444;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Initials for Video Off */
+  .lobby-video-initials {
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+  
+  /* Meeting Actions */
+  .meeting-actions-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px;
+    background: #272a32;
+    border-radius: 15px;
+    margin-top: 20px;
+  }
+  
+  /* Meeting Controls */
+  .video-home-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .video-home-menu:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Button Icons */
+  .video-menu {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+  }
+  
+  .video-menu img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .video-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  
+    .meeting-actions-container {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .video-container {
+      grid-template-columns: 1fr;
+    }
+  
+    .video-menu {
+      width: 40px;
+      height: 40px;
+    }
+  
+    .video-menu img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  

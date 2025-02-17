@@ -1,128 +1,173 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRef, useState, useEffect } from "react";
+import { Form, Input } from "antd";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { Input, Button } from "antd";
-import { VideoCameraOutlined, AudioMutedOutlined, SettingOutlined } from "@ant-design/icons";
-import UsitiveLogo from "../../../../assets/usitive-logo.svg";
-import "./style.css";
+import micIcon from "../../../../assets/Icons/mic-icon.svg";
+import micMuteIcon from "../../../../assets/Icons/mic-mute.svg";
+import videoIcon from "../../../../assets/Icons/camera video.svg";
+import videoOffIcon from "../../../../assets/Icons/camera video-silent.svg";
+import effectsIcon from "../../../../assets/Icons/effects.svg";
+import settingsIcon from "../../../../assets/Icons/settings-icon.svg";
+import logo from "../../../../assets/usitive-logo.svg";
+import CustomButton from "../../../../components/CustomButton";
+import "./SelfVideo.css";
 
-const Lobby = () => {
-  const [name, setName] = useState("");
-  const [meetingId, setMeetingId] = useState("");
+const SelfVideo = () => {
+  const [searchParams] = useSearchParams();
+  const type = searchParams.get("type");
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const [videoOn, setVideoOn] = useState(true); // ✅ Default video ON
-  const [audioOn, setAudioOn] = useState(true);
-  const videoRef = useRef(null);
-  const localStreamRef = useRef(null);
+  useEffect(() => {
+    if (isPlaying) {
+      startVideo();
+    } else {
+      stopVideo();
+    }
 
-  const startPreview = async () => {
+    return () => stopVideo(); // Cleanup on unmount
+  }, [isPlaying]); // Dependency on isPlaying
+
+  const startVideo = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-
-      localStreamRef.current = stream;
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-
-      stream.getVideoTracks().forEach((track) => (track.enabled = videoOn));
-      stream.getAudioTracks().forEach((track) => (track.enabled = audioOn));
+      streamRef.current = stream;
     } catch (error) {
-      console.error("Error accessing media devices:", error);
+      console.error("Error accessing webcam:", error);
     }
   };
 
-  useEffect(() => {
-    startPreview();
-    return () => {
-      if (localStreamRef.current) {
-        localStreamRef.current.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, []);
-
-  const toggleAudio = () => {
-    setAudioOn(!audioOn);
-    if (localStreamRef.current) {
-      localStreamRef.current.getAudioTracks().forEach((track) => (track.enabled = !audioOn));
+  const stopVideo = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
     }
   };
 
-  const toggleVideo = async () => {
-    if (videoOn) {
-      // ✅ Stop the video stream properly
-      localStreamRef.current.getVideoTracks().forEach((track) => track.stop());
+  const toggleVideo = () => {
+    setIsPlaying((prev) => !prev);
+  };
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+  };
+
+  const handleJoin = (values) => {
+    if (type === "instant") {
+      const newMeetingId = uuidv4();
+      navigate(
+        `/meeting-room/${newMeetingId}?name=${encodeURIComponent(
+          values.name
+        )}&video=${isPlaying}&audio=${isMuted}`
+      );
     } else {
-      // ✅ Restart the camera when turning video ON
-      await startPreview();
+      navigate(
+        `/meeting-room/${values.meetingID}?name=${encodeURIComponent(
+          values.name
+        )}&video=${isPlaying}&audio=${isMuted}`
+      );
     }
-    setVideoOn(!videoOn);
-  };
-
-  const createMeeting = () => {
-    if (!name) {
-      alert("Please enter your name.");
-      return;
-    }
-
-    const newMeetingId = uuidv4();
-    navigate(
-      `/meeting/${newMeetingId}?name=${encodeURIComponent(name)}&video=${videoOn}&audio=${audioOn}`
-    );
-  };
-
-  const joinMeeting = () => {
-    if (!meetingId.trim() || !name.trim()) {
-      alert("Please fill in all fields.");
-      return;
-    }
-
-    navigate(
-      `/meeting/${meetingId}?name=${encodeURIComponent(name)}&video=${videoOn}&audio=${audioOn}`
-    );
   };
 
   return (
-    <div className="lobby-container">
-      {/* Logo */}
-      <div className="lobby-logo">
-        <img src={UsitiveLogo} alt="Usitive Meet" />
-        <h2>usitive meet</h2>
+    <div className="video-lobby-container">
+      <div className="video-lobby-logo-container">
+        <img src={logo} alt="logo" /> <div>usitive meet</div>
       </div>
+      <div className="lobby-video-and-form-container">
+        <div className="lobby-video-container">
+          <div className="lobby-video-wrapper">
+            {isPlaying ? (
+              <video
+                ref={videoRef}
+                className="lobby-video-self-video"
+                autoPlay
+                playsInline
+                // muted={isMuted}
+              ></video>
+            ) : (
+              <div className="lobby-video-placeholder">
+                <div className="lobby-video-initials">MM</div>
+              </div>
+            )}
+            <img
+              src={settingsIcon}
+              alt="settings icon"
+              className="lobby-video-settings-icon"
+            />
+          </div>
 
-      <div className="lobby-content">
-        {/* Video Preview Section */}
-        <div className="video-preview">
-          {videoOn && localStreamRef.current ? (
-            <video ref={videoRef} autoPlay playsInline muted className="video-element" />
-          ) : (
-            <div className="initials-container">AB</div>
-          )}
+          <div className="lobby-video-controls">
+            <div>
+              <div onClick={toggleMute} className="lobby-video-control-button">
+                <div>
+                  <img src={isMuted ? micIcon : micMuteIcon} alt="mute icon" />
+                </div>
+                <span>Mute</span>
+              </div>
 
-          {/* Controls */}
-          <div className="video-controls">
-            <Button shape="circle" icon={<VideoCameraOutlined />} onClick={toggleVideo} />
-            <Button shape="circle" icon={<AudioMutedOutlined />} onClick={toggleAudio} />
-            <Button shape="circle" icon={<SettingOutlined />} />
+              <div onClick={toggleVideo} className="lobby-video-control-button">
+                <div>
+                  <img
+                    src={isPlaying ? videoIcon : videoOffIcon}
+                    alt="video icon"
+                  />
+                </div>
+                <span>Start</span>
+              </div>
+            </div>
+
+            <div className="lobby-video-control-button">
+              <div>
+                <img src={effectsIcon} alt="effects icon" />{" "}
+              </div>
+              <span>Effects</span>
+            </div>
           </div>
         </div>
-
-        {/* Meeting Join Form */}
-        <div className="join-form">
-          <h3>Joining as</h3>
-          <p>Quarterly planning meeting</p>
-          <Input placeholder="Meeting ID" value={meetingId} onChange={(e) => setMeetingId(e.target.value)} required />
-          <Input placeholder="Enter Name" value={name} onChange={(e) => setName(e.target.value)} required />
-          <Button type="primary" className="join-btn" onClick={joinMeeting}>
-            Join
-          </Button>
+        <div className="lobby-form-container">
+          <div>Joining as</div>
+          <Form
+            style={{ width: "100%" }}
+            form={form}
+            layout="vertical"
+            onFinish={handleJoin}
+          >
+            {type === "join" && (
+              <Form.Item
+                name="meetingID"
+                rules={[{ required: true, message: "Meeting ID is required" }]}
+              >
+                <Input placeholder="Meeting ID" />
+              </Form.Item>
+            )}
+            <Form.Item
+              name="name"
+              rules={[{ required: true, message: "Name is required" }]}
+            >
+              <Input placeholder="Enter name" />
+            </Form.Item>
+            <Form.Item>
+              <CustomButton color={"blue"} block>
+                Join
+              </CustomButton>
+            </Form.Item>
+          </Form>
         </div>
       </div>
     </div>
   );
 };
 
-export default Lobby;
+export default SelfVideo;

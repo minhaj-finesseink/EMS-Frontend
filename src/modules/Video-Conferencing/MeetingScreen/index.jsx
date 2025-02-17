@@ -153,7 +153,7 @@ function VideoHomeScreen() {
         </div>
       </div>
       <div className="video-home-main-container">
-        <div className="video-home-header">
+        {/* <div className="video-home-header">
           <div style={{ width: "150px" }}>
             <motion.div
               className="video-record-container"
@@ -211,11 +211,9 @@ function VideoHomeScreen() {
               <span style={{ fontWeight: 500 }}>Layouts</span>
             </div>
           </div>
-        </div>
-        <div className="video-home-meeting-container">
-          <div>
+        </div> */}
+        {/* <div className="video-home-meeting-container"> */}
             <Video />
-          </div>
 
           {/* Participants Side Panel */}
           {/* <ParticipantsDrawer
@@ -256,7 +254,7 @@ function VideoHomeScreen() {
             </motion.div>
           ))}
         </div> */}
-      </div>
+      {/* </div> */}
     </div>
   );
 }
