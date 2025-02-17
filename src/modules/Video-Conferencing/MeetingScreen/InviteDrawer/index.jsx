@@ -1,14 +1,39 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Drawer } from "antd";
+import { Drawer, message } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import mailIcon from "../../../../assets/Icons/mail.svg";
 import copyIcon from "../../../../assets/Icons/copy.svg";
 import QR from "../../../../assets/video-call-test-images/QR.png";
 import "./style.css";
+import { useParams } from "react-router-dom";
+
+const FRONTEND_URL = "https://ems-frontend-8eqf.onrender.com";
+// const FRONTEND_URL = "http://localhost:5173";
+
+// http://localhost:5173/meeting-room/7874504b-4eb1-443d-83b7-71b8d230dec4
+// http://localhost:5173/lobby?type=join
 
 function InviteDrawer({ isOpen, onClose }) {
+  const { meetingId } = useParams();
+  const [copied, setCopied] = useState(false);
+
+  // 🔹 Function to copy text to clipboard
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        `${FRONTEND_URL}/lobby?type=join?id=${meetingId}`
+      ); // ✅ Text to be copied
+      setCopied(true); // ✅ Show "Copied"
+      message.success("Copied!"); // ✅ Show success message
+      setTimeout(() => setCopied(false), 2000); // Reset after 2 sec
+    } catch (err) {
+      message.error("Failed to copy!"); // Show error message
+    }
+  };
+
   return (
     <Drawer
       className="invite-drawer"
@@ -54,11 +79,17 @@ function InviteDrawer({ isOpen, onClose }) {
             borderRadius: "10px",
             cursor: "pointer",
           }}
+          onClick={copyToClipboard} // ✅ Call function on click
         >
           <div style={{ width: "30px" }}>
             <img src={copyIcon} alt="copy icon" />
           </div>
-          <div style={{ fontWeight: 700 }}>Copy joining info</div>
+          <div style={{ fontWeight: 700 }}>
+            {/* Copy joining 
+            info */}
+            {copied ? "Copied!" : "Copy joining info"}{" "}
+            {/* ✅ Show copied text */}
+          </div>
         </div>
         <div
           style={{
