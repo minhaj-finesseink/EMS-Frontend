@@ -2,16 +2,16 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import { Drawer, message } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import mailIcon from "../../../../assets/Icons/mail.svg";
 import copyIcon from "../../../../assets/Icons/copy.svg";
 import QR from "../../../../assets/video-call-test-images/QR.png";
 import "./style.css";
-import { useParams } from "react-router-dom";
 
-const FRONTEND_URL = "https://ems-frontend-8eqf.onrender.com";
-// const FRONTEND_URL = "http://localhost:5173";
+// const FRONTEND_URL = "https://ems-frontend-8eqf.onrender.com";
+const FRONTEND_URL = "http://localhost:5173";
 
 // http://localhost:5173/meeting-room/7874504b-4eb1-443d-83b7-71b8d230dec4
 // http://localhost:5173/lobby?type=join
@@ -24,7 +24,7 @@ function InviteDrawer({ isOpen, onClose }) {
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${FRONTEND_URL}/lobby?type=join?id=${meetingId}`
+        `${FRONTEND_URL}/lobby?type=invite&id=${meetingId}`
       ); // ✅ Text to be copied
       setCopied(true); // ✅ Show "Copied"
       message.success("Copied!"); // ✅ Show success message

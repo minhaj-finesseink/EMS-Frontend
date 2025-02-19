@@ -50,29 +50,72 @@ const MeetingRoom = () => {
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
 
-  const [remoteUsers, setRemoteUsers] = useState({});
   const [isRecording, setIsRecording] = useState(false);
 
+  const [participantsInfo, setParticipantsInfo] = useState({});
+
   useEffect(() => {
+    // const startVideo = async () => {
+    //   try {
+    //     const stream = await navigator.mediaDevices.getUserMedia({
+    //       video: isVideoEnabled,
+    //       audio: isAudioEnabled,
+    //     });
+
+    //     stream
+    //       .getVideoTracks()
+    //       .forEach((track) => (track.enabled = isVideoEnabled));
+    //     stream
+    //       .getAudioTracks()
+    //       .forEach((track) => (track.enabled = isAudioEnabled));
+
+    //     localStreamRef.current = stream;
+
+    //     if (localVideoRef.current) {
+    //       localVideoRef.current.srcObject = stream;
+    //     } else {
+    //       console.warn("⚠️ localVideoRef.current is NULL");
+    //     }
+
+    //     socket.emit("join-meeting", { meetingId, name });
+    //   } catch (error) {
+    //     console.error("❌ Error accessing media devices:", error);
+    //   }
+    // };
+
     const startVideo = async () => {
       try {
+        // ✅ Always request full audio & video access initially
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: videoOn,
-          audio: audioOn,
+          video: true,
+          audio: true,
         });
 
-        stream.getVideoTracks().forEach((track) => (track.enabled = videoOn));
-        stream.getAudioTracks().forEach((track) => (track.enabled = audioOn));
-
         localStreamRef.current = stream;
-
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
-        } else {
-          console.warn("⚠️ localVideoRef.current is NULL");
         }
 
-        socket.emit("join-meeting", { meetingId, name });
+        // ✅ Join meeting with full access first
+        socket.emit("join-meeting", {
+          meetingId,
+          name,
+          isVideoEnabled: true,
+          isAudioEnabled: true,
+        });
+
+        // ✅ If video/audio is disabled in URL, "click" the button automatically
+        // if (!videoOn) {
+        //   setTimeout(() => toggleVideo(), 1000); // Simulate button click
+        // }
+        // if (!audioOn) {
+        //   setTimeout(() => toggleAudio(), 1000); // Simulate button click
+        // }
+
+        // ✅ Instantly toggle if video/audio is false in the URL
+        if (!videoOn) toggleVideo(); // Instantly disable video
+        if (!audioOn) toggleAudio(); // Instantly mute audio
+        
       } catch (error) {
         console.error("❌ Error accessing media devices:", error);
       }
@@ -91,14 +134,6 @@ const MeetingRoom = () => {
       localStreamRef.current.getTracks().forEach((track) => {
         peerConnection.addTrack(track, localStreamRef.current);
       });
-
-      // peerConnection.ontrack = (event) => {
-      //   console.log(`Received remote stream from ${userId}`);
-      //   setRemoteStreams((prevStreams) => ({
-      //     ...prevStreams,
-      //     [userId]: event.streams[0],
-      //   }));
-      // };
 
       peerConnection.ontrack = (event) => {
         console.log(`Received remote stream from ${userId}`);
@@ -245,7 +280,7 @@ const MeetingRoom = () => {
 
   useEffect(() => {
     socket.on("toggle-audio", ({ from, isAudioEnabled }) => {
-      setRemoteUsers((prev) => ({
+      setRemoteStreams((prev) => ({
         ...prev,
         [from]: { ...(prev[from] || {}), isAudioEnabled },
       }));
@@ -275,17 +310,27 @@ const MeetingRoom = () => {
       return updatedStreams;
     });
 
-    navigate("/lobby");
+    navigate("/video-dashboard");
+  };
+
+  // 📹 Toggle Video (On/Off)
+  const toggleVideo = () => {
+    const newVideoState = !isVideoEnabled;
+
+    localStreamRef.current.getVideoTracks().forEach((track) => {
+      track.enabled = newVideoState;
+    });
+
+    setIsVideoEnabled(newVideoState);
+
+    // ✅ Emit event with user info
+    socket.emit("toggle-video", {
+      meetingId,
+      isVideoEnabled: newVideoState,
+    });
   };
 
   // 🎤 Toggle Audio (Mute/Unmute)
-  // const toggleAudio = () => {
-  //   localStreamRef.current.getAudioTracks().forEach((track) => {
-  //     track.enabled = !track.enabled;
-  //   });
-  //   setIsAudioEnabled(!isAudioEnabled);
-  // };
-
   const toggleAudio = () => {
     const newAudioState = !isAudioEnabled;
 
@@ -295,52 +340,11 @@ const MeetingRoom = () => {
 
     setIsAudioEnabled(newAudioState);
 
-    // Notify server to update other participants
-    socket.emit("toggle-audio", { meetingId, isAudioEnabled: newAudioState });
-  };
-
-  // 📹 Toggle Video (On/Off)
-  const toggleVideo = async () => {
-    if (isVideoEnabled) {
-      localStreamRef.current
-        .getVideoTracks()
-        .forEach((track) => (track.enabled = false));
-      setIsVideoEnabled(false);
-    } else {
-      try {
-        const newStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-        });
-
-        localStreamRef.current
-          .getVideoTracks()
-          .forEach((track) => track.stop());
-        localStreamRef.current = newStream;
-
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = null;
-          setTimeout(() => {
-            localVideoRef.current.srcObject = newStream;
-          }, 100);
-        }
-
-        Object.values(peerConnectionsRef.current).forEach((peerConnection) => {
-          const sender = peerConnection
-            .getSenders()
-            .find((s) => s.track?.kind === "video");
-          if (sender) {
-            sender.replaceTrack(newStream.getVideoTracks()[0]);
-          }
-        });
-
-        setIsVideoEnabled(true);
-      } catch (error) {
-        console.error("❌ Error restarting video:", error);
-      }
-    }
-
-    // ✅ Emit event to notify others
-    socket.emit("toggle-video", { meetingId, isVideoEnabled: !isVideoEnabled });
+    // ✅ Emit event with user info
+    socket.emit("toggle-audio", {
+      meetingId,
+      isAudioEnabled: newAudioState,
+    });
   };
 
   useEffect(() => {
@@ -357,48 +361,56 @@ const MeetingRoom = () => {
       // 🔴 Stop screen sharing properly
       let tracks = localStreamRef.current?.getTracks();
       if (tracks) {
-        tracks.forEach(track => track.stop()); // Stop all tracks
+        tracks.forEach((track) => track.stop()); // Stop all tracks
       }
-  
+
       // 🟢 Switch back to camera stream
-      const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
       localStreamRef.current = newStream;
-  
+
       // 🔄 Update local video element
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = newStream;
       }
-  
+
       // 🔄 Replace the screen track with the camera video track for remote participants
-      Object.values(peerConnectionsRef.current).forEach(peerConnection => {
-        const sender = peerConnection.getSenders().find(s => s.track?.kind === "video");
+      Object.values(peerConnectionsRef.current).forEach((peerConnection) => {
+        const sender = peerConnection
+          .getSenders()
+          .find((s) => s.track?.kind === "video");
         if (sender) {
           sender.replaceTrack(newStream.getVideoTracks()[0]);
         }
       });
-  
+
       setIsScreenSharing(false);
     } else {
       try {
         // 🟢 Start screen sharing
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-  
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+        });
+
         // 🔄 Replace the local stream with screen sharing stream
         localStreamRef.current = screenStream;
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = screenStream;
         }
-  
+
         // 🔄 Replace video track for remote participants
-        Object.values(peerConnectionsRef.current).forEach(peerConnection => {
-          const sender = peerConnection.getSenders().find(s => s.track?.kind === "video");
+        Object.values(peerConnectionsRef.current).forEach((peerConnection) => {
+          const sender = peerConnection
+            .getSenders()
+            .find((s) => s.track?.kind === "video");
           if (sender) {
             sender.replaceTrack(screenStream.getVideoTracks()[0]);
           }
         });
-  
+
         setIsScreenSharing(true);
-  
+
         // 🔴 Stop sharing when user clicks browser's stop button
         screenStream.getVideoTracks()[0].onended = () => {
           toggleScreenShare();
@@ -408,8 +420,6 @@ const MeetingRoom = () => {
       }
     }
   };
-  
-  
 
   const meetingAction = [
     {
@@ -461,11 +471,20 @@ const MeetingRoom = () => {
   const participants = Object.values(remoteStreams);
   const totalParticipants = participants.length + 1; // Including self
 
-  console.log("remoteStreams", remoteStreams);
-
   const handleRecordClick = () => {
     setIsRecording(!isRecording);
   };
+
+  useEffect(() => {
+    socket.on("update-participants", (updatedParticipants) => {
+      console.log("Updated Participants Info:", updatedParticipants);
+      setParticipantsInfo(updatedParticipants);
+    });
+
+    return () => {
+      socket.off("update-participants");
+    };
+  }, []);
 
   return (
     <div
@@ -556,60 +575,52 @@ const MeetingRoom = () => {
             </>
           ) : (
             <div className="lobby-video-placeholder">
-              <div className="lobby-video-initials">MM</div>
+              <div className="lobby-video-initials">
+                {name.slice(0, 2).toUpperCase()}
+              </div>
             </div>
           )}
         </div>
-        {/* {Object.entries(remoteStreams).map(([userId, stream]) => (
-          <div key={userId} className="video-wrapper">
-            <video
-              autoPlay
-              playsInline
-              className="video-preview"
-              ref={(video) => video && (video.srcObject = stream)}
-            />
-            <p>{userId}</p>
-          </div>
-        ))} */}
-
-        {/* Show Screen Share Locally */}
-        {/* {isScreenSharing && remoteStreams.screen && (
-          <div className="video-wrapper">
-            <video
-              autoPlay
-              playsInline
-              className="video-preview"
-              ref={(video) => {
-                if (video) video.srcObject = remoteStreams.screen;
-              }}
-            />
-            <p>Screen Sharing</p>
-          </div>
-        )} */}
-
-        {/* <div className="video-container"> */}
         {Object.entries(remoteStreams).map(([userId, stream]) => (
           <div key={userId} className="video-wrapper">
-            {stream === "video-off" ? ( // Show initials if video is off
-              <div className="lobby-video-placeholder">
-                <div className="lobby-video-initials">
-                  {userId.slice(0, 2).toUpperCase()}{" "}
-                </div>
-              </div>
-            ) : (
+            {participantsInfo[userId]?.isVideoEnabled && stream ? (
               <video
                 autoPlay
                 playsInline
-                // className="video-preview"
-                className={`video-preview ${stream.isScreenShare ? "screen-share" : ""}`} 
-                ref={(video) => video && (video.srcObject = stream)}
-                style={{}}
+                ref={(video) => {
+                  if (video && stream && video.srcObject !== stream) {
+                    video.srcObject = stream;
+                    video
+                      .play()
+                      .catch((err) =>
+                        console.error("Video playback error:", err)
+                      );
+                  }
+                }}
+                className="video-preview"
               />
+            ) : (
+              <div className="lobby-video-placeholder">
+                <div className="lobby-video-initials">
+                  {participantsInfo[userId]?.name.slice(0, 2).toUpperCase()}
+                </div>
+              </div>
             )}
-            <p>{userId}</p>
+            <div className="participants-name-icon">
+              <p>{participantsInfo[userId]?.name}</p>
+              <div>
+                <img
+                  src={
+                    participantsInfo[userId]?.isAudioEnabled
+                      ? micIcon
+                      : micMuteIcon
+                  }
+                  alt="mic icon"
+                />
+              </div>
+            </div>
           </div>
         ))}
-        {/* </div> */}
       </div>
 
       <div className="meeting-actions-container">

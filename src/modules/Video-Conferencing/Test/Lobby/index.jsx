@@ -15,6 +15,8 @@ import "./SelfVideo.css";
 const SelfVideo = () => {
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type");
+  const meetingID = searchParams.get("id");
+
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -64,6 +66,15 @@ const SelfVideo = () => {
   };
 
   const handleJoin = (values) => {
+    // ✅ Store settings in local storage before navigating
+    localStorage.setItem(
+      "meetingSettings",
+      JSON.stringify({
+        name: values.name,
+        videoOn: isPlaying,
+        audioOn: isMuted,
+      })
+    );
     if (type === "instant") {
       const newMeetingId = uuidv4();
       navigate(
@@ -71,12 +82,16 @@ const SelfVideo = () => {
           values.name
         )}&video=${isPlaying}&audio=${isMuted}`
       );
+      // navigate(`/meeting-room/${newMeetingId}`);
     } else {
       navigate(
-        `/meeting-room/${values.meetingID}?name=${encodeURIComponent(
+        `/meeting-room/${
+          meetingID ? meetingID : values.meetingID
+        }?name=${encodeURIComponent(
           values.name
         )}&video=${isPlaying}&audio=${isMuted}`
       );
+      // navigate(`/meeting-room/${meetingID ? meetingID : values.meetingID}`);
     }
   };
 
@@ -151,6 +166,17 @@ const SelfVideo = () => {
               >
                 <Input placeholder="Meeting ID" />
               </Form.Item>
+            )}
+            {type === "invite" && (
+              <div
+                style={{
+                  padding: "10px",
+                  fontSize: "16px",
+                  fontFamily: "Inter",
+                }}
+              >
+                <span>{meetingID}</span>
+              </div>
             )}
             <Form.Item
               name="name"

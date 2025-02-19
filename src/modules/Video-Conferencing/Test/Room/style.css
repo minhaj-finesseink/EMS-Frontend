@@ -1,51 +1,3 @@
-/* .video-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.video-wrapper {
-  display: inline-block;
-  width: 200px;
-  height: 200px;
-  margin: 10px;
-  position: relative;
-}
-
-.video-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.video-wrapper p {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  color: white;
-  font-size: 14px;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 2px 5px;
-  border-radius: 5px;
-}
-
-.controls {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-} */
-
-/* .video-home-meeting-container { */
-/* padding: 0 20px 20px; */
-/* height: calc(100vh - 140px); */
-/* Adjust for header and bottom menu */
-/* display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden; */
-/* Prevents scrolling */
-/* } */
-
 .video-container {
   display: grid;
   gap: 10px;
@@ -123,6 +75,7 @@
   overflow: hidden;
   /* width: 500px;
   height: 300px; */
+  min-height: 350px;
 }
 
 /* Video Player */
@@ -133,19 +86,23 @@
 }
 
 .video-preview.screen-share {
-  object-fit: none; /* Apply only for screen share */
+  object-fit: none;
+  /* Apply only for screen share */
 }
 
-/* Participant Name Tag */
-.video-wrapper p {
+/* Participant Name and mic icon */
+.participants-name-icon {
   position: absolute;
   bottom: 5px;
   left: 5px;
-  color: white;
   font-size: 14px;
   background: rgba(0, 0, 0, 0.5);
   padding: 4px 8px;
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  width: calc(100% - 30px);
+  justify-content: space-between;
 }
 
 
@@ -183,4 +140,27 @@
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%); */
+}
+
+.room-video-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background-color: #272A32;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.room-video-initials {
+  width: 80px;
+  height: 80px;
+  background-color: #007DC5;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }

@@ -17,9 +17,11 @@ import VideoHomeScreen from "./modules/Video-Conferencing/MeetingScreen";
 // import MeetingRoom from "./modules/Video-Conferencing/MeetingLobby";
 import Test from "./modules/Video-Conferencing/Test/Lobby";
 import Room from "./modules/Video-Conferencing/Test/Room";
+// import { VideoProvider } from "./context/VideoCallContext";
 
 function App() {
   return (
+    // <VideoProvider> 
     <BrowserRouter>
       <Toaster /> {/* Toaster component to display toast messages */}
       <Routes>
@@ -59,6 +61,7 @@ function App() {
         ></Route>
       </Routes>
     </BrowserRouter>
+    // </VideoProvider>
   );
 }
 
