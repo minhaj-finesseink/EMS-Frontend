@@ -244,10 +244,10 @@ const MeetingRoom = () => {
 
       setIsScreenSharing(false);
       socket.emit("toggle-screen", { meetingId, isScreenSharing: false });
-      setIsVideoEnabled(!isVideoEnabled);
+      setIsVideoEnabled(false);
       socket.emit("toggle-video", {
         meetingId,
-        isVideoEnabled: !isVideoEnabled,
+        isVideoEnabled: false,
       });
     } else {
       try {
@@ -274,10 +274,10 @@ const MeetingRoom = () => {
 
         setIsScreenSharing(true);
         socket.emit("toggle-screen", { meetingId, isScreenSharing: true });
-        setIsVideoEnabled(!isVideoEnabled);
+        setIsVideoEnabled(true);
         socket.emit("toggle-video", {
           meetingId,
-          isVideoEnabled: !isVideoEnabled,
+          isVideoEnabled: true,
         });
 
         // 🔴 Stop sharing when user clicks browser's stop button
@@ -353,6 +353,10 @@ const MeetingRoom = () => {
       onClick: endMeeting,
     },
   ];
+
+  const screenSharingUser = Object.entries(participantsInfo).find(
+    ([, participant]) => participant.isScreenSharing
+  );
 
   return (
     <div className="meeting-room">

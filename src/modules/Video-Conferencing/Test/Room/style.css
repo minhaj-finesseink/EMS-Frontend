@@ -36,18 +36,6 @@
   visibility: hidden;
 }
 
-/* If 4 or more participants, first video is larger */
-.video-container.split-layout {
-  grid-template-columns: 70% 30%;
-  grid-template-rows: 100%;
-}
-
-/* Other participant videos should be small */
-.video-wrapper.small-video {
-  width: 100px;
-  height: 100px;
-}
-
 /* Participant Name and mic icon */
 .participants-name-icon {
   position: absolute;
@@ -119,3 +107,4 @@
   justify-content: center;
   border-radius: 50%;
 }
+
