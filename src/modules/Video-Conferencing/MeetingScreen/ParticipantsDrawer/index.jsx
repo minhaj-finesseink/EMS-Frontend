@@ -1,22 +1,38 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Drawer, Input } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
+import socket from "../../socket";
 import searchIcon from "../../../../assets/Icons/search.svg";
 import CustomButton from "../../../../components/CustomButton";
 import micIcon from "../../../../assets/Icons/mic-icon.svg";
+import micMuteIcon from "../../../../assets/Icons/mic-mute.svg";
 import videoIcon from "../../../../assets/Icons/camera video.svg";
+import videoOffIcon from "../../../../assets/Icons/camera video-silent.svg";
 import "./style.css";
 
-function ParticipantsDrawer({ isOpen, onClose, participants }) {
+function ParticipantsDrawer({ isOpen, onClose }) {
   const colors = ["#AADDC4", "#F8F3D6", "#CCE5F3"];
+  const [participants, setParticipants] = useState({});
+
+  useEffect(() => {
+    socket.on("update-participants", (updatedParticipants) => {
+      // console.log("Updated Participants Info1:", updatedParticipants);
+      setParticipants(updatedParticipants);
+    });
+
+    return () => {
+      socket.off("update-participants");
+    };
+  }, []);
+
   return (
     <Drawer
       className="participants-drawer"
       title={
         <span style={{ color: "white" }}>
-          Participants - {participants.length}
+          Participants - {Object.keys(participants).length}
         </span>
       }
       placement="right"
@@ -61,10 +77,8 @@ function ParticipantsDrawer({ isOpen, onClose, participants }) {
             borderBottom: "1px solid #CCCCCC2E",
           }}
         >
-          <div
-            style={{ fontSize: "14px", fontWeight: 600 }}
-          >
-            ON THIS CALL - {participants.length}
+          <div style={{ fontSize: "14px", fontWeight: 600 }}>
+            ON THIS CALL - {Object.keys(participants).length}
           </div>
           <div>
             <CustomButton
@@ -83,9 +97,9 @@ function ParticipantsDrawer({ isOpen, onClose, participants }) {
             gap: "20px",
           }}
         >
-          {participants.map((participant, index) => (
+          {Object.entries(participants).map(([userId, user]) => (
             <div
-              key={index}
+              key={userId}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -103,7 +117,11 @@ function ParticipantsDrawer({ isOpen, onClose, participants }) {
                 <div
                   style={{
                     fontSize: "12px",
-                    backgroundColor: colors[index % colors.length],
+                    backgroundColor:
+                      colors[
+                        Object.keys(participants).indexOf(userId) %
+                          colors.length
+                      ],
                     borderRadius: "50%",
                     height: "30px",
                     width: "30px",
@@ -114,16 +132,22 @@ function ParticipantsDrawer({ isOpen, onClose, participants }) {
                     fontWeight: 500,
                   }}
                 >
-                  {participant.initials}
+                  {user.name.slice(0, 2).toUpperCase()}
                 </div>
-                <div >
-                  <div style={{ marginBottom: "5px" }}>{participant.name}</div>
-                  {participant.host && <div>Host</div>}
+                <div>
+                  <div style={{ marginBottom: "5px" }}>{user.name}</div>
+                  {user.host && <div>Host</div>}
                 </div>
               </div>
               <div style={{ display: "flex", gap: "15px" }}>
-                <img src={micIcon} alt="mic icon" />
-                <img src={videoIcon} alt="video icon" />
+                <img
+                  src={user.isAudioEnabled ? micIcon : micMuteIcon}
+                  alt="mic icon"
+                />
+                <img
+                  src={user.isVideoEnabled ? videoIcon : videoOffIcon}
+                  alt="video icon"
+                />
               </div>
             </div>
           ))}

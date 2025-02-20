@@ -16,7 +16,7 @@ import CustomButton from "../../../components/CustomButton";
 import { startInstantMeeting } from "../../../redux/VideoConference/video.action";
 import "./style.css";
 
-const socket = io("http://localhost:5000");
+// const socket = io("http://localhost:5000");
 
 const MeetingLobby = (props) => {
   const navigate = useNavigate();

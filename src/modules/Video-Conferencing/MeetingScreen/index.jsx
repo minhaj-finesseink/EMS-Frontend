@@ -216,11 +216,10 @@ function VideoHomeScreen() {
             <Video />
 
           {/* Participants Side Panel */}
-          {/* <ParticipantsDrawer
+          <ParticipantsDrawer
             isOpen={isParticipantsOpen}
             onClose={() => setIsParticipantsOpen(false)}
-            participants={participants}
-          /> */}
+          />
 
           {/* Invite Side Panel */}
           <InviteDrawer

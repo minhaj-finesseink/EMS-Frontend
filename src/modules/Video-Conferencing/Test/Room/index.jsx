@@ -37,7 +37,6 @@ const MeetingRoom = () => {
   const { meetingId } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
   const name = urlParams.get("name") || "Guest";
-
   const videoOn = urlParams.get("video") === "true";
   const audioOn = urlParams.get("audio") === "true";
 
@@ -55,305 +54,163 @@ const MeetingRoom = () => {
   const [participantsInfo, setParticipantsInfo] = useState({});
 
   useEffect(() => {
-    // const startVideo = async () => {
-    //   try {
-    //     const stream = await navigator.mediaDevices.getUserMedia({
-    //       video: isVideoEnabled,
-    //       audio: isAudioEnabled,
-    //     });
-
-    //     stream
-    //       .getVideoTracks()
-    //       .forEach((track) => (track.enabled = isVideoEnabled));
-    //     stream
-    //       .getAudioTracks()
-    //       .forEach((track) => (track.enabled = isAudioEnabled));
-
-    //     localStreamRef.current = stream;
-
-    //     if (localVideoRef.current) {
-    //       localVideoRef.current.srcObject = stream;
-    //     } else {
-    //       console.warn("⚠️ localVideoRef.current is NULL");
-    //     }
-
-    //     socket.emit("join-meeting", { meetingId, name });
-    //   } catch (error) {
-    //     console.error("❌ Error accessing media devices:", error);
-    //   }
-    // };
-
-    const startVideo = async () => {
+    const startMedia = async () => {
       try {
-        // ✅ Always request full audio & video access initially
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: true,
         });
 
         localStreamRef.current = stream;
+
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
 
-        // ✅ Join meeting with full access first
-        socket.emit("join-meeting", {
-          meetingId,
-          name,
-          isVideoEnabled: true,
-          isAudioEnabled: true,
+        socket.emit("join-meeting", { meetingId, name });
+        // ✅ Instantly disable video/audio based on URL params
+        if (!videoOn) toggleVideo();
+        if (!audioOn) toggleAudio();
+
+        socket.on("user-joined", async (userId) => {
+          if (peerConnectionsRef.current[userId]) return;
+
+          const peerConnection = new RTCPeerConnection(iceServers);
+          peerConnectionsRef.current[userId] = peerConnection;
+
+          // Add only audio and video tracks once
+          stream.getTracks().forEach((track) => {
+            peerConnection.addTrack(track, stream);
+          });
+
+          peerConnection.ontrack = (event) => {
+            console.log(`Received remote stream from ${userId}`);
+            setRemoteStreams((prevStreams) => ({
+              ...prevStreams,
+              [userId]: event.streams[0],
+            }));
+          };
+
+          peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+              socket.emit("ice-candidate", {
+                candidate: event.candidate,
+                to: userId,
+              });
+            }
+          };
+
+          const offer = await peerConnection.createOffer();
+          await peerConnection.setLocalDescription(offer);
+          socket.emit("offer", { offer, to: userId });
         });
 
-        // ✅ If video/audio is disabled in URL, "click" the button automatically
-        // if (!videoOn) {
-        //   setTimeout(() => toggleVideo(), 1000); // Simulate button click
-        // }
-        // if (!audioOn) {
-        //   setTimeout(() => toggleAudio(), 1000); // Simulate button click
-        // }
+        socket.on("offer", async ({ offer, from }) => {
+          if (!peerConnectionsRef.current[from]) {
+            peerConnectionsRef.current[from] = new RTCPeerConnection(
+              iceServers
+            );
+          }
 
-        // ✅ Instantly toggle if video/audio is false in the URL
-        if (!videoOn) toggleVideo(); // Instantly disable video
-        if (!audioOn) toggleAudio(); // Instantly mute audio
-        
+          const peerConnection = peerConnectionsRef.current[from];
+
+          stream.getTracks().forEach((track) => {
+            if (!peerConnection.getSenders().some((s) => s.track === track)) {
+              peerConnection.addTrack(track, stream);
+            }
+          });
+
+          peerConnection.ontrack = (event) => {
+            setRemoteStreams((prevStreams) => ({
+              ...prevStreams,
+              [from]: event.streams[0],
+            }));
+          };
+
+          peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+              socket.emit("ice-candidate", {
+                candidate: event.candidate,
+                to: from,
+              });
+            }
+          };
+
+          await peerConnection.setRemoteDescription(
+            new RTCSessionDescription(offer)
+          );
+          const answer = await peerConnection.createAnswer();
+          await peerConnection.setLocalDescription(answer);
+          socket.emit("answer", { answer, to: from });
+        });
+
+        socket.on("answer", async ({ answer, from }) => {
+          if (!peerConnectionsRef.current[from]) return;
+          await peerConnectionsRef.current[from].setRemoteDescription(
+            new RTCSessionDescription(answer)
+          );
+        });
+
+        socket.on("ice-candidate", async ({ candidate, from }) => {
+          if (!peerConnectionsRef.current[from]) return;
+          await peerConnectionsRef.current[from].addIceCandidate(
+            new RTCIceCandidate(candidate)
+          );
+        });
+
+        socket.on("user-left", (userId) => {
+          if (peerConnectionsRef.current[userId]) {
+            peerConnectionsRef.current[userId].close();
+            delete peerConnectionsRef.current[userId];
+          }
+
+          setRemoteStreams((prevStreams) => {
+            const updatedStreams = { ...prevStreams };
+            delete updatedStreams[userId];
+            return updatedStreams;
+          });
+        });
       } catch (error) {
-        console.error("❌ Error accessing media devices:", error);
+        console.error("Error accessing media devices:", error);
       }
     };
 
-    startVideo();
-
-    socket.on("user-joined", async (userId) => {
-      // console.log(`User joined: ${userId}`);
-
-      if (peerConnectionsRef.current[userId]) return;
-
-      const peerConnection = new RTCPeerConnection(iceServers);
-      peerConnectionsRef.current[userId] = peerConnection;
-
-      localStreamRef.current.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, localStreamRef.current);
-      });
-
-      peerConnection.ontrack = (event) => {
-        console.log(`Received remote stream from ${userId}`);
-
-        const stream = event.streams[0];
-
-        // Check if video track exists and is enabled
-        const videoTrack = stream.getVideoTracks()[0];
-        if (videoTrack && !videoTrack.enabled) {
-          console.log(`User ${userId} turned off their camera`);
-          setRemoteStreams((prevStreams) => ({
-            ...prevStreams,
-            [userId]: "hidden", // ✅ Mark as hidden to show initials
-          }));
-        } else {
-          setRemoteStreams((prevStreams) => ({
-            ...prevStreams,
-            [userId]: stream, // ✅ Keep video stream if video is ON
-          }));
-        }
-      };
-
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-          socket.emit("ice-candidate", {
-            candidate: event.candidate,
-            to: userId,
-          });
-        }
-      };
-
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-      socket.emit("offer", { offer, to: userId });
-    });
-
-    socket.on("offer", async ({ offer, from }) => {
-      // console.log(`Received offer from ${from}`);
-
-      if (!peerConnectionsRef.current[from]) {
-        peerConnectionsRef.current[from] = new RTCPeerConnection(iceServers);
-      }
-
-      const peerConnection = peerConnectionsRef.current[from];
-
-      localStreamRef.current.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, localStreamRef.current);
-      });
-
-      peerConnection.ontrack = (event) => {
-        // console.log(`Received remote stream from ${from}`);
-        setRemoteStreams((prevStreams) => ({
-          ...prevStreams,
-          [from]: event.streams[0],
-        }));
-      };
-
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-          socket.emit("ice-candidate", {
-            candidate: event.candidate,
-            to: from,
-          });
-        }
-      };
-
-      await peerConnection.setRemoteDescription(
-        new RTCSessionDescription(offer)
-      );
-
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      socket.emit("answer", { answer, to: from });
-    });
-
-    socket.on("answer", async ({ answer, from }) => {
-      // console.log(`Received answer from ${from}`);
-
-      if (!peerConnectionsRef.current[from]) return;
-
-      await peerConnectionsRef.current[from].setRemoteDescription(
-        new RTCSessionDescription(answer)
-      );
-    });
-
-    socket.on("ice-candidate", async ({ candidate, from }) => {
-      // console.log(`Received ICE candidate from ${from}`);
-
-      if (!peerConnectionsRef.current[from]) return;
-
-      await peerConnectionsRef.current[from].addIceCandidate(
-        new RTCIceCandidate(candidate)
-      );
-    });
-
-    socket.on("user-left", (userId) => {
-      // console.log(`User left: ${userId}`);
-
-      if (peerConnectionsRef.current[userId]) {
-        peerConnectionsRef.current[userId].close();
-        delete peerConnectionsRef.current[userId];
-      }
-
-      // ✅ Remove the user’s video from the UI
-      setRemoteStreams((prevStreams) => {
-        const updatedStreams = { ...prevStreams };
-        delete updatedStreams[userId];
-        return updatedStreams;
-      });
-    });
+    startMedia();
 
     return () => {
       Object.values(peerConnectionsRef.current).forEach((pc) => pc.close());
-      socket.emit("leave-meeting", { meetingId, name });
+      socket.emit("end-meeting", { meetingId, name });
     };
   }, [meetingId]);
 
-  useEffect(() => {
-    socket.on("toggle-video", ({ from, isVideoEnabled }) => {
-      setRemoteStreams((prevStreams) => {
-        if (isVideoEnabled) {
-          return {
-            ...prevStreams,
-            [from]: peerConnectionsRef.current[from]
-              ?.getReceivers()
-              .find((r) => r.track?.kind === "video")?.track
-              ? new MediaStream([
-                  peerConnectionsRef.current[from]
-                    .getReceivers()
-                    .find((r) => r.track?.kind === "video")?.track,
-                ])
-              : prevStreams[from], // Restore if video track exists
-          };
-        } else {
-          return { ...prevStreams, [from]: "video-off" }; // Mark as "video-off"
-        }
-      });
-    });
-
-    return () => {
-      socket.off("toggle-video");
-    };
-  }, []);
-
-  useEffect(() => {
-    socket.on("toggle-audio", ({ from, isAudioEnabled }) => {
-      setRemoteStreams((prev) => ({
-        ...prev,
-        [from]: { ...(prev[from] || {}), isAudioEnabled },
-      }));
-    });
-
-    return () => {
-      socket.off("toggle-audio");
-    };
-  }, []);
-
-  // ✅ NEW FUNCTION: Leaves the Meeting without Ending It for Others
-  const leaveMeeting = () => {
-    Object.values(peerConnectionsRef.current).forEach((pc) => pc.close());
-
-    if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach((track) => track.stop());
-    }
-
-    // ✅ Notify others that this participant has left
-    socket.emit("leave-meeting", { meetingId, userId: socket.id });
-
-    // ✅ Remove the current user’s video from the UI
-    setRemoteStreams((prevStreams) => {
-      const updatedStreams = { ...prevStreams };
-      // console.log("updatedStreams", updatedStreams);
-      delete updatedStreams[socket.id];
-      return updatedStreams;
-    });
-
-    navigate("/video-dashboard");
-  };
-
-  // 📹 Toggle Video (On/Off)
   const toggleVideo = () => {
     const newVideoState = !isVideoEnabled;
-
-    localStreamRef.current.getVideoTracks().forEach((track) => {
-      track.enabled = newVideoState;
-    });
-
+    localStreamRef.current
+      .getVideoTracks()
+      .forEach((track) => (track.enabled = newVideoState));
     setIsVideoEnabled(newVideoState);
-
-    // ✅ Emit event with user info
-    socket.emit("toggle-video", {
-      meetingId,
-      isVideoEnabled: newVideoState,
-    });
+    socket.emit("toggle-video", { meetingId, isVideoEnabled: newVideoState });
   };
 
-  // 🎤 Toggle Audio (Mute/Unmute)
   const toggleAudio = () => {
     const newAudioState = !isAudioEnabled;
-
-    localStreamRef.current.getAudioTracks().forEach((track) => {
-      track.enabled = newAudioState;
-    });
-
+    localStreamRef.current
+      .getAudioTracks()
+      .forEach((track) => (track.enabled = newAudioState));
     setIsAudioEnabled(newAudioState);
-
-    // ✅ Emit event with user info
-    socket.emit("toggle-audio", {
-      meetingId,
-      isAudioEnabled: newAudioState,
-    });
+    socket.emit("toggle-audio", { meetingId, isAudioEnabled: newAudioState });
   };
 
   useEffect(() => {
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = localStreamRef.current;
-    } else {
-      console.warn("⚠️ localVideoRef.current is NULL");
-    }
-  }, [isVideoEnabled]);
+    socket.on("update-participants", (updatedParticipants) => {
+      console.log("Updated Participants Info:", updatedParticipants);
+      setParticipantsInfo(updatedParticipants);
+    });
+
+    return () => {
+      socket.off("update-participants");
+    };
+  }, []);
 
   // 🖥️ Toggle Screen Sharing
   const toggleScreenShare = async () => {
@@ -386,6 +243,12 @@ const MeetingRoom = () => {
       });
 
       setIsScreenSharing(false);
+      socket.emit("toggle-screen", { meetingId, isScreenSharing: false });
+      setIsVideoEnabled(!isVideoEnabled);
+      socket.emit("toggle-video", {
+        meetingId,
+        isVideoEnabled: !isVideoEnabled,
+      });
     } else {
       try {
         // 🟢 Start screen sharing
@@ -410,6 +273,12 @@ const MeetingRoom = () => {
         });
 
         setIsScreenSharing(true);
+        socket.emit("toggle-screen", { meetingId, isScreenSharing: true });
+        setIsVideoEnabled(!isVideoEnabled);
+        socket.emit("toggle-video", {
+          meetingId,
+          isVideoEnabled: !isVideoEnabled,
+        });
 
         // 🔴 Stop sharing when user clicks browser's stop button
         screenStream.getVideoTracks()[0].onended = () => {
@@ -419,6 +288,23 @@ const MeetingRoom = () => {
         console.error("Error starting screen share:", error);
       }
     }
+  };
+
+  const endMeeting = () => {
+    socket.emit("end-meeting", { meetingId });
+    navigate("/video-dashboard");
+  };
+
+  useEffect(() => {
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = localStreamRef.current;
+    } else {
+      // console.warn("⚠️ localVideoRef.current is NULL");
+    }
+  }, [isVideoEnabled]);
+
+  const handleRecordClick = () => {
+    setIsRecording(!isRecording);
   };
 
   const meetingAction = [
@@ -464,38 +350,12 @@ const MeetingRoom = () => {
       icon: crossIcon,
       text: "End meeting",
       backgroundColor: "#ED1C24",
-      onClick: leaveMeeting,
+      onClick: endMeeting,
     },
   ];
 
-  const participants = Object.values(remoteStreams);
-  const totalParticipants = participants.length + 1; // Including self
-
-  const handleRecordClick = () => {
-    setIsRecording(!isRecording);
-  };
-
-  useEffect(() => {
-    socket.on("update-participants", (updatedParticipants) => {
-      console.log("Updated Participants Info:", updatedParticipants);
-      setParticipantsInfo(updatedParticipants);
-    });
-
-    return () => {
-      socket.off("update-participants");
-    };
-  }, []);
-
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        height: "100%",
-        padding: "0 20px",
-      }}
-    >
+    <div className="meeting-room">
       <div className="video-home-header">
         <div style={{ width: "150px" }}>
           <motion.div
@@ -555,72 +415,82 @@ const MeetingRoom = () => {
           </div>
         </div>
       </div>
-
       <div
-        className={`video-container grid-${
-          totalParticipants > 6 ? "more" : totalParticipants
-        }`}
+        className="video-container"
+        style={{
+          gridTemplateColumns:
+            Object.keys(participantsInfo).length <= 2
+              ? "repeat(2, 1fr)"
+              : "repeat(3, 1fr)",
+        }}
       >
         <div className="video-wrapper">
           {isVideoEnabled ? (
-            <>
-              <video
-                ref={localVideoRef}
-                autoPlay
-                playsInline
-                muted
-                className="video-preview"
-              />
-              <p>You</p>{" "}
-            </>
+            <video
+              ref={localVideoRef}
+              autoPlay
+              playsInline
+              muted
+              // className="video-preview"
+              className={`video-preview ${
+                isScreenSharing ? "screen-share-mode" : ""
+              }`}
+            />
           ) : (
-            <div className="lobby-video-placeholder">
-              <div className="lobby-video-initials">
+            <div className="room-video-placeholder">
+              <div className="room-video-initials">
                 {name.slice(0, 2).toUpperCase()}
               </div>
             </div>
           )}
         </div>
-        {Object.entries(remoteStreams).map(([userId, stream]) => (
-          <div key={userId} className="video-wrapper">
-            {participantsInfo[userId]?.isVideoEnabled && stream ? (
+
+        {Object.entries(remoteStreams).map(([userId, stream]) => {
+          const isVideoEnabled = participantsInfo[userId]?.isVideoEnabled;
+          const isScreenSharing = participantsInfo[userId]?.isScreenSharing;
+          console.log("isScreenSharing", isScreenSharing);
+
+          return (
+            <div key={userId} className="video-wrapper">
               <video
                 autoPlay
                 playsInline
                 ref={(video) => {
                   if (video && stream && video.srcObject !== stream) {
                     video.srcObject = stream;
-                    video
-                      .play()
-                      .catch((err) =>
-                        console.error("Video playback error:", err)
-                      );
                   }
                 }}
-                className="video-preview"
+                // className="video-preview"
+                // className={`video-preview ${
+                //   !isVideoEnabled ? "hidden-video" : ""
+                // }`}
+                className={`video-preview ${
+                  isScreenSharing ? "screen-share-mode" : ""
+                } ${!isVideoEnabled ? "hidden-video" : ""}`}
               />
-            ) : (
-              <div className="lobby-video-placeholder">
-                <div className="lobby-video-initials">
-                  {participantsInfo[userId]?.name.slice(0, 2).toUpperCase()}
+              {!isVideoEnabled && (
+                <div className="room-video-placeholder">
+                  <div className="room-video-initials">
+                    {participantsInfo[userId]?.name.slice(0, 2).toUpperCase()}
+                  </div>
+                </div>
+              )}
+              <div className="participants-name-icon">
+                <p>{participantsInfo[userId]?.name}</p>
+                <div>
+                  <img
+                    src={
+                      participantsInfo[userId]?.isAudioEnabled
+                        ? micIcon
+                        : micMuteIcon
+                    }
+                    alt="mic icon"
+                  />
                 </div>
               </div>
-            )}
-            <div className="participants-name-icon">
-              <p>{participantsInfo[userId]?.name}</p>
-              <div>
-                <img
-                  src={
-                    participantsInfo[userId]?.isAudioEnabled
-                      ? micIcon
-                      : micMuteIcon
-                  }
-                  alt="mic icon"
-                />
-              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="meeting-actions-container">
