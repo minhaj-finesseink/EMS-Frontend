@@ -18,10 +18,11 @@ import VideoHomeScreen from "./modules/Video-Conferencing/MeetingScreen";
 import Test from "./modules/Video-Conferencing/Test/Lobby";
 import Room from "./modules/Video-Conferencing/Test/Room";
 // import { VideoProvider } from "./context/VideoCallContext";
+import Layout from "./modules/Video-Conferencing/Layout";
 
 function App() {
   return (
-    // <VideoProvider> 
+    // <VideoProvider>
     <BrowserRouter>
       <Toaster /> {/* Toaster component to display toast messages */}
       <Routes>
@@ -45,6 +46,7 @@ function App() {
         {/* video test */}
         <Route path="/lobby" element={<Test />} />
         <Route path="/room/:meetingId" element={<Room />} />
+        <Route path="/test/:meetingId" element={<Layout />} />
         {/* Protected Route */}
         <Route
           path="/admin-dashboard"

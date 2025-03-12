@@ -1,0 +1,31 @@
+.room-header-container {
+    background: #000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    height: 80px;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.room-header-recording-container {
+    border: 1px solid #545454;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: 500;
+    display: flex;
+    gap: 10px;
+}
+
+.room-header-right-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.room-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

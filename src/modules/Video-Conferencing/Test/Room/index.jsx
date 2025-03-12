@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import socket from "../../socket";
 import { motion } from "framer-motion";
+import socket from "../../socket";
 import micIcon from "../../../../assets/Icons/mic-icon.svg";
 import micMuteIcon from "../../../../assets/Icons/mic-mute.svg";
 import videoIcon from "../../../../assets/Icons/camera video.svg";
@@ -358,6 +358,18 @@ const MeetingRoom = () => {
     ([, participant]) => participant.isScreenSharing
   );
 
+  const [expandedUserId, setExpandedUserId] = useState(null); // Track expanded user
+
+  // Toggle expand user
+  const toggleExpandUser = (userId) => {
+    setExpandedUserId(expandedUserId === userId ? null : userId); // Toggle or collapse
+  };
+
+  // Check if any user is expanded
+  const isExpanded = expandedUserId !== null;
+
+  console.log("isExpanded", isExpanded);
+
   return (
     <div className="meeting-room">
       <div className="video-home-header">
@@ -419,83 +431,281 @@ const MeetingRoom = () => {
           </div>
         </div>
       </div>
-      <div
-        className="video-container"
-        style={{
-          gridTemplateColumns:
-            Object.keys(participantsInfo).length <= 2
-              ? "repeat(2, 1fr)"
-              : "repeat(3, 1fr)",
-        }}
-      >
-        <div className="video-wrapper">
-          {isVideoEnabled ? (
+
+      {isExpanded ? (
+        // 🟢 Expanded View
+        <div style={{ display: "flex", gap: "10px", padding: "10px" }}>
+          {/* Expanded User (Left 70%) */}
+          <div
+            className="video-wrapper"
+            style={{
+              width: "70%",
+              position: "relative",
+              backgroundColor: "lightgreen",
+              borderRadius: "10px",
+              transition: "all 0.3s ease",
+            }}
+          >
             <video
-              ref={localVideoRef}
               autoPlay
               playsInline
-              muted
-              // className="video-preview"
-              className={`video-preview ${
-                isScreenSharing ? "screen-share-mode" : ""
-              }`}
+              ref={(video) => {
+                if (video && expandedUserId === "local") {
+                  video.srcObject = localStreamRef.current;
+                } else if (
+                  video &&
+                  expandedUserId &&
+                  remoteStreams[expandedUserId]
+                ) {
+                  video.srcObject = remoteStreams[expandedUserId];
+                }
+              }}
+              className="video-preview"
+              style={{
+                width: "100%",
+                height: "100%",
+                borderRadius: "10px",
+                objectFit: "cover",
+              }}
             />
-          ) : (
-            <div className="room-video-placeholder">
-              <div className="room-video-initials">
-                {name.slice(0, 2).toUpperCase()}
-              </div>
-            </div>
-          )}
-        </div>
+            <button
+              onClick={() => toggleExpandUser(expandedUserId)}
+              style={{
+                position: "absolute",
+                top: "5px",
+                right: "5px",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                border: "none",
+                borderRadius: "5px",
+                padding: "2px 5px",
+                cursor: "pointer",
+                color: "#fff",
+              }}
+            >
+              Collapse
+            </button>
+          </div>
 
-        {Object.entries(remoteStreams).map(([userId, stream]) => {
-          const isVideoEnabled = participantsInfo[userId]?.isVideoEnabled;
-          const isScreenSharing = participantsInfo[userId]?.isScreenSharing;
-          console.log("isScreenSharing", isScreenSharing);
-
-          return (
-            <div key={userId} className="video-wrapper">
-              <video
-                autoPlay
-                playsInline
-                ref={(video) => {
-                  if (video && stream && video.srcObject !== stream) {
-                    video.srcObject = stream;
-                  }
+          {/* Other Users (Right 30%) */}
+          <div
+            style={{
+              width: "30%",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              overflowY: "auto",
+              maxHeight: "calc(100vh - 20px)",
+            }}
+          >
+            {/* Local Video if not expanded */}
+            {expandedUserId !== "local" && (
+              <div
+                className="video-wrapper"
+                style={{
+                  width: "100%",
+                  height: "100px",
+                  position: "relative",
+                  borderRadius: "10px",
+                  overflow: "hidden",
                 }}
-                // className="video-preview"
-                // className={`video-preview ${
-                //   !isVideoEnabled ? "hidden-video" : ""
-                // }`}
-                className={`video-preview ${
-                  isScreenSharing ? "screen-share-mode" : ""
-                } ${!isVideoEnabled ? "hidden-video" : ""}`}
-              />
-              {!isVideoEnabled && (
-                <div className="room-video-placeholder">
-                  <div className="room-video-initials">
-                    {participantsInfo[userId]?.name.slice(0, 2).toUpperCase()}
+              >
+                <video
+                  ref={localVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="video-preview"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+                <button
+                  onClick={() => toggleExpandUser("local")}
+                  style={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px",
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    border: "none",
+                    borderRadius: "5px",
+                    padding: "2px 5px",
+                    cursor: "pointer",
+                    color: "#fff",
+                  }}
+                >
+                  Expand
+                </button>
+              </div>
+            )}
+
+            {/* Remote Videos */}
+            {Object.entries(remoteStreams).map(([userId, stream]) => {
+              if (userId !== expandedUserId) {
+                return (
+                  <div
+                    key={userId}
+                    className="video-wrapper"
+                    style={{
+                      width: "100%",
+                      height: "100px",
+                      position: "relative",
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <video
+                      autoPlay
+                      playsInline
+                      ref={(video) => {
+                        if (video && stream && video.srcObject !== stream) {
+                          video.srcObject = stream;
+                        }
+                      }}
+                      className="video-preview"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <button
+                      onClick={() => toggleExpandUser(userId)}
+                      style={{
+                        position: "absolute",
+                        top: "5px",
+                        right: "5px",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        border: "none",
+                        borderRadius: "5px",
+                        padding: "2px 5px",
+                        cursor: "pointer",
+                        color: "#fff",
+                      }}
+                    >
+                      Expand
+                    </button>
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
+        </div>
+      ) : (
+        <div
+          className="video-container"
+          style={{
+            gridTemplateColumns:
+              Object.keys(participantsInfo).length <= 2
+                ? "repeat(2, 1fr)"
+                : "repeat(3, 1fr)",
+          }}
+        >
+          <div className="video-wrapper">
+            {isVideoEnabled ? (
+              <>
+                <video
+                  ref={localVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  // className="video-preview"
+                  className={`video-preview ${
+                    isScreenSharing ? "screen-share-mode" : ""
+                  }`}
+                />
+                {/* Expand Button for Local Video */}
+                <button
+                  // onClick={() => toggleExpandVideo("local")}
+                  style={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px",
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    border: "none",
+                    borderRadius: "5px",
+                    padding: "2px 5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Expand
+                </button>{" "}
+              </>
+            ) : (
+              <div className="room-video-placeholder">
+                <div className="room-video-initials">
+                  {name.slice(0, 2).toUpperCase()}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {Object.entries(remoteStreams).map(([userId, stream]) => {
+            const isVideoEnabled = participantsInfo[userId]?.isVideoEnabled;
+            const isScreenSharing = participantsInfo[userId]?.isScreenSharing;
+            console.log("isScreenSharing", isScreenSharing);
+
+            return (
+              <div key={userId} className="video-wrapper">
+                <video
+                  autoPlay
+                  playsInline
+                  ref={(video) => {
+                    if (video && stream && video.srcObject !== stream) {
+                      video.srcObject = stream;
+                    }
+                  }}
+                  // className="video-preview"
+                  // className={`video-preview ${
+                  //   !isVideoEnabled ? "hidden-video" : ""
+                  // }`}
+                  className={`video-preview ${
+                    isScreenSharing ? "screen-share-mode" : ""
+                  } ${!isVideoEnabled ? "hidden-video" : ""}`}
+                />
+                {/* Expand Button for Local Video */}
+                <button
+                  // onClick={() => toggleExpandVideo("local")}
+                  style={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px",
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    border: "none",
+                    borderRadius: "5px",
+                    padding: "2px 5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Expand
+                </button>
+                {!isVideoEnabled && (
+                  <div className="room-video-placeholder">
+                    <div className="room-video-initials">
+                      {participantsInfo[userId]?.name.slice(0, 2).toUpperCase()}
+                    </div>
+                  </div>
+                )}
+                <div className="participants-name-icon">
+                  <p>{participantsInfo[userId]?.name}</p>
+                  <div>
+                    <img
+                      src={
+                        participantsInfo[userId]?.isAudioEnabled
+                          ? micIcon
+                          : micMuteIcon
+                      }
+                      alt="mic icon"
+                    />
                   </div>
                 </div>
-              )}
-              <div className="participants-name-icon">
-                <p>{participantsInfo[userId]?.name}</p>
-                <div>
-                  <img
-                    src={
-                      participantsInfo[userId]?.isAudioEnabled
-                        ? micIcon
-                        : micMuteIcon
-                    }
-                    alt="mic icon"
-                  />
-                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="meeting-actions-container">
         {meetingAction.map((item, index) => (
@@ -522,3 +732,64 @@ const MeetingRoom = () => {
 };
 
 export default MeetingRoom;
+
+{/* <div className="video-wrapper">
+  {isVideoEnabled ? (
+    <>
+      <video
+        ref={localVideoRef}
+        autoPlay
+        playsInline
+        muted
+        className="video-preview"
+      />
+    </>
+  ) : (
+    <div className="room-video-placeholder">
+      <div className="room-video-initials">
+        {name.slice(0, 2).toUpperCase()}
+      </div>
+    </div>
+  )}
+</div>;
+
+{
+  Object.entries(remoteStreams).map(([userId, stream]) => {
+    const isVideoEnabled = participantsInfo[userId]?.isVideoEnabled;
+    const isScreenSharing = participantsInfo[userId]?.isScreenSharing;
+    console.log("isScreenSharing", isScreenSharing);
+
+    return (
+      <div key={userId} className="video-wrapper">
+        <video
+          autoPlay
+          playsInline
+          ref={(video) => {
+            if (video && stream && video.srcObject !== stream) {
+              video.srcObject = stream;
+            }
+          }}
+          className={`video-preview`}
+        />
+        {!isVideoEnabled && (
+          <div className="room-video-placeholder">
+            <div className="room-video-initials">
+              {participantsInfo[userId]?.name.slice(0, 2).toUpperCase()}
+            </div>
+          </div>
+        )}
+        <div className="participants-name-icon">
+          <p>{participantsInfo[userId]?.name}</p>
+          <div>
+            <img
+              src={
+                participantsInfo[userId]?.isAudioEnabled ? micIcon : micMuteIcon
+              }
+              alt="mic icon"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  });
+} */}

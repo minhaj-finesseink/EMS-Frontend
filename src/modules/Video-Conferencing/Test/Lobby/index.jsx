@@ -78,14 +78,14 @@ const SelfVideo = () => {
     if (type === "instant") {
       const newMeetingId = uuidv4();
       navigate(
-        `/meeting-room/${newMeetingId}?name=${encodeURIComponent(
+        `/test/${newMeetingId}?name=${encodeURIComponent(
           values.name
         )}&video=${isPlaying}&audio=${isMuted}`
       );
       // navigate(`/meeting-room/${newMeetingId}`);
     } else {
       navigate(
-        `/meeting-room/${
+        `/test/${
           meetingID ? meetingID : values.meetingID
         }?name=${encodeURIComponent(
           values.name

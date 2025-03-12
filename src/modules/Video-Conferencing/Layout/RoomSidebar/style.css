@@ -1,0 +1,39 @@
+.room-sidebar-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 500;
+    gap: 5px;
+    margin: 20px 0;
+}
+
+.room-sidebar-logo img {
+    width: 35px;
+    height: 35px;
+}
+
+.room-sidebar-items {
+    border: 1px solid #545454;
+    border-radius: 50%;
+    height: 55px;
+    width: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.room-sidebar-items-container>div:last-child {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.room-sidebar-items-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    /* justify-content: center; */
+}

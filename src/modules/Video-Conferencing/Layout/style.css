@@ -1,0 +1,152 @@
+/* General Layout */
+.layout-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 128px;
+    background: #14171D;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* padding-top: 15px; */
+    color: white;
+}
+
+.count-label {
+    font-weight: bold;
+    /* margin-bottom: 10px; */
+}
+
+.counter-btn {
+    padding: 8px;
+    margin: 5px;
+    border: none;
+    background: #d1d1d1;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Main Content Area */
+.main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    /* Light Red */
+    overflow: hidden;
+}
+
+/* Primary Content */
+.primary-content {
+    flex: 1;
+    display: grid;
+    grid-gap: 10px;
+    padding: 15px;
+    /* background: #ffc0cb; */
+    /* Light Red */
+    height: calc(100vh - 140px);
+    /* Fixed height to avoid reduction */
+    overflow-y: auto;
+    /* Enables scrolling when content exceeds available space */
+}
+
+/* Content Box */
+.content-box1 {
+    position: relative;
+    background: #272A32;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    /* padding: 15px; */
+    font-weight: bold;
+    text-align: center;
+    /* border: 3px solid red; */
+    min-height: 150px;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Caption Box */
+.caption-box {
+    text-align: center;
+    background: #ffcc80;
+    /* Light Orange */
+    padding: 10px;
+    font-weight: bold;
+}
+
+.sidebar-box {
+    width: 100%;
+    height: 100%;
+    background: #7b6868;
+    color: white;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+}
+
+.pinned-screen-container {
+    height: calc(100vh - 140px);
+    display: grid;
+    grid-template-columns: 65% 35%;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.pinned-screen-container>div:first-child {
+    padding: 10px;
+    /* background-color: #ffc0cb; */
+}
+
+.pinned-screen-container>div:last-child {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    /* background-color: aquamarine; */
+    padding: 10px;
+    overflow-y: auto;
+    align-content: start;
+}
+
+.room-video-placeholder1 {
+    background-color: #007DC5;
+    height: 90px;
+    width: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.participants-name-icon1 {
+    position: absolute;
+    bottom: 10px;
+    display: flex;
+    width: calc(100% - 60px);
+    justify-content: space-between;
+    background: #1A131878;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.participants-pin-button {
+    position: absolute;
+    bottom: 100px;
+    color: white;
+    background: #1A131878;
+    border: 0;
+    font-size: 24px;
+}

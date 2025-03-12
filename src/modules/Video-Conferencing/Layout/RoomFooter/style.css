@@ -1,0 +1,30 @@
+.room-button-container {
+    background: #000;
+    color: white;
+    height: 86px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.room-button-icon {
+    width: 55px;
+    height: 55px;
+    border: 1px solid #545454;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room-pagination {
+    position: absolute;
+    right: 20px;
+    border: 2px solid #545454;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
