@@ -1,0 +1,7 @@
+.host-drawer .ant-drawer-header-title {
+    flex-direction: row-reverse;
+}
+
+.host-drawer .ant-drawer-title {
+    text-align: center;
+}

@@ -19,6 +19,7 @@ import Test from "./modules/Video-Conferencing/Test/Lobby";
 import Room from "./modules/Video-Conferencing/Test/Room";
 // import { VideoProvider } from "./context/VideoCallContext";
 import Layout from "./modules/Video-Conferencing/Layout";
+import Test1 from './modules/Video-Conferencing/new.jsx'
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
         <Route path="/lobby" element={<Test />} />
         <Route path="/room/:meetingId" element={<Room />} />
         <Route path="/test/:meetingId" element={<Layout />} />
+        <Route path="/new" element={<Test1 />} />
         {/* Protected Route */}
         <Route
           path="/admin-dashboard"

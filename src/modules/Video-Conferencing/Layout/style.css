@@ -76,10 +76,11 @@
 /* Caption Box */
 .caption-box {
     text-align: center;
-    background: #ffcc80;
+    /* background: #ffcc80; */
     /* Light Orange */
     padding: 10px;
     font-weight: bold;
+    color: white;
 }
 
 .sidebar-box {
@@ -149,4 +150,102 @@
     background: #1A131878;
     border: 0;
     font-size: 24px;
+}
+
+.hand-raised-container {
+    position: absolute;
+    background: #1E2022;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border-bottom: 3px solid #007DC5;
+    box-shadow: 0px 1px 1px 0px #007DC5;
+    bottom: 75px;
+    left: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ai-tile-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #000;
+    width: 100px;
+    height: 100px;
+    padding: 15px 0 0 15px;
+    border-top-left-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Outer container for the icon */
+.ai-tile-container>div:first-child {
+    background-color: #222222;
+    border-radius: 15px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Multi-ring effect container */
+.pulsating-glow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60%;
+    /* Adjust as needed */
+    height: 60%;
+    border-radius: 50%;
+    position: relative;
+    background-color: #9747FF;
+    /* Main inner glow */
+    z-index: 2;
+}
+
+/* Inner ring */
+.pulsating-glow::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(151, 71, 255, 0.5);
+    border-radius: 50%;
+    z-index: -1;
+    animation: pulse-ring 2s infinite ease-in-out;
+}
+
+/* Outer ring */
+.pulsating-glow::after {
+    content: "";
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    background-color: rgba(151, 71, 255, 0.3);
+    border-radius: 50%;
+    z-index: -2;
+    animation: pulse-ring 2s infinite ease-in-out 0.5s;
+}
+
+/* Animation for pulsating rings */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
 }

@@ -1,12 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import RoomSideBar from "./RoomSidebar";
 import RoomHeader from "./RoomHeader";
 import RoomFooter from "./RoomFooter";
 import micIcon from "../../../assets/Icons/mic-icon.svg";
 import micMuteIcon from "../../../assets/Icons/mic-mute.svg";
 import socket from "../socket";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ArrowsAltOutlined } from "@ant-design/icons";
+import ParticipantsDrawer from "./ParticipantsDrawer";
+import InviteDrawer from "./InviteDrawer";
+import Breakout from "./BreakoutModal";
+import PluginDrawer from "./PluginDrawer";
+import SettingsModal from "./SettingsModal";
+import handIcon from "../../../assets/NewIcons/hand-3.svg";
+import HostControl from "./HostControlDrawer";
+import ChatDrawer from "./ChatDrawer";
+import NoteTakerIcon from "../../../assets/NewIcons/note-taker.svg";
+import MeetingAgenda from "./MeetingAgenda";
+import useRecordFunctions from "./Recording";
 import "./style.css";
 
 const iceServers = {
@@ -22,19 +34,25 @@ const iceServers = {
 };
 
 function Layout() {
-  const navigate = useNavigate();
   const { meetingId } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
   const name = urlParams.get("name") || "Guest";
   const videoOn = urlParams.get("video") === "true";
   const audioOn = urlParams.get("audio") === "true";
 
-  const [caption, setCaption] = useState(false);
   const [movedItem, setMovedItem] = useState(null); // ✅ Only store one item
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Room buttons control
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [isHandRaised, setIsHandRaised] = useState(false);
+  const [caption, setCaption] = useState(false);
+  const [activeReactions, setActiveReactions] = useState({});
+  const [chat, setChat] = useState(false);
+  const [isAIEnable, setIsAIEnabled] = useState(false);
+
   const [remoteUsers, setRemoteUsers] = useState([]);
   const [participantsInfo, setParticipantsInfo] = useState({});
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -44,6 +62,23 @@ function Layout() {
   const localVideoRef = useRef(null);
   const localStreamRef = useRef(null);
   const peerConnectionsRef = useRef({});
+
+  const [isParticipantsOpen, setIsParticipantsOpen] = useState(false);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [isBreakoutOpen, setIsbreakoutOpen] = useState(false);
+  const [isPluginOpen, setIsPluginOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isHostControlOpen, setIsHostControlOpen] = useState(false);
+  const [captions, setCaptions] = useState([]);
+  const [isOpenAgenda, setIsOpenAgenda] = useState(false);
+
+  const [isManuallyUnpinned, setIsManuallyUnpinned] = useState(false);
+
+  // Screen recording
+  const [isRecording, setIsRecording] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const { startRecording, stopRecording, startTimer, stopTimer } =
+    useRecordFunctions();
 
   useEffect(() => {
     const startMedia = async () => {
@@ -271,6 +306,43 @@ function Layout() {
     }
   };
 
+  // Toggle hand raise
+  const toggleHandRaise = () => {
+    const newHandRaiseState = !isHandRaised;
+    setIsHandRaised(newHandRaiseState);
+
+    // Emit event to notify other participants
+    socket.emit("hand-raised", { meetingId, isHandRaised: newHandRaiseState });
+  };
+
+  // 🟢 Listen for incoming reactions
+  useEffect(() => {
+    socket.on("reaction", ({ name, reaction }) => {
+      setActiveReactions((prev) => {
+        const userReactions = prev[name] || [];
+        return {
+          ...prev,
+          [name]: [...userReactions, { reaction, id: Date.now() }], // Keep track of multiple reactions
+        };
+      });
+
+      // ⏳ Auto-hide the reaction after 5 seconds
+      setTimeout(() => {
+        setActiveReactions((prev) => {
+          const userReactions = prev[name] || [];
+          return {
+            ...prev,
+            [name]: userReactions.slice(1), // Remove the oldest reaction first
+          };
+        });
+      }, 5000);
+    });
+
+    return () => {
+      socket.off("reaction");
+    };
+  }, []);
+
   useEffect(() => {
     socket.on("update-participants", (updatedParticipants) => {
       // console.log("Updated Participants Info:", updatedParticipants);
@@ -285,12 +357,9 @@ function Layout() {
   const itemsPerPage = 15;
   const totalPages = Math.ceil((count - 1) / itemsPerPage);
 
-  console.log("participantsInfo", participantsInfo);
-
   const remoteUsersArray = Object.entries(remoteUsers).map(
     ([userId, stream]) => {
       const participant = participantsInfo?.[userId] || {}; // Get participant info safely
-      console.log("participant", participant);
 
       return {
         id: userId,
@@ -298,7 +367,11 @@ function Layout() {
         stream: stream,
         isVideoEnabled: participant.isVideoEnabled,
         isAudioEnabled: participant.isAudioEnabled,
-        isScreenSharing: participant.isScreenSharing,
+        isScreenSharing: participant.isScreenSharing
+          ? participant.isScreenSharing
+          : false,
+        isHandRaised: participant.isHandRaised,
+        isNoteTakerEnabled: participant.isNoteTakerEnabled,
       };
     }
   );
@@ -310,6 +383,7 @@ function Layout() {
       isVideoEnabled,
       isAudioEnabled,
       isScreenSharing,
+      isNoteTakerEnabled: isAIEnable,
       stream: localStreamRef.current,
     },
     ...remoteUsersArray,
@@ -372,17 +446,100 @@ function Layout() {
   // ✅ Move item back to the grid
   const moveBackToGrid = () => {
     setMovedItem(null); // ✅ Clear sidebar
+    setIsManuallyUnpinned(true); // ✅ Stop auto-pinning again
   };
 
+  useEffect(() => {
+    if (isManuallyUnpinned) return; // ✅ Stop auto-pinning if manually unpinned
+
+    // Find the first user who is screen sharing
+    const screenSharingIndex = allUsers.findIndex(
+      (user) => user.isScreenSharing
+    );
+
+    if (screenSharingIndex !== -1) {
+      setMovedItem(screenSharingIndex); // ✅ Auto-pin screen-sharing user initially
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allUsers]); // Runs when users update
+
+  // Caption socket code
+  useEffect(() => {
+    socket.on("transcription", ({ speaker, transcription, isFinal }) => {
+      console.log(`[${speaker}]: ${transcription}`);
+
+      setCaptions((prevCaptions) => [
+        ...prevCaptions,
+        { speaker, text: transcription, isFinal },
+      ]);
+    });
+
+    // Cleanup listener on component unmount
+    return () => {
+      socket.off("transcription");
+    };
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCaptions((prevCaptions) => {
+        // Keep only the last 5 captions to avoid clutter
+        if (prevCaptions.length > 5) {
+          return prevCaptions.slice(prevCaptions.length - 5);
+        }
+        return prevCaptions;
+      });
+    }, 5000); // Run every 5 seconds to clean up old captions
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Recording
+  const handleStartStop = () => {
+    if (isRecording) {
+      stopRecording();
+      stopTimer();
+    } else {
+      startRecording();
+      startTimer(setTimer);
+    }
+    setIsRecording((prev) => !prev);
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      stopTimer();
+    };
+  }, []);
+
   return (
-    <div className="layout-container">
+    <div id="recordableDiv" className="layout-container">
       <div className="sidebar">
-        <RoomSideBar />
+        <RoomSideBar
+          openParticipants={() => setIsParticipantsOpen(true)}
+          openInvite={() => setIsInviteOpen(true)}
+          openBreakout={() => setIsbreakoutOpen(true)}
+          openPlugin={() => setIsPluginOpen(true)}
+          openSettings={() => setIsSettingsOpen(true)}
+          openHostControl={() => setIsHostControlOpen(true)}
+          participant={isParticipantsOpen}
+          invite={isInviteOpen}
+          breakout={isBreakoutOpen}
+          plugin={isPluginOpen}
+          settings={isSettingsOpen}
+          hostControl={isHostControlOpen}
+        />
       </div>
 
       <div className="main-wrapper">
         <div>
-          <RoomHeader />
+          <RoomHeader
+            openMeetingAgenda={() => setIsOpenAgenda(true)}
+            isRecording={isRecording}
+            timer={timer}
+            onStartStop={handleStartStop}
+          />
         </div>
 
         {movedItem !== null ? (
@@ -393,8 +550,15 @@ function Layout() {
                 .filter((_, index) => index === movedItem) // ✅ Only show the pinned user
                 .map((user) => {
                   if (!user) return null;
-                  const { id, name, stream, isVideoEnabled, isAudioEnabled } =
-                    user;
+                  const {
+                    id,
+                    name,
+                    stream,
+                    isVideoEnabled,
+                    isAudioEnabled,
+                    isScreenSharing,
+                    isHandRaised,
+                  } = user;
 
                   return (
                     <div
@@ -420,6 +584,7 @@ function Layout() {
                             position: "absolute",
                             width: "100%",
                             height: "100%",
+                            objectFit: isScreenSharing ? "contain" : "cover",
                           }}
                         />
                       ) : id === "self" ? (
@@ -436,6 +601,7 @@ function Layout() {
                             position: "absolute",
                             width: "100%",
                             height: "100%",
+                            objectFit: isScreenSharing ? "contain" : "cover",
                           }}
                         />
                       ) : null}
@@ -464,6 +630,35 @@ function Layout() {
                       >
                         ✖
                       </button>
+                      {/* Hand raise */}
+                      {isHandRaised && (
+                        <div className="hand-raised-container">
+                          {name} raised hand <img src={handIcon} alt="hand" />
+                        </div>
+                      )}
+                      {/* Reaction */}
+                      {id !== "self"
+                        ? activeReactions[name] &&
+                          activeReactions[name].map(
+                            ({ reaction, id }, index) => (
+                              <motion.div
+                                key={id}
+                                style={{
+                                  bottom: `${70 + index * 30}px`,
+                                  fontSize: "40px",
+                                  position: "absolute",
+                                  right: "10px",
+                                }} // Stack each reaction higher
+                                initial={{ opacity: 0, y: 0, scale: 1 }}
+                                animate={{ opacity: 1, y: -80, scale: 1 }} // 🔹 Move up less & keep size normal
+                                exit={{ opacity: 0, y: -100, scale: 0.5 }} // 🔹 Shrink as it disappears
+                                transition={{ duration: 1.2, ease: "easeOut" }} // 🔹 Slightly reduced duration
+                              >
+                                {reaction}
+                              </motion.div>
+                            )
+                          )
+                        : ""}
                     </div>
                   );
                 })}
@@ -475,8 +670,14 @@ function Layout() {
                 .filter((_, index) => index !== movedItem) // ✅ Exclude the pinned user
                 .map((user, index) => {
                   if (!user) return null;
-                  const { id, name, stream, isVideoEnabled, isAudioEnabled } =
-                    user;
+                  const {
+                    id,
+                    name,
+                    stream,
+                    isVideoEnabled,
+                    isAudioEnabled,
+                    isHandRaised,
+                  } = user;
 
                   return (
                     <div key={id} className="content-box1">
@@ -498,6 +699,7 @@ function Layout() {
                             position: "absolute",
                             width: "100%",
                             height: "100%",
+                            objectFit: isScreenSharing ? "contain" : "cover",
                           }}
                         />
                       ) : id === "self" ? (
@@ -514,6 +716,7 @@ function Layout() {
                             position: "absolute",
                             width: "100%",
                             height: "100%",
+                            objectFit: isScreenSharing ? "contain" : "cover",
                           }}
                         />
                       ) : null}
@@ -556,6 +759,42 @@ function Layout() {
                             <ArrowsAltOutlined />
                           </button>
                         )}
+                      {/* Hand raise */}
+                      {isHandRaised && (
+                        <div
+                          className="hand-raised-container"
+                          style={{
+                            padding: "5px",
+                            bottom: "50px",
+                            left: "10px",
+                          }}
+                        >
+                          <img src={handIcon} alt="hand" />
+                        </div>
+                      )}
+                      {/* Reaction */}
+                      {id !== "self"
+                        ? activeReactions[name] &&
+                          activeReactions[name].map(
+                            ({ reaction, id }, index) => (
+                              <motion.div
+                                key={id}
+                                style={{
+                                  bottom: `${50 + index * 25}px`, // 🔹 Lower starting position
+                                  fontSize: "25px",
+                                  position: "absolute",
+                                  right: "10px",
+                                }}
+                                initial={{ opacity: 0, y: 0, scale: 1 }}
+                                animate={{ opacity: 1, y: -10, scale: 1 }} // 🔹 Moves up less (-50 instead of -80)
+                                exit={{ opacity: 0, y: -60, scale: 0.7 }} // 🔹 Shrinks slightly, moves up less
+                                transition={{ duration: 1.5, ease: "easeOut" }} // 🔹 Slower animation (1.5s instead of 1.2s)
+                              >
+                                {reaction}
+                              </motion.div>
+                            )
+                          )
+                        : ""}
                     </div>
                   );
                 })}
@@ -565,12 +804,16 @@ function Layout() {
           <div className="primary-content" style={getGridTemplate()}>
             {allUsers.map((user, index) => {
               if (!user) return null;
-              const { id, name, stream, isVideoEnabled, isAudioEnabled, isScreenSharing } = user;
-              // console.log("id", id);
-              // console.log("name", name);
-              // console.log("isVideoEnabled", isVideoEnabled);
-              console.log("isScreenSharing", isScreenSharing);
-
+              const {
+                id,
+                name,
+                stream,
+                isVideoEnabled,
+                isAudioEnabled,
+                isScreenSharing,
+                isHandRaised,
+                isNoteTakerEnabled,
+              } = user;
               return (
                 <div
                   key={id}
@@ -596,6 +839,7 @@ function Layout() {
                         position: "absolute",
                         width: "100%",
                         height: "100%",
+                        objectFit: isScreenSharing ? "contain" : "cover",
                       }}
                     />
                   ) : id === "self" ? (
@@ -612,6 +856,7 @@ function Layout() {
                         position: "absolute",
                         width: "100%",
                         height: "100%",
+                        objectFit: isScreenSharing ? "contain" : "cover",
                       }}
                     />
                   ) : null}
@@ -646,17 +891,73 @@ function Layout() {
                       <ArrowsAltOutlined />
                     </button>
                   )}
+
+                  {/* Hand raise */}
+                  {isHandRaised && (
+                    <div className="hand-raised-container">
+                      {name} raised hand <img src={handIcon} alt="hand" />
+                    </div>
+                  )}
+
+                  {/* Reaction */}
+                  {id !== "self"
+                    ? activeReactions[name] &&
+                      activeReactions[name].map(({ reaction, id }, index) => (
+                        <motion.div
+                          key={id}
+                          style={{
+                            bottom: `${70 + index * 30}px`,
+                            fontSize: "40px",
+                            position: "absolute",
+                            right: "10px",
+                          }} // Stack each reaction higher
+                          initial={{ opacity: 0, y: 0, scale: 1 }}
+                          animate={{ opacity: 1, y: -80, scale: 1 }} // 🔹 Move up less & keep size normal
+                          exit={{ opacity: 0, y: -100, scale: 0.5 }} // 🔹 Shrink as it disappears
+                          transition={{ duration: 1.2, ease: "easeOut" }} // 🔹 Slightly reduced duration
+                        >
+                          {reaction}
+                        </motion.div>
+                      ))
+                    : ""}
+
+                  {/* AI Tile */}
+                  {isNoteTakerEnabled && (
+                    <div className="ai-tile-container">
+                      <div>
+                        <div className="pulsating-glow">
+                          <img src={NoteTakerIcon} alt="note" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         )}
 
-        {caption && <div className="caption-box">Caption is enabled</div>}
+        {caption && (
+          <div className="caption-box">
+            {captions.map((caption, index) => (
+              <div
+                key={index}
+                className={`caption ${caption.isFinal ? "final" : "interim"}`}
+                style={{
+                  animationDelay: `${index * 0.5}s`,
+                }} /* Staggered fade-in */
+              >
+                <strong>{caption.speaker}:</strong> {caption.text}
+              </div>
+            ))}
+          </div>
+        )}
 
         <div>
           <RoomFooter
-            caption={setCaption}
+            meetingId={meetingId}
+            caption={caption}
+            setCaption={setCaption}
             pagination={{ currentPage, totalPages, setCurrentPage }}
             toggleVideo={toggleVideo} // ✅ Pass toggleVideo function
             toggleAudio={toggleAudio} // ✅ Pass toggleAudio function
@@ -664,8 +965,63 @@ function Layout() {
             isAudioEnabled={isAudioEnabled} // ✅ Send current audio status
             toggleScreenShare={toggleScreenShare}
             isScreenSharing={isScreenSharing}
+            toggleHandRaise={toggleHandRaise}
+            isHandRaised={isHandRaised}
+            chat={chat} // Pass currect status
+            openChat={() => setChat(true)} // Pass open function
+            AIEnable={setIsAIEnabled}
+            AI={isAIEnable}
           />
         </div>
+        {/* Participants Side Panel */}
+        <ParticipantsDrawer
+          isOpen={isParticipantsOpen}
+          onClose={() => setIsParticipantsOpen(false)}
+        />
+
+        {/* Invite Side Panel */}
+        <InviteDrawer
+          isOpen={isInviteOpen}
+          onClose={() => setIsInviteOpen(false)}
+        />
+
+        {/* Breakout modal */}
+        <Breakout
+          isOpen={isBreakoutOpen}
+          onClose={() => setIsbreakoutOpen(false)}
+        />
+
+        {/* Plugin Side Panel */}
+        <PluginDrawer
+          isOpen={isPluginOpen}
+          onClose={() => setIsPluginOpen(false)}
+        />
+
+        {/* Settings Modal */}
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+        />
+
+        {/* Host control side panel */}
+        <HostControl
+          isOpen={isHostControlOpen}
+          onClose={() => setIsHostControlOpen(false)}
+        />
+
+        {/* Chat side panel */}
+        <ChatDrawer
+          isOpen={chat}
+          onClose={() => setChat(false)}
+          meetingId={meetingId}
+          name={name}
+        />
+
+        {/* Meetign agenda side panel */}
+        <MeetingAgenda
+          isOpen={isOpenAgenda}
+          onClose={() => setIsOpenAgenda(false)}
+        />
       </div>
     </div>
   );

@@ -1,0 +1,266 @@
+/* Modal Background */
+.settings-modal .ant-modal-content {
+    background-color: #1A1A1A !important;
+    color: white;
+    /* height: 100vh; */
+    padding: 0;
+}
+
+/* Modal Header */
+.settings-modal .ant-modal-header {
+    background-color: #1A1A1A !important;
+    border-bottom: 1px solid #333;
+}
+
+/* Modal Title */
+.settings-modal .ant-modal-title {
+    color: white;
+}
+
+/* Modal Close Button */
+.settings-modal .ant-modal-close {
+    color: white;
+}
+
+/* Settings Container */
+.settings-container {
+    display: flex;
+}
+
+/* Left Sidebar Menu */
+.settings-menu {
+    min-width: 220px;
+    background: #191B23;
+    border-radius: 8px;
+    margin-right: 20px;
+    margin: 0;
+    font-weight: 600;
+    padding: 20px;
+    /* color: red !important; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.settings-menu .ant-menu-item {
+    color: #fff !important;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-weight: 400;
+}
+
+/* Selected Menu Item */
+.settings-menu .ant-menu-item-selected {
+    background-color: #007Dc5 !important;
+    color: #fff !important;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Right Settings Content */
+.settings-content {
+    flex: 1;
+    padding: 10px;
+    background: #11131A;
+    /* border-radius: 8px; */
+    /* height: 80vh; */
+}
+
+/* Each Setting Row */
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* background: #262626; */
+    padding: 10px 20px;
+    /* margin-bottom: 10px; */
+    /* border-radius: 8px; */
+}
+
+/* Setting Titles */
+.settings-item-title {
+    font-size: 16px;
+    font-weight: 600;
+    max-width: 70%;
+}
+
+/* Setting Descriptions */
+.settings-item-desc {
+    color: #8F9099CC;
+}
+
+/* Custom Select */
+.settings-select .ant-select-selector {
+    background: #272A32 !important;
+    color: white !important;
+    border: none !important;
+    min-width: 220px !important;
+}
+
+.settings-select .ant-select-arrow {
+    color: white !important;
+}
+
+.settings-select1 .ant-select-selector {
+    background: none !important;
+    color: white !important;
+    border: none !important;
+    /* min-width: 220px !important; */
+}
+
+.settings-select1 .ant-select-arrow {
+    color: white !important;
+}
+
+.settings-close-icon {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+/* Default Switch Background (Unchecked) */
+.settings-switch {
+    background-color: grey !important;
+}
+
+/* Change switch background when enabled (checked) */
+.settings-switch.ant-switch-checked {
+    background-color: #00964C !important;
+}
+
+.device-select-button {
+    background-color: #272A32;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    border-radius: 8px;
+}
+
+.appearence-mode-selecter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.appearence-mode-selecter>div {
+    margin-top: 2px;
+}
+
+/* Audio tab */
+.audio-settings-container {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    font-family: Arial, sans-serif;
+}
+
+.audio-section {
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    background-color: #2a2a2a;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.audio-select {
+    flex: 1;
+    background-color: #2a2a2a !important;
+    color: white !important;
+}
+
+.test-button {
+    margin-left: 10px;
+    background-color: gray;
+    color: white;
+    transition: background 0.3s ease-in-out;
+}
+
+.test-button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.level-title {
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.level-bar {
+    height: 9px;
+    background-color: #444;
+    /* border-radius: 4px; */
+    margin-top: 2px;
+    width: 100%;
+    position: relative;
+}
+
+.level-fill {
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 4px;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.volume-control .volume-slider {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.input-level-text {
+    white-space: row-wrap;
+}
+
+/* whiteboard */
+
+.whiteboard-custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: rgba(217, 217, 217, 0.8);
+    /* #D9D9D9 with 80% opacity */
+    cursor: pointer;
+}
+
+.whiteboard-custom-checkbox input {
+    appearance: none;
+    /* Hide default checkbox */
+    width: 16px;
+    height: 16px;
+    border: 1px solid white;
+    /* White border */
+    border-radius: 4px;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.whiteboard-custom-checkbox input:checked::before {
+    content: "✔";
+    /* Custom checkmark */
+    font-size: 12px;
+    color: white;
+    display: block;
+    text-align: center;
+}

@@ -1,22 +1,33 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import micIcon from "../../../../assets/Icons/mic-icon.svg";
-import micMuteIcon from "../../../../assets/Icons/mic-mute.svg";
-import videoIcon from "../../../../assets/Icons/camera video.svg";
-import videoOffIcon from "../../../../assets/Icons/camera video-silent.svg";
-import arrowUpIcon from "../../../../assets/Icons/arrow up.svg";
-import handRaiseIcon from "../../../../assets/Icons/hand raise.svg";
-import emojiIcon from "../../../../assets/Icons/emoji.svg";
-import chatIcon from "../../../../assets/Icons/chat.svg";
-import AIIcon from "../../../../assets/Icons/AI Generate.svg";
-import crossIcon from "../../../../assets/Icons/cross.svg";
-import captionIcon from "../../../../assets/Icons/caption-icon.svg";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { Button, Popover } from "antd";
+import socket from "../../socket";
+import micIcon from "../../../../assets/NewIcons/mic-1.svg";
+import micMuteIcon from "../../../../assets/Icons/mic-mute.svg";
+import videoIcon from "../../../../assets/NewIcons/video-1.svg";
+import videoOffIcon from "../../../../assets/Icons/camera video-silent.svg";
+import shareIcon from "../../../../assets/NewIcons/share-1.svg";
+import share2Icon from "../../../../assets/NewIcons/share-2.svg";
+import captionIcon from "../../../../assets/NewIcons/caption-1.svg";
+import caption2Icon from "../../../../assets/NewIcons/caption-2.svg";
+import emojiIcon from "../../../../assets/NewIcons/emoji-1.svg";
+import emoji2Icon from "../../../../assets/NewIcons/emoji-2.svg";
+import handRaiseIcon from "../../../../assets/NewIcons/hand-1.svg";
+import handRaise2Icon from "../../../../assets/NewIcons/hand-2.svg";
+import AIIcon from "../../../../assets/NewIcons/Ai-1.svg";
+import AI2Icon from "../../../../assets/NewIcons/Ai-2.svg";
+import chatIcon from "../../../../assets/NewIcons/chat-1.svg";
+import chat2Icon from "../../../../assets/NewIcons/chat-2.svg";
+import endIcon from "../../../../assets/NewIcons/end-1.svg";
 import "./style.css";
 
 function RoomFooter({
+  meetingId,
   caption,
+  setCaption,
   pagination,
   toggleVideo,
   toggleAudio,
@@ -24,8 +35,19 @@ function RoomFooter({
   isVideoEnabled,
   toggleScreenShare,
   isScreenSharing,
+  toggleHandRaise,
+  isHandRaised,
+  chat,
+  openChat,
+  AIEnable,
+  AI,
 }) {
+  const navigate = useNavigate();
   const { currentPage, totalPages, setCurrentPage } = pagination;
+
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [floatingEmojis, setFloatingEmojis] = useState([]);
+  const [isAIEnabled, setIsAIEnabled] = useState(false);
 
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -36,64 +58,111 @@ function RoomFooter({
   };
 
   const handleCaption = () => {
-    caption((prev) => !prev);
+    setCaption((prev) => !prev);
+  };
+  const handleEnableAI = () => {
+    AIEnable((prev) => !prev);
+    const newAiState = !isAIEnabled;
+    setIsAIEnabled(newAiState);
+
+    // Emit event to notify other participants
+    socket.emit("note-taker", { meetingId, isNoteTakerEnabled: newAiState });
+  };
+
+  const handleReaction = (visible) => {
+    setIsPopoverOpen(visible);
+  };
+
+  // Handle emoji click: Add emoji & remove after animation
+  const sendReaction = (emoji) => {
+    const id = Date.now(); // Unique ID for each emoji
+    setFloatingEmojis((prev) => [...prev, { id, emoji }]);
+
+    // Remove emoji after animation completes (2 sec)
+    setTimeout(() => {
+      setFloatingEmojis((prev) => prev.filter((e) => e.id !== id));
+    }, 2500);
+
+    // Hide popover
+    setIsPopoverOpen(false);
+
+    // Socket call
+    socket.emit("reaction", { meetingId, reaction: emoji });
+  };
+
+  // Reaction Content inside Popover
+  const reactionContent = (
+    <div style={{ display: "flex", gap: "10px", padding: "10px" }}>
+      {["👍", "❤️", "👏", "😂", "🔥", "🎉"].map((emoji) => (
+        <Button
+          key={emoji}
+          type="text"
+          className="reaction-emoji"
+          onClick={() => sendReaction(emoji)}
+        >
+          {emoji}
+        </Button>
+      ))}
+    </div>
+  );
+
+  const endMeeting = () => {
+    socket.emit("end-meeting", { meetingId });
+    navigate("/video-dashboard");
   };
 
   const meetingAction = [
     {
       icon: isAudioEnabled ? micIcon : micMuteIcon,
       text: isAudioEnabled ? "Mute" : "Unmute",
-      backgroundColor: "#272A32",
       onClick: toggleAudio,
     },
     {
       icon: isVideoEnabled ? videoIcon : videoOffIcon,
       text: isVideoEnabled ? "Stop video" : "Start video",
-      backgroundColor: "#272A32",
       onClick: toggleVideo,
     },
     {
-      icon: arrowUpIcon,
+      icon: isScreenSharing ? share2Icon : shareIcon,
       text: isScreenSharing ? "Stop" : "Share",
-      backgroundColor: isScreenSharing ? "#ED1C24" : "#009A4E",
       onClick: toggleScreenShare,
     },
     {
-      icon: handRaiseIcon,
-      text: "Hand raise",
-      backgroundColor: "#272A32",
+      icon: isHandRaised ? handRaise2Icon : handRaiseIcon,
+      text: isHandRaised ? "Lower hand" : "Raise hand",
+      onClick: toggleHandRaise,
     },
     {
-      icon: emojiIcon,
+      icon: isPopoverOpen ? emoji2Icon : emojiIcon,
       text: "Reaction",
-      backgroundColor: "#272A32",
+      popover: true,
     },
     {
-      icon: chatIcon,
+      icon: chat ? chat2Icon : chatIcon,
       text: "Chat",
-      backgroundColor: "#272A32",
+      onClick: openChat,
     },
     {
-      icon: AIIcon,
+      icon: AI ? AI2Icon : AIIcon,
       text: "AI",
-      backgroundColor: "#272A32",
+      onClick: handleEnableAI,
     },
     {
-      icon: captionIcon,
+      icon: caption ? caption2Icon : captionIcon,
       text: "Caption",
       onClick: handleCaption,
     },
     {
-      icon: crossIcon,
+      icon: endIcon,
       text: "End meeting",
-      backgroundColor: "#ED1C24",
-      //   onClick: endMeeting,
+      background: "#ED1C24",
+      onClick: endMeeting,
     },
   ];
 
   return (
     <div className="room-button-container">
-      {meetingAction.map((item, index) => (
+      {/* {meetingAction.map((item, index) => (
         <motion.div
           key={index}
           style={{
@@ -107,12 +176,82 @@ function RoomFooter({
           transition={{ type: "spring", stiffness: 300 }}
           onClick={item.onClick}
         >
-          <div className="room-button-icon">
+          <div
+            className="room-button-icon"
+            style={{
+              background: item.background ? item.background : "transparent",
+            }}
+          >
             <img src={item.icon} alt={`${item.text} icon`} />
           </div>
           <span>{item.text}</span>
         </motion.div>
+      ))} */}
+      {meetingAction.map((item, index) => (
+        <motion.div
+          key={index}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "10px",
+            position: "relative", // Required for Popover positioning
+          }}
+          whileHover={{ scale: 1.1 }}
+          animate={{ opacity: 1, y: [5, 0] }}
+          transition={{ type: "spring", stiffness: 300 }}
+          onClick={item.onClick}
+        >
+          {item.popover ? (
+            // Popover for the Reaction button
+            <Popover
+              content={reactionContent}
+              // title="Select a Reaction"
+              trigger="click"
+              open={isPopoverOpen}
+              onOpenChange={handleReaction} // Handle popover visibility
+              placement="top"
+              overlayClassName="custom-reaction-popover"
+            >
+              <div
+                className="room-button-icon"
+                style={{
+                  background: item.background ? item.background : "transparent",
+                  cursor: "pointer",
+                }}
+              >
+                <img src={item.icon} alt={`${item.text} icon`} />
+              </div>
+            </Popover>
+          ) : (
+            // Normal buttons
+            <div
+              className="room-button-icon"
+              style={{
+                background: item.background ? item.background : "transparent",
+              }}
+            >
+              <img src={item.icon} alt={`${item.text} icon`} />
+            </div>
+          )}
+          <span>{item.text}</span>
+        </motion.div>
       ))}
+      {/* Floating Emoji Animation */}
+      <AnimatePresence>
+        {floatingEmojis.map(({ id, emoji }) => (
+          <motion.div
+            key={id}
+            initial={{ opacity: 1, y: 0, scale: 1 }}
+            animate={{ opacity: 0, y: -100, scale: 1.5 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 2, ease: "easeOut" }}
+            className="floating-emoji"
+          >
+            {emoji}
+          </motion.div>
+        ))}
+      </AnimatePresence>
       {totalPages > 1 && (
         <div className="room-pagination">
           <button

@@ -18,20 +18,28 @@
 * @returns {{loginResponse: {}, login: boolean, status: boolean}|{loginResponse: *, login: boolean, status: boolean}|{loginResponse: {}, login: boolean, status: *}}
 */
 
-import { START_INSTANT_MEETING_RES } from "./video.types";
+import { JOIN_MEETING_RES, SEND_MEETING_INVITE_RES, START_INSTANT_MEETING_RES } from "./video.types";
 
 const INITIAL_STATE = {
-    startInstantMeetingResponse: null,
+  startInstantMeetingResponse: null,
+  sendMeetingInviteResponse: null,
+  joinMeetingResponse: null,
 }
 
 const videoConferenceReducer = (state = INITIAL_STATE, action) => {
-    switch (action.type) {
-        case START_INSTANT_MEETING_RES: {
-            return { ...state, ...{ startInstantMeetingResponse: action.payload } }
-        }
-        default:
-            return state;
+  switch (action.type) {
+    case START_INSTANT_MEETING_RES: {
+      return { ...state, ...{ startInstantMeetingResponse: action.payload } }
     }
+    case SEND_MEETING_INVITE_RES: {
+      return { ...state, ...{ sendMeetingInviteResponse: action.payload } }
+    }
+    case JOIN_MEETING_RES: {
+      return { ...state, ...{ joinMeetingResponse: action.payload } }
+    }
+    default:
+      return state;
+  }
 }
 
 export default videoConferenceReducer

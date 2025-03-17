@@ -1,0 +1,103 @@
+/* Modal Background */
+.breakout-modal .ant-modal-content {
+    background-color: #181A1D !important;
+    color: white;
+    height: 100%;
+    padding: 0;
+}
+
+.breakout-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.breakout-header {
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.breakout-time-controller-container {
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+}
+
+.breakout-time-controller {
+    border: 1px solid #8F9099CC;
+    height: 45px;
+    width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.breakout-time-controller:first-child {
+    border-radius: 10px 0 0 10px;
+    border-right: 0;
+}
+
+.breakout-time-controller:last-child {
+    border-radius: 0 10px 10px 0;
+    border-left: 0;
+}
+
+.breakout-btn-container {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-right: 8px;
+}
+
+.breakout-create-btn {
+    background-color: #007DC5;
+    width: 130px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.breakout-create-btn:disabled {
+    background-color: #a9b3c1;
+    cursor: not-allowed;
+    color: #fff;
+}
+
+.breakout-cancel-btn {
+    width: 130px;
+    height: 36px;
+    border: 1px solid #D9D9D924;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    background: none;
+    cursor: pointer;
+}
+
+/* Remove padding and white line between panels */
+.custom-collapse .ant-collapse-content-box {
+    padding: 0 !important;
+    /* Remove padding inside content */
+    background-color: #181A1D !important;
+    /* Match dark theme */
+}
+
+.custom-collapse .ant-collapse-item {
+    border-bottom: none !important;
+    /* Remove white line between panels */
+}
+
+.custom-collapse .ant-collapse-content {
+    border-top: none !important;
+    /* Remove top border of content */
+}

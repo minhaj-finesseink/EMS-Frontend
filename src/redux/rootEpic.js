@@ -40,6 +40,8 @@ const rootEpic = combineEpics(
   ShiftEpic.addShiftBulkUser,
   ShiftEpic.addShiftUserFromHr,
   VideoConferenceEpic.startInstantMeeting,
+  VideoConferenceEpic.sendMeetingInvite,
+  VideoConferenceEpic.joinMeeting,
 );
 
 export default rootEpic;

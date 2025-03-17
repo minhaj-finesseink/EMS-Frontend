@@ -1,0 +1,34 @@
+.invite-drawer .ant-drawer-header-title {
+    flex-direction: row-reverse;
+}
+
+.invite-drawer .ant-drawer-title {
+    text-align: center;
+}
+
+/* Change placeholder color to white only for .custom-mail-input */
+.custom-mail-input::placeholder {
+    color: white !important;
+    opacity: 1;
+    /* Ensure full visibility */
+}
+
+/* Fix autofill background only for .custom-mail-input */
+.custom-mail-input:-webkit-autofill,
+.custom-mail-input:-webkit-autofill:hover,
+.custom-mail-input:-webkit-autofill:focus,
+.custom-mail-input:-webkit-autofill:active {
+    background-color: #272A32 !important;
+    /* Dark background */
+    -webkit-box-shadow: 0 0 0px 1000px #272A32 inset !important;
+    -webkit-text-fill-color: white !important;
+    color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
+    /* Prevents flash */
+}
+
+/* Optional: Adjust the cursor when typing */
+.custom-mail-input {
+    caret-color: white !important;
+    /* Ensures text cursor is always white */
+}

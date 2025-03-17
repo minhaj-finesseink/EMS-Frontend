@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import recordIcon from "../../../../assets/Icons/record-icon.svg";
@@ -8,18 +9,13 @@ import infoIcon from "../../../../assets/Icons/information-icon.svg";
 import gridIcon from "../../../../assets/Icons/grid-icon.svg";
 import "./style.css";
 
-function RoomHeader() {
-  const [isRecording, setIsRecording] = useState(false);
-
-  const handleRecordClick = () => {
-    setIsRecording(!isRecording);
-  };
+function RoomHeader({ openMeetingAgenda, isRecording, timer, onStartStop }) {
   return (
     <div className="room-header-container">
       <div style={{ width: "130px" }}>
         <motion.div
           className="room-header-recording-container"
-          onClick={handleRecordClick}
+          onClick={onStartStop}
           animate={{ width: isRecording ? 130 : 62 }}
           transition={{
             duration: 0.6,
@@ -35,7 +31,7 @@ function RoomHeader() {
           />
           {isRecording ? (
             <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <span>{"00:00"} </span> <img src={pauseIcon} alt="pauseb icon" />
+              <span>{timer} </span> <img src={pauseIcon} alt="pauseb icon" />
               <img src={mediaStopIcon} alt="srop icon" />
             </div>
           ) : (
@@ -50,7 +46,7 @@ function RoomHeader() {
         <div style={{ fontSize: "12px", fontWeight: 600 }}>10:36 pm</div>
       </div>
       <div className="room-header-right-section">
-        <div className="room-header-right">
+        <div className="room-header-right" onClick={openMeetingAgenda}>
           <div>
             <img src={infoIcon} alt="agenda icon" />
           </div>

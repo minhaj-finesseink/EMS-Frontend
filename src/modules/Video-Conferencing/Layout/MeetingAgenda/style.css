@@ -1,0 +1,31 @@
+.agenda-drawer .ant-drawer-header-title {
+    flex-direction: row-reverse;
+}
+
+.agenda-drawer .ant-drawer-title {
+    text-align: center;
+}
+
+.agenda-table-container {
+    justify-content: center;
+    display: flex;
+}
+
+.agenda-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    /* Prevents double borders */
+}
+
+.agenda-table-container th,
+.agenda-table-container td {
+    border: 1px solid #444;
+    padding: 10px;
+    text-align: left;
+}
+
+.agenda-table-container th {}
+
+.agenda-table-container td {
+    color: #ddd;
+}

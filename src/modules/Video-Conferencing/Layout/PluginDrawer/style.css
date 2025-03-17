@@ -1,0 +1,32 @@
+.plugin-drawer .ant-drawer-header-title {
+    flex-direction: row-reverse;
+}
+
+.plugin-drawer .ant-drawer-title {
+    text-align: center;
+}
+
+.plugin-drawer-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.plugin-drawer-items {
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.plugin-drawer-items>div:first-child {
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+}
+
+.plugin-drawer-items>div:last-child {
+    font-weight: 600;
+    font-size: 16px;
+}

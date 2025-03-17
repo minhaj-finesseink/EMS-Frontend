@@ -1,3 +1,8 @@
+.room-sidebar-container {
+    height: 100vh;
+    padding: 20px 0;
+}
+
 .room-sidebar-logo {
     display: flex;
     flex-direction: column;
@@ -6,7 +11,7 @@
     font-size: 18px;
     font-weight: 500;
     gap: 5px;
-    margin: 20px 0;
+    margin-bottom: 20px;
 }
 
 .room-sidebar-logo img {
@@ -25,15 +30,21 @@
     gap: 5px;
 }
 
-.room-sidebar-items-container>div:last-child {
-    font-size: 12px;
-    font-weight: 500;
-}
-
 .room-sidebar-items-container {
+    padding: 10px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    /* justify-content: center; */
+    justify-content: space-around;
+    height: calc(100% - 100px);
+    overflow-y: auto;
+    /* Enables vertical scrolling */
+    scrollbar-width: none;
+    /* Hides scrollbar in Firefox */
+}
+
+.room-sidebar-items-container::-webkit-scrollbar {
+    display: none;
+    /* Hides scrollbar in Chrome, Safari */
 }
