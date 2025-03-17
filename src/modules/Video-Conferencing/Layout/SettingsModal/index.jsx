@@ -30,7 +30,7 @@ import Notification2Icon from "../../../../assets/NewIcons/notification-2.svg";
 import Security1Icon from "../../../../assets/NewIcons/security-1.svg";
 import Security2Icon from "../../../../assets/NewIcons/security-2.svg";
 import SpeakerIcon from "../../../../assets/NewIcons/speaker.svg";
-import LightModeIcon from "../../../../assets/newIcons/settings-light-mode.png";
+import LightModeIcon from "../../../../assets/NewIcons/settings-light-mode.png";
 import DarkModeIcon from "../../../../assets/newIcons/settings-dark-mode.png";
 import SystemModeIcon from "../../../../assets/newIcons/settings-system-mode.png";
 import "./style.css";
