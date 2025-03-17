@@ -4,7 +4,7 @@ import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs';
 import { baseUrl } from '../../environments/environment.dev';
 import { JOIN_MEETING, SEND_MEETING_INVITE, START_INSTANT_MEETING } from './video.types';
-import { sendMeetingInviteResponse, startInstantMeetingResponse } from './video.action';
+import { joinMeetingResponse, sendMeetingInviteResponse, startInstantMeetingResponse } from './video.action';
 
 const BaseUrl = baseUrl;
 
@@ -66,12 +66,13 @@ VideoConferenceEpic.joinMeeting = (action$) =>
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`, // Add token to Authorization header
                 },
-                url: `${BaseUrl}/video-call/join-meeting?userId=${action.payload.userId}&meetingId=${action.payload.meetingId}`,
+                url: `${BaseUrl}/video-call/join-meeting`,
                 method: 'POST',
+                body: action.payload,
             }).pipe(
-                map((response) => sendMeetingInviteResponse(response.response)), // Extract and pass response data
+                map((response) => joinMeetingResponse(response.response)), // Extract and pass response data
                 catchError((error) =>
-                    of(sendMeetingInviteResponse({ error: error.message })) // Graceful error handling
+                    of(joinMeetingResponse({ error: error.message })) // Graceful error handling
                 )
             );
         })

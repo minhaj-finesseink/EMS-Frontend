@@ -13,8 +13,8 @@ import QR from "../../../../assets/video-call-test-images/QR.png";
 import { sendMeetingInvite } from "../../../../redux/VideoConference/video.action";
 import "./style.css";
 
-const FRONTEND_URL = "https://ems-frontend-8eqf.onrender.com";
-// const FRONTEND_URL = "http://localhost:5173";
+// const FRONTEND_URL = "https://ems-frontend-8eqf.onrender.com";
+const FRONTEND_URL = "http://localhost:5173";
 
 function InviteDrawer({
   sendMeetingInvite,
