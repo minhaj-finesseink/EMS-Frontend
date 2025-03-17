@@ -67,7 +67,7 @@ VideoConferenceEpic.joinMeeting = (action$) =>
                     Authorization: `Bearer ${token}`, // Add token to Authorization header
                 },
                 url: `${BaseUrl}/video-call/join-meeting?userId=${action.payload.userId}&meetingId=${action.payload.meetingId}`,
-                method: 'GET',
+                method: 'POST',
             }).pipe(
                 map((response) => sendMeetingInviteResponse(response.response)), // Extract and pass response data
                 catchError((error) =>

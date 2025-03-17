@@ -219,6 +219,7 @@ import {
   startInstantMeeting,
 } from "../../../../redux/VideoConference/video.action";
 import "./SelfVideo.css";
+import toast from "react-hot-toast";
 
 const MeetingLobby = (props) => {
   const [searchParams] = useSearchParams();
@@ -308,16 +309,16 @@ const MeetingLobby = (props) => {
   const handleJoin = (values) => {
     // values.name
     // values.meetingID
-    props.startInstantMeeting({
-      username: values.name,
-    });
+    // props.startInstantMeeting({
+    //   username: values.name,
+    // });
     if (type === "instant") {
       props.startInstantMeeting({
         username: values.name,
       });
     } else {
       props.joinMeeting({
-        meetingID,
+        meetingId: meetingID,
         userId: userInfo._id,
       });
     }
