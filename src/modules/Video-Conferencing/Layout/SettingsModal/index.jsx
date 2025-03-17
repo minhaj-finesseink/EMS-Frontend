@@ -31,8 +31,8 @@ import Security1Icon from "../../../../assets/NewIcons/security-1.svg";
 import Security2Icon from "../../../../assets/NewIcons/security-2.svg";
 import SpeakerIcon from "../../../../assets/NewIcons/speaker.svg";
 import LightModeIcon from "../../../../assets/NewIcons/settings-light-mode.png";
-import DarkModeIcon from "../../../../assets/newIcons/settings-dark-mode.png";
-import SystemModeIcon from "../../../../assets/newIcons/settings-system-mode.png";
+import DarkModeIcon from "../../../../assets/NewIcons/settings-dark-mode.png";
+import SystemModeIcon from "../../../../assets/NewIcons/settings-system-mode.png";
 import "./style.css";
 
 const { Option } = Select;
