@@ -59,7 +59,6 @@ function InviteDrawer({
     }
 
     // API call"
-    // console.log("Working fine", mailId);
     setLoading(true);
     sendMeetingInvite({
       email: mailId,
