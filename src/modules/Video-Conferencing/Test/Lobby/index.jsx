@@ -320,7 +320,7 @@ const MeetingLobby = (props) => {
       props.joinMeeting({
         meetingId: meetingID,
         // userId: userInfo._id,
-        ...(userInfo._id && { userId: userInfo._id }),
+        // ...(userInfo._id && { userId: userInfo._id }),
       });
     }
   };
