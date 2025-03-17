@@ -11,7 +11,7 @@
 })
  */
 
-import { JOIN_MEETING, JOIN_MEETING_RES, SEND_MEETING_INVITE, SEND_MEETING_INVITE_RES, START_INSTANT_MEETING, START_INSTANT_MEETING_RES } from "./video.types"
+import { JOIN_MEETING, JOIN_MEETING_RES, SEND_MEETING_INVITE, SEND_MEETING_INVITE_RES, START_INSTANT_MEETING, START_INSTANT_MEETING_RES, UPDATE_HOST_CONTROL, UPDATE_HOST_CONTROL_RES } from "./video.types"
 
 export const startInstantMeeting = (data) => ({
     type: START_INSTANT_MEETING,
@@ -40,5 +40,15 @@ export const joinMeeting = (data) => ({
 
 export const joinMeetingResponse = (res) => ({
     type: JOIN_MEETING_RES,
+    payload: res
+})
+
+export const updateHostControl = (data) => ({
+    type: UPDATE_HOST_CONTROL,
+    payload: data
+})
+
+export const updateHostControlResponse = (res) => ({
+    type: UPDATE_HOST_CONTROL_RES,
     payload: res
 })

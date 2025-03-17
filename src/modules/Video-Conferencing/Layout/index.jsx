@@ -1,5 +1,8 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import RoomSideBar from "./RoomSidebar";
 import RoomHeader from "./RoomHeader";
 import RoomFooter from "./RoomFooter";
@@ -33,7 +36,7 @@ const iceServers = {
   ],
 };
 
-function Layout() {
+function Layout(props) {
   const { meetingId } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
   const name = urlParams.get("name") || "Guest";
@@ -73,6 +76,7 @@ function Layout() {
   const [isOpenAgenda, setIsOpenAgenda] = useState(false);
 
   const [isManuallyUnpinned, setIsManuallyUnpinned] = useState(false);
+  const [hostData, setHostData] = useState(null);
 
   // Screen recording
   const [isRecording, setIsRecording] = useState(false);
@@ -513,6 +517,19 @@ function Layout() {
     };
   }, []);
 
+  // Host data
+  useEffect(() => {
+    if (props.videoConferenceData.joinMeetingResponse) {
+      let data = props.videoConferenceData.joinMeetingResponse;
+      if (data.success) {
+        setHostData({
+          hostName: data.meeting.hostName,
+          hostControl: data.meeting.hostControl,
+        });
+      }
+    }
+  }, [props.videoConferenceData.joinMeetingResponse]);
+
   return (
     <div id="recordableDiv" className="layout-container">
       <div className="sidebar">
@@ -529,6 +546,7 @@ function Layout() {
           plugin={isPluginOpen}
           settings={isSettingsOpen}
           hostControl={isHostControlOpen}
+          hostData={hostData}
         />
       </div>
 
@@ -1007,6 +1025,8 @@ function Layout() {
         <HostControl
           isOpen={isHostControlOpen}
           onClose={() => setIsHostControlOpen(false)}
+          hostData={hostData}
+          meetingId={meetingId}
         />
 
         {/* Chat side panel */}
@@ -1027,4 +1047,12 @@ function Layout() {
   );
 }
 
-export default Layout;
+const mapStateToProps = (state) => ({
+  videoConferenceData: state.videoConference,
+});
+
+const mapDispatchToProps = (dispatch) => ({});
+
+Layout.propTypes = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Layout);

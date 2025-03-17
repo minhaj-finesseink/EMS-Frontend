@@ -5,3 +5,40 @@
 .host-drawer .ant-drawer-title {
     text-align: center;
 }
+
+.host-control-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.host-control-items-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.host-control-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.host-control-desc {
+    color: var(--Grey-Grey-50, rgba(224, 229, 235, 0.50));
+}
+
+.host-control-custom-checkbox .ant-checkbox-inner {
+    background: none !important;
+    border: 1px solid #545454 !important;
+}
+
+.host-control-custom-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+    background: #545454 !important;
+    border-color: #545454 !important;
+}
+
+.host-control-custom-checkbox .ant-checkbox-input {
+    opacity: 0;
+}

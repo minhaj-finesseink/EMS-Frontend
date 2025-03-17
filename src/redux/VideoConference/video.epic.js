@@ -3,8 +3,8 @@ import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs';
 import { baseUrl } from '../../environments/environment.dev';
-import { JOIN_MEETING, SEND_MEETING_INVITE, START_INSTANT_MEETING } from './video.types';
-import { joinMeetingResponse, sendMeetingInviteResponse, startInstantMeetingResponse } from './video.action';
+import { JOIN_MEETING, SEND_MEETING_INVITE, START_INSTANT_MEETING, UPDATE_HOST_CONTROL } from './video.types';
+import { joinMeetingResponse, sendMeetingInviteResponse, startInstantMeetingResponse, updateHostControlResponse } from './video.action';
 
 const BaseUrl = baseUrl;
 
@@ -73,6 +73,29 @@ VideoConferenceEpic.joinMeeting = (action$) =>
                 map((response) => joinMeetingResponse(response.response)), // Extract and pass response data
                 catchError((error) =>
                     of(joinMeetingResponse({ error: error.message })) // Graceful error handling
+                )
+            );
+        })
+    );
+
+VideoConferenceEpic.updateHostControl = (action$) =>
+    action$.pipe(
+        ofType(UPDATE_HOST_CONTROL),
+        switchMap((action) => {
+            // Retrieve the token from localStorage
+            const token = localStorage.getItem('token');
+            return ajax({
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Add token to Authorization header
+                },
+                url: `${BaseUrl}/video-call/update-host-control?meetingId=${action.payload.meetingId}`,
+                method: 'PATCH',
+                body: action.payload,
+            }).pipe(
+                map((response) => updateHostControlResponse(response.response)), // Extract and pass response data
+                catchError((error) =>
+                    of(updateHostControlResponse({ error: error.message })) // Graceful error handling
                 )
             );
         })

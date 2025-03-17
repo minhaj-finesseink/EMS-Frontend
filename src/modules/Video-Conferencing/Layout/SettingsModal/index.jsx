@@ -53,6 +53,7 @@ function SettingsModal({ isOpen, onClose }) {
   const [speakerLevel, setSpeakerLevel] = useState(0);
   const [isMicTesting, setIsMicTesting] = useState(false);
   const [isSpeakerTesting, setIsSpeakerTesting] = useState(false);
+  
   let micStream = null;
   let micAnimation = null;
   let speakerAnimation = null;

@@ -29,6 +29,7 @@ function RoomSideBar({
   plugin,
   settings,
   hostControl,
+  hostData,
 }) {
   const [participants, setParticipants] = useState({});
 
@@ -64,7 +65,20 @@ function RoomSideBar({
       text: "Plugins",
       onClick: openPlugin,
     },
-    { icon: hostIcon, text: "Host Control", onClick: openHostControl },
+    //  {
+    //       icon: hostIcon,
+    //       text: "Host Control",
+    //       onClick: openHostControl,
+    //     },
+    ...(hostData?.hostName
+      ? []
+      : [
+          {
+            icon: hostIcon,
+            text: "Host Control",
+            onClick: openHostControl,
+          },
+        ]),
     {
       icon: settings ? settings2Icon : settingsIcon,
       text: "Settings",
