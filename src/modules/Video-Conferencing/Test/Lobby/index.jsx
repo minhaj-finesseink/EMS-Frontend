@@ -319,7 +319,7 @@ const MeetingLobby = (props) => {
     } else {
       props.joinMeeting({
         meetingId: meetingID,
-        // userId: userInfo._id,
+        userId: userInfo ? userInfo._id : "",
         // ...(userInfo._id && { userId: userInfo._id }),
       });
     }
