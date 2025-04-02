@@ -1,0 +1,122 @@
+.pricing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    /* padding: 20px; */
+}
+
+.plan-card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50px;
+    align-items: center;
+}
+
+.plan-card-header>div:first-child {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.plan-card-header>div:last-child {
+    border: 1px solid #E2E2E2;
+    border-radius: 12px;
+    padding: 8px;
+    display: flex;
+    /* gap: 5px; */
+}
+
+/* Button Default Style */
+.plan-toggle button {
+    color: #747474;
+    border: none;
+    background: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Active Button (Selected Button) */
+.plan-toggle button.active {
+    background: #007DC5;
+    color: white;
+    font-weight: bold;
+}
+
+.plan-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+.plan-card {
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.basic-plan {
+    /* border: 1px solid #ccc; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.premium-plan {
+    background: linear-gradient(372deg, #002F4A 38%, #007DC5);
+    color: white;
+}
+
+.custom-plan {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.plan-title {
+    font-size: 12px;
+    color: #407BFF;
+    font-weight: 700;
+}
+
+.premium-plan .plan-title {
+    color: white;
+}
+
+.plan-price {
+    font-size: 28px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 30px 0 40px;
+    text-align: left;
+}
+
+.plan-features li {
+    font-size: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.price-varies {
+    color: #696969;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+/* Ensure they stay in a row until screen is too small */
+@media (max-width: 900px) {
+    .pricing-container {
+        justify-content: center;
+        /* Centers cards on smaller screens */
+    }
+}
+
+@media (max-width: 750px) {
+    .pricing-container {
+        flex-direction: column;
+        /* Stack cards when space is very limited */
+        align-items: center;
+    }
+}

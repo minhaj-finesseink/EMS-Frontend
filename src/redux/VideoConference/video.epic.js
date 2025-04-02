@@ -3,8 +3,8 @@ import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs';
 import { baseUrl } from '../../environments/environment.dev';
-import { JOIN_MEETING, SEND_MEETING_INVITE, START_INSTANT_MEETING, UPDATE_HOST_CONTROL } from './video.types';
-import { joinMeetingResponse, sendMeetingInviteResponse, startInstantMeetingResponse, updateHostControlResponse } from './video.action';
+import { JOIN_MEETING, SCHEDULE_MEETING, SEND_MEETING_INVITE, START_INSTANT_MEETING, UPDATE_HOST_CONTROL, UPDATE_MEET_SETTINGS } from './video.types';
+import { joinMeetingResponse, scheduleMeetingResponse, sendMeetingInviteResponse, startInstantMeetingResponse, updateHostControlResponse, updateMeetSettingsResponse } from './video.action';
 
 const BaseUrl = baseUrl;
 
@@ -96,6 +96,52 @@ VideoConferenceEpic.updateHostControl = (action$) =>
                 map((response) => updateHostControlResponse(response.response)), // Extract and pass response data
                 catchError((error) =>
                     of(updateHostControlResponse({ error: error.message })) // Graceful error handling
+                )
+            );
+        })
+    );
+
+VideoConferenceEpic.updateMeetSettings = (action$) =>
+    action$.pipe(
+        ofType(UPDATE_MEET_SETTINGS),
+        switchMap((action) => {
+            // Retrieve the token from localStorage
+            const token = localStorage.getItem('token');
+            return ajax({
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Add token to Authorization header
+                },
+                url: `${BaseUrl}/video-call/meet-settings`,
+                method: 'PATCH',
+                body: action.payload,
+            }).pipe(
+                map((response) => updateMeetSettingsResponse(response.response)), // Extract and pass response data
+                catchError((error) =>
+                    of(updateMeetSettingsResponse({ error: error.message })) // Graceful error handling
+                )
+            );
+        })
+    );
+
+VideoConferenceEpic.scheduleMeeting = (action$) =>
+    action$.pipe(
+        ofType(SCHEDULE_MEETING),
+        switchMap((action) => {
+            // Retrieve the token from localStorage
+            const token = localStorage.getItem('token');
+            return ajax({
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Add token to Authorization header
+                },
+                url: `${BaseUrl}/video-call/schedule-meeting`,
+                method: 'POST',
+                body: action.payload,
+            }).pipe(
+                map((response) => scheduleMeetingResponse(response.response)), // Extract and pass response data
+                catchError((error) =>
+                    of(scheduleMeetingResponse({ error: error.message })) // Graceful error handling
                 )
             );
         })

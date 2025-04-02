@@ -1,0 +1,13 @@
+.general-settings-container {
+    display: flex;
+    gap: 20px;
+}
+
+.general-settings-menu {
+    width: 250px;
+}
+
+.general-settings-content-container {
+    width: 100%;
+    padding: 20px;
+}

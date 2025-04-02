@@ -42,7 +42,9 @@ const rootEpic = combineEpics(
   VideoConferenceEpic.startInstantMeeting,
   VideoConferenceEpic.sendMeetingInvite,
   VideoConferenceEpic.joinMeeting,
-  VideoConferenceEpic.updateHostControl
+  VideoConferenceEpic.updateHostControl,
+  VideoConferenceEpic.updateMeetSettings,
+  VideoConferenceEpic.scheduleMeeting
 );
 
 export default rootEpic;

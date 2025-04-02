@@ -1,0 +1,40 @@
+.video-footer-container {
+    background-color: #272A32;
+    color: white;
+    padding: 5px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.video-footer-left-content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.video-footer-left-content p {
+    font-size: 10px;
+    font-weight: 500;
+    color: #A2A2A2;
+}
+
+.video-footer-left-content img {
+    width: 15px;
+    height: 15px;
+}
+
+.video-footer-left-content span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.video-footer-mid-content {
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.video-footer-right-content {
+    font-size: 10px;
+    font-weight: 500;
+}

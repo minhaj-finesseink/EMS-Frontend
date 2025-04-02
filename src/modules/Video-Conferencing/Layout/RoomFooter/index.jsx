@@ -2,7 +2,11 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import { Button, Popover } from "antd";
 import socket from "../../socket";
 import micIcon from "../../../../assets/NewIcons/mic-1.svg";
@@ -116,11 +120,13 @@ function RoomFooter({
       icon: isAudioEnabled ? micIcon : micMuteIcon,
       text: isAudioEnabled ? "Mute" : "Unmute",
       onClick: toggleAudio,
+      arrow: true,
     },
     {
       icon: isVideoEnabled ? videoIcon : videoOffIcon,
-      text: isVideoEnabled ? "Stop video" : "Start video",
+      text: isVideoEnabled ? "Stop" : "Start",
       onClick: toggleVideo,
+      arrow: true,
     },
     {
       icon: isScreenSharing ? share2Icon : shareIcon,
@@ -139,13 +145,14 @@ function RoomFooter({
     },
     {
       icon: chat ? chat2Icon : chatIcon,
-      text: "Chat",
+      text: "Chats",
       onClick: openChat,
     },
     {
       icon: AI ? AI2Icon : AIIcon,
-      text: "AI",
+      text: "AI Assistant",
       onClick: handleEnableAI,
+      arrow: true,
     },
     {
       icon: caption ? caption2Icon : captionIcon,
@@ -154,7 +161,7 @@ function RoomFooter({
     },
     {
       icon: endIcon,
-      text: "End meeting",
+      text: "End",
       background: "#ED1C24",
       onClick: endMeeting,
     },
@@ -162,40 +169,16 @@ function RoomFooter({
 
   return (
     <div className="room-button-container">
-      {/* {meetingAction.map((item, index) => (
-        <motion.div
-          key={index}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "10px",
-          }}
-          whileHover={{ scale: 1.1 }} // Slight hover effect
-          animate={{ opacity: 1, y: [5, 0] }} // Small bounce effect
-          transition={{ type: "spring", stiffness: 300 }}
-          onClick={item.onClick}
-        >
-          <div
-            className="room-button-icon"
-            style={{
-              background: item.background ? item.background : "transparent",
-            }}
-          >
-            <img src={item.icon} alt={`${item.text} icon`} />
-          </div>
-          <span>{item.text}</span>
-        </motion.div>
-      ))} */}
       {meetingAction.map((item, index) => (
         <motion.div
           key={index}
           style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "10px",
+            // flexDirection: "column",
+            alignItems: "flex-start",
+            gap: "5px",
             position: "relative", // Required for Popover positioning
+            cursor: "pointer",
           }}
           whileHover={{ scale: 1.1 }}
           animate={{ opacity: 1, y: [5, 0] }}
@@ -214,27 +197,67 @@ function RoomFooter({
               overlayClassName="custom-reaction-popover"
             >
               <div
-                className="room-button-icon"
                 style={{
-                  background: item.background ? item.background : "transparent",
-                  cursor: "pointer",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "5px",
                 }}
               >
-                <img src={item.icon} alt={`${item.text} icon`} />
+                <div
+                  className="room-button-icon"
+                  style={{
+                    background: item.background
+                      ? item.background
+                      : "transparent",
+                    cursor: "pointer",
+                  }}
+                >
+                  <img src={item.icon} alt={`${item.text} icon`} />
+                </div>
+                <span style={{ fontSize: "12px", fontWeight: 600 }}>
+                  {item.text}
+                </span>
               </div>
             </Popover>
           ) : (
             // Normal buttons
-            <div
-              className="room-button-icon"
-              style={{
-                background: item.background ? item.background : "transparent",
-              }}
-            >
-              <img src={item.icon} alt={`${item.text} icon`} />
-            </div>
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <div
+                  className="room-button-icon"
+                  style={{
+                    background: item.background
+                      ? item.background
+                      : "transparent",
+                  }}
+                >
+                  <img src={item.icon} alt={`${item.text} icon`} />
+                </div>
+                <span style={{ fontSize: "12px", fontWeight: 600 }}>
+                  {item.text}
+                </span>
+              </div>
+              <div style={{ marginTop: "20px" }}>
+                {item.arrow && (
+                  <UpOutlined
+                    style={{
+                      fontSize: "14px",
+                      color: "#464454",
+                      strokeWidth: "3",
+                    }}
+                  />
+                )}
+              </div>
+            </>
           )}
-          <span>{item.text}</span>
         </motion.div>
       ))}
       {/* Floating Emoji Animation */}

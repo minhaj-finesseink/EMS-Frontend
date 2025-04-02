@@ -1,0 +1,41 @@
+.apps-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .apps-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .apps-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .apps-icon {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .apps-title {
+    font-size: 24px;
+    font-weight: 700;
+  }
+  
+  .apps-description {
+    font-size: 12px;
+    color: #555;
+  }
+  

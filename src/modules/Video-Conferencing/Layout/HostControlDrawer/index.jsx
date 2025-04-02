@@ -77,7 +77,7 @@ function HostControl({
         toast.success(data.message);
       }
     }
-    videoConferenceData.updateHostControlResponse = null;
+    // videoConferenceData.updateHostControlResponse = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoConferenceData.updateHostControlResponse]);
 

@@ -1,0 +1,36 @@
+.general-settings-container {
+    display: flex;
+    gap: 20px;
+}
+
+/* .general-settings-menu {
+    width: 250px;
+} */
+
+/* .general-settings-content-container {
+    width: 100%;
+    padding: 40px 80px 20px 20px;
+} */
+
+/* .general-settings-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 30px 15px;
+} */
+
+.general-settings-menu .ant-menu-item {
+    color: #46445499 !important;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-weight: 400;
+}
+
+/* Selected Menu Item */
+.general-settings-menu .ant-menu-item-selected {
+    background-color: #007Dc5 !important;
+    color: #fff !important;
+    border-radius: 8px;
+    font-weight: 600;
+}

@@ -1,0 +1,59 @@
+.schedule-meeting-modal .ant-modal-content {
+    padding: 0;
+}
+
+.schedule-meeting-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #CCCCCCCC;
+    justify-content: space-between;
+    padding: 24px;
+}
+
+.schedule-meeting-modal-title>div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.schedule-meeting-modal-content {
+    padding: 24px 24px 0;
+}
+
+/* Form labels */
+.schedule-meeting-modal-content .ant-form-item-label>label {
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    color: #464454;
+}
+
+/* Placeholder styling */
+.schedule-meeting-modal-content input::placeholder,
+.schedule-meeting-modal-content textarea::placeholder {
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    color: #16151C99;
+}
+
+/* Input + TextArea base styles */
+.schedule-meeting-modal-content input,
+.schedule-meeting-modal-content textarea {
+    border: none !important;
+    background-color: #F6F6F7 !important;
+    height: 48px !important;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    color: #16151C99;
+    padding: 12px;
+    /* optional, adjust as needed */
+    border-radius: 6px;
+    /* optional: to make it look modern */
+    box-shadow: none !important;
+}
+
+/* Optional: Fix TextArea height */
+.schedule-meeting-modal-content textarea {
+    height: auto !important;
+    min-height: 48px;
+}

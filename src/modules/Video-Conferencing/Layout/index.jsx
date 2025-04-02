@@ -20,9 +20,11 @@ import handIcon from "../../../assets/NewIcons/hand-3.svg";
 import HostControl from "./HostControlDrawer";
 import ChatDrawer from "./ChatDrawer";
 import NoteTakerIcon from "../../../assets/NewIcons/note-taker.svg";
+import ArrowIcon from "../../../assets/NewIcons/arrow-icon.svg";
 import MeetingAgenda from "./MeetingAgenda";
 import useRecordFunctions from "./Recording";
 import "./style.css";
+import { Button, Popover } from "antd";
 
 const iceServers = {
   iceServers: [
@@ -77,6 +79,8 @@ function Layout(props) {
 
   const [isManuallyUnpinned, setIsManuallyUnpinned] = useState(false);
   const [hostData, setHostData] = useState(null);
+  const [showFooter, setShowFooter] = useState(true);
+  const [isInvitePopover, setIsInvitePopover] = useState(true);
 
   // Screen recording
   const [isRecording, setIsRecording] = useState(false);
@@ -972,25 +976,66 @@ function Layout(props) {
         )}
 
         <div>
-          <RoomFooter
-            meetingId={meetingId}
-            caption={caption}
-            setCaption={setCaption}
-            pagination={{ currentPage, totalPages, setCurrentPage }}
-            toggleVideo={toggleVideo} // ✅ Pass toggleVideo function
-            toggleAudio={toggleAudio} // ✅ Pass toggleAudio function
-            isVideoEnabled={isVideoEnabled} // ✅ Send current video status
-            isAudioEnabled={isAudioEnabled} // ✅ Send current audio status
-            toggleScreenShare={toggleScreenShare}
-            isScreenSharing={isScreenSharing}
-            toggleHandRaise={toggleHandRaise}
-            isHandRaised={isHandRaised}
-            chat={chat} // Pass currect status
-            openChat={() => setChat(true)} // Pass open function
-            AIEnable={setIsAIEnabled}
-            AI={isAIEnable}
-          />
+          <div
+            style={{ textAlign: "center" }}
+            onClick={() => setShowFooter(!showFooter)}
+          >
+            <img
+              className="footer-control-button"
+              src={ArrowIcon}
+              alt="icon"
+              style={{ transform: showFooter ? "rotate(180deg)" : "" }}
+            />
+          </div>
+          {showFooter && (
+            <RoomFooter
+              meetingId={meetingId}
+              caption={caption}
+              setCaption={setCaption}
+              pagination={{ currentPage, totalPages, setCurrentPage }}
+              toggleVideo={toggleVideo} // ✅ Pass toggleVideo function
+              toggleAudio={toggleAudio} // ✅ Pass toggleAudio function
+              isVideoEnabled={isVideoEnabled} // ✅ Send current video status
+              isAudioEnabled={isAudioEnabled} // ✅ Send current audio status
+              toggleScreenShare={toggleScreenShare}
+              isScreenSharing={isScreenSharing}
+              toggleHandRaise={toggleHandRaise}
+              isHandRaised={isHandRaised}
+              chat={chat} // Pass currect status
+              openChat={() => setChat(true)} // Pass open function
+              AIEnable={setIsAIEnabled}
+              AI={isAIEnable}
+            />
+          )}
         </div>
+        {/* <div style={{ color: "white", position: "absolute", bottom: 0 }}>
+          <Popover
+            content={
+              <p>
+                Invite Link:{" "}
+                <a
+                  href="https://meet.example.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Join Meeting
+                </a>
+              </p>
+            }
+            title="Invite People"
+            trigger="click"
+            open={isInvitePopover} // Controlled visibility
+            onOpenChange={(visible) => setIsInvitePopover(visible)} // Sync state with popover
+            destroyTooltipOnHide={true} // Remove empty popovers
+          >
+            <Button
+              type="primary"
+              onClick={() => setIsInvitePopover(!isInvitePopover)}
+            >
+              {isInvitePopover ? "Close Invite" : "Open Invite"}
+            </Button>
+          </Popover>
+        </div> */}
         {/* Participants Side Panel */}
         <ParticipantsDrawer
           isOpen={isParticipantsOpen}

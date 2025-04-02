@@ -18,13 +18,15 @@
 * @returns {{loginResponse: {}, login: boolean, status: boolean}|{loginResponse: *, login: boolean, status: boolean}|{loginResponse: {}, login: boolean, status: *}}
 */
 
-import { JOIN_MEETING_RES, SEND_MEETING_INVITE_RES, START_INSTANT_MEETING_RES, UPDATE_HOST_CONTROL_RES } from "./video.types";
+import { JOIN_MEETING_RES, SCHEDULE_MEETING_RES, SEND_MEETING_INVITE_RES, START_INSTANT_MEETING_RES, UPDATE_HOST_CONTROL_RES, UPDATE_MEET_SETTINGS_RES } from "./video.types";
 
 const INITIAL_STATE = {
   startInstantMeetingResponse: null,
   sendMeetingInviteResponse: null,
   joinMeetingResponse: null,
-  updateHostControlResponse: null
+  updateHostControlResponse: null,
+  updateMeetSettingsResponse: null,
+  scheduleMeetingResponse: null,
 }
 
 const videoConferenceReducer = (state = INITIAL_STATE, action) => {
@@ -40,6 +42,12 @@ const videoConferenceReducer = (state = INITIAL_STATE, action) => {
     }
     case UPDATE_HOST_CONTROL_RES: {
       return { ...state, ...{ updateHostControlResponse: action.payload } }
+    }
+    case UPDATE_MEET_SETTINGS_RES: {
+      return { ...state, ...{ updateMeetSettingsResponse: action.payload } }
+    }
+    case SCHEDULE_MEETING_RES: {
+      return { ...state, ...{ scheduleMeetingResponse: action.payload } }
     }
     default:
       return state;

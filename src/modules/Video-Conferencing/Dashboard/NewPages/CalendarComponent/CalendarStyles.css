@@ -1,0 +1,297 @@
+/* Full Calendar Container */
+.calendar-container {
+  padding: 20px;
+  font-family: "Inter", sans-serif;
+}
+
+/* Custom Toolbar */
+.custom-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background: white;
+  /* border-radius: 8px; */
+  /* box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); */
+}
+
+/* Toolbar Left Section (Today & Navigation) */
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Today Button */
+.today-btn {
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Navigation Buttons (‹ ›) */
+.nav-btn {
+  background-color: transparent;
+  border: none;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 5px;
+  color: #46445499;
+}
+
+/* Month Title (Feb - 2025) */
+.month-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Toolbar Center (Day, Week, Month Buttons) */
+.toolbar-center {
+  display: flex;
+  box-shadow: 0px 0px 3px 0px #0000002E;
+  border-radius: 34px;
+  padding: 4px 16px;
+}
+
+/* View Buttons */
+.view-btn {
+  background-color: white;
+  border: 0;
+  color: #464454;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-family: Inter;
+}
+
+.view-btn:hover {
+  background-color: #f3f3f3;
+}
+
+/* Active View Button */
+.view-btn.active {
+  background-color: #007DC5;
+  color: white;
+  border: none;
+}
+
+/* Schedule a Meeting Button */
+.schedule-btn {
+  background-color: #007DC5;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: Inter;
+}
+
+.schedule-btn span {
+  margin-top: 2px;
+}
+
+.schedule-btn:hover {
+  background-color: #007DC5;
+}
+
+/* Remove Extra Space in Week View */
+.rbc-allday-cell {
+  display: none !important;
+}
+
+.rbc-header+.rbc-row {
+  display: none !important;
+}
+
+/* Custom Header (Days of the week) */
+.custom-header {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Highlight Sunday in Red */
+.sunday-highlight {
+  color: red;
+}
+
+/* Time Slot Styling */
+.rbc-time-slot {
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+
+/* Event Styling */
+.rbc-event {
+  background-color: #009A4E69 !important;
+  border-radius: 5px;
+  padding: 6px;
+  color: white !important;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Highlight Today’s Date */
+.rbc-today {
+  background-color: white !important;
+}
+
+/* Month View - Match numbers from Figma */
+/* .rbc-month-view .rbc-date-cell {
+  font-size: 16px !important;
+  font-weight: 500;
+  color: #333;
+} */
+/* .rbc-month-view .rbc-date-cell {
+  font-size: 28px !important; 
+  font-weight: 700 !important; 
+  color: #333;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+} */
+
+
+/* Sunday numbers in red */
+.rbc-month-view .rbc-date-cell:first-child {
+  color: red;
+}
+
+/* Add border for each day cell */
+.rbc-day-bg {
+  border: 1px solid #ddd;
+}
+
+/* Calendar Header */
+.rbc-header {
+  background-color: white;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 10px;
+  border-bottom: 0;
+}
+
+/* Adjust Week View Row Heights */
+.rbc-time-content>*+*>* {
+  /* border-top: 1px solid #ddd; */
+  /* border-top: 0;  */
+}
+
+.rbc-time-content {
+  border-top: 1px solid #ddd;
+}
+
+/* Scrollbar Styling */
+.rbc-time-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rbc-time-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.rbc-time-content::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+.custom-time-gutter {
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  background-color: white;
+  padding: 10px;
+  width: 64px;
+}
+
+/* Ensure Each Hour is a Single Slot */
+.rbc-timeslot-group {
+  min-height: 60px !important;
+  /* Controls the height of each hour */
+  border-bottom: 1px solid #ddd;
+}
+
+/* 🔥 Forcefully Remove Any Padding & Margin from "GMT" Cell */
+.rbc-time-header-gutter {
+  padding: 0px !important;
+  margin: 0px !important;
+  width: auto !important;
+  /* Ensures it doesn't shrink */
+  min-width: unset !important;
+  max-width: unset !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: white;
+}
+
+/* 🔥 Ensure No Padding Inside the Parent Container */
+.rbc-time-header {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+/* 🔥 Fix Any Leftover Internal Padding */
+.rbc-time-header-content {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  background-color: white;
+}
+
+/* 🔥 Remove Unwanted Spacing from Gutter */
+.rbc-time-header .rbc-time-header-gutter {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.rbc-time-view .rbc-row {
+  height: 100%;
+  margin-right: 7px;
+}
+
+.rbc-day-slot .rbc-events-container {
+  margin-right: 0;
+}
+
+.rbc-day-slot .rbc-event,
+.rbc-day-slot .rbc-background-event {
+  border: 0;
+  border-left: 4px solid #009A4E;
+}
+
+/* Ensuring the text inside each header is styled */
+.rbc-time-header .rbc-time-header-cell span {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.rbc-date-cell {
+  height: 100px;
+  justify-content: space-around;
+  display: flex;
+}
+
+.rbc-button-link {
+  font-size: 24px;
+  font-weight: 600;
+}

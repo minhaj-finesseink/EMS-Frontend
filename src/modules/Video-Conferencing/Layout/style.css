@@ -232,6 +232,15 @@
     animation: pulse-ring 2s infinite ease-in-out 0.5s;
 }
 
+.footer-control-button {
+    width: 14px;
+    height: 12px;
+    border: 2px solid#545454;
+    padding: 5px;
+    /* margin-bottom: -5px;
+    border-bottom: 0; */
+}
+
 /* Animation for pulsating rings */
 @keyframes pulse-ring {
     0% {
