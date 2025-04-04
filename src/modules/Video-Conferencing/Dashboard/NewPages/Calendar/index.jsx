@@ -14,7 +14,7 @@ import {
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { CloseOutlined } from "@ant-design/icons";
-import ScheduleMeetingIcon from "../../../../../assets/NewIcons/schedulemeeting.svg";
+import ScheduleMeetingIcon from "../../../../../assets/NewIcons/scheduleMeeting.svg";
 import CustomButton from "../../../../../components/CustomButton";
 import {
   getCalendarMeeting,
