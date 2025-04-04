@@ -552,6 +552,7 @@ function Layout(props) {
           hostControl={isHostControlOpen}
           hostData={hostData}
         />
+        <button>Test</button>
       </div>
 
       <div className="main-wrapper">

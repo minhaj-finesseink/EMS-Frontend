@@ -19,14 +19,14 @@ const DashboardLayout = () => {
       case "Settings":
         return <Settings />;
       default:
-        return <HomePage />;
+        return <HomePage setActivePage={setActivePage} />;
     }
   };
   return (
     <div className="video-dashboard-container">
       {/* Sidebar */}
       <aside className="video-sidebar-container">
-        <SideBar setActivePage={setActivePage} />
+        <SideBar activePage={activePage} setActivePage={setActivePage} />
       </aside>
 
       {/* Main Section */}

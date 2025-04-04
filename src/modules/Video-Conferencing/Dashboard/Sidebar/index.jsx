@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+import React from "react";
 import UsitiveLogo from "../../../../assets/usitive-logo.svg";
 import HomeIcon1 from "../../../../assets/Video-Home-Icons/home-1.svg";
 import HomeIcon2 from "../../../../assets/Video-Home-Icons/home-2.svg";
@@ -11,31 +12,28 @@ import SettingsIcon2 from "../../../../assets/Video-Home-Icons/settings-2.svg";
 import QuestionMarkicon from "../../../../assets/Video-Home-Icons/Question-mark.svg";
 import "./style.css";
 
-function Sidebar({ setActivePage }) {
-  const [selectedMenu, setSelectedMenu] = useState("Home");
-
+function Sidebar({ activePage, setActivePage }) {
   const menuItems = [
     {
       name: "Home",
-      icon: selectedMenu === "Home" ? HomeIcon2 : HomeIcon1,
+      icon: activePage === "Home" ? HomeIcon2 : HomeIcon1,
     },
     {
       name: "Calendar",
-      icon: selectedMenu === "Calendar" ? CalendarIcon2 : CalendarIcon1,
+      icon: activePage === "Calendar" ? CalendarIcon2 : CalendarIcon1,
     },
     {
       name: "Analytics",
-      icon: selectedMenu === "Analytics" ? ChartIcon2 : ChartIcon1,
+      icon: activePage === "Analytics" ? ChartIcon2 : ChartIcon1,
     },
     {
       name: "Settings",
-      icon: selectedMenu === "Settings" ? SettingsIcon2 : SettingsIcon1,
+      icon: activePage === "Settings" ? SettingsIcon2 : SettingsIcon1,
     },
   ];
 
   const handleSelectMenu = (menu) => {
     setActivePage(menu);
-    setSelectedMenu(menu);
   };
 
   return (
@@ -48,12 +46,11 @@ function Sidebar({ setActivePage }) {
           <div
             key={item.name}
             className={`video-sidebar-menu-item ${
-              selectedMenu === item.name ? "selected" : ""
+              activePage === item.name ? "selected" : ""
             }`}
             onClick={() => handleSelectMenu(item.name)}
           >
             <span>
-              {" "}
               <img src={item.icon} alt="icon" />{" "}
             </span>
             <span>{item.name}</span>

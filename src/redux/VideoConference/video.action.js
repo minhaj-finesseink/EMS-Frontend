@@ -12,6 +12,8 @@
  */
 
 import {
+    GET_CALENDAR_MEETING,
+    GET_CALENDAR_MEETING_RES,
     JOIN_MEETING,
     JOIN_MEETING_RES,
     SCHEDULE_MEETING,
@@ -83,5 +85,15 @@ export const scheduleMeeting = (data) => ({
 
 export const scheduleMeetingResponse = (res) => ({
     type: SCHEDULE_MEETING_RES,
+    payload: res
+})
+
+export const getCalendarMeeting = (data) => ({
+    type: GET_CALENDAR_MEETING,
+    payload: data
+})
+
+export const getCalendarMeetingResponse = (res) => ({
+    type: GET_CALENDAR_MEETING_RES,
     payload: res
 })

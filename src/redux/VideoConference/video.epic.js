@@ -3,8 +3,8 @@ import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs';
 import { baseUrl } from '../../environments/environment.dev';
-import { JOIN_MEETING, SCHEDULE_MEETING, SEND_MEETING_INVITE, START_INSTANT_MEETING, UPDATE_HOST_CONTROL, UPDATE_MEET_SETTINGS } from './video.types';
-import { joinMeetingResponse, scheduleMeetingResponse, sendMeetingInviteResponse, startInstantMeetingResponse, updateHostControlResponse, updateMeetSettingsResponse } from './video.action';
+import { GET_CALENDAR_MEETING, JOIN_MEETING, SCHEDULE_MEETING, SEND_MEETING_INVITE, START_INSTANT_MEETING, UPDATE_HOST_CONTROL, UPDATE_MEET_SETTINGS } from './video.types';
+import { getCalendarMeetingResponse, joinMeetingResponse, scheduleMeetingResponse, sendMeetingInviteResponse, startInstantMeetingResponse, updateHostControlResponse, updateMeetSettingsResponse } from './video.action';
 
 const BaseUrl = baseUrl;
 
@@ -142,6 +142,29 @@ VideoConferenceEpic.scheduleMeeting = (action$) =>
                 map((response) => scheduleMeetingResponse(response.response)), // Extract and pass response data
                 catchError((error) =>
                     of(scheduleMeetingResponse({ error: error.message })) // Graceful error handling
+                )
+            );
+        })
+    );
+
+VideoConferenceEpic.getCalendarMeeting = (action$) =>
+    action$.pipe(
+        ofType(GET_CALENDAR_MEETING),
+        switchMap((action) => {
+            // Retrieve the token from localStorage
+            const token = localStorage.getItem('token');
+            return ajax({
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Add token to Authorization header
+                },
+                url: `${BaseUrl}/video-call/calender-meetings?startDate=${action.payload.startDate}&endDate=${action.payload.endDate}`,
+                method: 'GET',
+                // body: action.payload, // Directly use action.payload, no need to stringify
+            }).pipe(
+                map((response) => getCalendarMeetingResponse(response.response)), // Extract and pass response data
+                catchError((error) =>
+                    of(getCalendarMeetingResponse({ error: error.message })) // Graceful error handling
                 )
             );
         })

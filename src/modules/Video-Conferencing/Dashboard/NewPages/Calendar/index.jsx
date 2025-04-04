@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import CalendarComponent from "../CalendarComponent";
 import {
   Checkbox,
@@ -16,16 +16,31 @@ import { connect } from "react-redux";
 import { CloseOutlined } from "@ant-design/icons";
 import ScheduleMeetingIcon from "../../../../../assets/NewIcons/schedulemeeting.svg";
 import CustomButton from "../../../../../components/CustomButton";
-import { scheduleMeeting } from "../../../../../redux/VideoConference/video.action";
+import {
+  getCalendarMeeting,
+  scheduleMeeting,
+} from "../../../../../redux/VideoConference/video.action";
 import "./style.css";
 
 const { TextArea } = Input;
 
-function Calendar({ scheduleMeeting }) {
+function Calendar({
+  scheduleMeeting,
+  getCalendarMeeting,
+  videoConferenceData,
+}) {
   const [form] = Form.useForm();
   const [openScheduleMeetingModal, setOpenScheduleMeetingModal] =
     useState(false);
-
+  const [rangeDates, setRangeDates] = useState({
+    start: "",
+    end: "",
+  });
+  const [events, setEvents] = useState({
+    title: "",
+    start: "",
+    end: "",
+  });
   const [settings, setSettings] = useState({
     recording: true,
     muteOnEntry: true,
@@ -62,16 +77,42 @@ function Calendar({ scheduleMeeting }) {
   };
 
   const handleScheduleSubmit = (values) => {
-    console.log("Form Submitted:", values);
-    // TODO: send values to API or state
-    // setOpenScheduleMeetingModal(false); // close modal
+    // console.log("Form Submitted:", values);
     scheduleMeeting(values);
   };
+
+  useEffect(() => {
+    if (rangeDates.start && rangeDates.end) {
+      getCalendarMeeting({
+        startDate: rangeDates.start,
+        endDate: rangeDates.end,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rangeDates.start, rangeDates.end]);
+
+  useEffect(() => {
+    const response = videoConferenceData.getCalendarMeetingResponse;
+
+    if (response && response.success && Array.isArray(response.meetings)) {
+      const meeting = response.meetings[0]; // take the first meeting
+
+      if (meeting?.startTime && meeting?.endTime) {
+        setEvents({
+          title: meeting.title,
+          start: meeting.startTime,
+          end: meeting.endTime,
+        });
+      }
+    }
+  }, [videoConferenceData.getCalendarMeetingResponse]);
 
   return (
     <div>
       <CalendarComponent
         openScheduleMeetingModal={setOpenScheduleMeetingModal}
+        eventsDate={events}
+        setRangeDates={setRangeDates}
       />
       <Modal
         className="schedule-meeting-modal"
@@ -131,7 +172,7 @@ function Calendar({ scheduleMeeting }) {
                   style={{ display: "flex", gap: "8px", alignItems: "center" }}
                 >
                   <Form.Item
-                    name="startDate"
+                    // name="startDate"
                     rules={[
                       { required: true, message: "Please select a start date" },
                     ]}
@@ -210,7 +251,7 @@ function Calendar({ scheduleMeeting }) {
                   style={{ display: "flex", gap: "8px", alignItems: "center" }}
                 >
                   <Form.Item
-                    name="endDate"
+                    // name="endDate"
                     rules={[
                       { required: true, message: "Please select a end date" },
                     ]}
@@ -294,11 +335,11 @@ function Calendar({ scheduleMeeting }) {
                 },
                 {
                   validator: (_, value) => {
-                    if (!value || value.length === 0) {
-                      return Promise.reject(
-                        "Please add at least one participant"
-                      );
-                    }
+                    // if (!value || value.length === 0) {
+                    //   return Promise.reject(
+                    //     "Please add at least one participant"
+                    //   );
+                    // }
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     const invalidEmails = value.filter(
                       (email) => !emailRegex.test(email)
@@ -315,13 +356,15 @@ function Calendar({ scheduleMeeting }) {
             >
               <Select
                 mode="tags"
+                open={false}
                 style={{ width: "100%" }}
                 placeholder="Enter email addresses"
                 tokenSeparators={[",", " "]} // allow comma/space separation
+                className="custom-email-select"
               />
             </Form.Item>
 
-            <Form.Item label="Meeting agenda" name="agenda">
+            <Form.Item label="Meeting agenda" name="meetingAgenda">
               <TextArea
                 rows={2}
                 placeholder="Enter meeting agenda about your meeting"
@@ -416,10 +459,12 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   scheduleMeeting: (values) => dispatch(scheduleMeeting(values)),
+  getCalendarMeeting: (values) => dispatch(getCalendarMeeting(values)),
 });
 
 Calendar.propTypes = {
   scheduleMeeting: PropTypes.func,
+  getCalendarMeeting: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Calendar);

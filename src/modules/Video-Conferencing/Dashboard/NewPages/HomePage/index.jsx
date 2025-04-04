@@ -20,7 +20,7 @@ import HubDiagram from "../HubDiagram";
 import VideoFooter from "../../Footer";
 import "./style.css";
 
-function HomePage() {
+function HomePage({ setActivePage }) {
   const navigate = useNavigate();
 
   const startInstantMeeting = () => {
@@ -34,7 +34,11 @@ function HomePage() {
   const meetingOptions = [
     { name: "Instant meeting", icon: VideoIcon, onClick: startInstantMeeting },
     { name: "Join a meeting", icon: UsersIcon, onClick: joinMeeting },
-    { name: "Schedule a meeting", icon: CalenderIcon },
+    {
+      name: "Schedule a meeting",
+      icon: CalenderIcon,
+      onClick: () => setActivePage("Calendar"),
+    },
   ];
 
   const buttonNames = [
