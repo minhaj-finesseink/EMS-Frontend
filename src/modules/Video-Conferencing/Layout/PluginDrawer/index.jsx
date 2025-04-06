@@ -7,11 +7,23 @@ import fileIcon from "../../../../assets/NewIcons/plugin-file.png";
 import excalidrawIcon from "../../../../assets/NewIcons/plugin-excalidraw.png";
 import "./style.css";
 
-function PluginDrawer({ isOpen, onClose }) {
+function PluginDrawer({ isOpen, onClose, openMathEditor, openCodeEditor }) {
+  const handleMathEditor = () => {
+    openMathEditor(true);
+    openCodeEditor(false);
+    onClose();
+  };
+
+  const handleCodeEditor = () => {
+    openCodeEditor(true);
+    openMathEditor(false);
+    onClose();
+  };
+
   return (
     <Drawer
       className="plugin-drawer"
-      title={<span style={{ color: "white" }}>Invite</span>}
+      title={<span style={{ color: "white" }}>Plugins</span>}
       placement="right"
       onClose={onClose}
       open={isOpen}
@@ -33,6 +45,14 @@ function PluginDrawer({ isOpen, onClose }) {
         <div className="plugin-drawer-items">
           <div></div>
           <div>Whiteboard</div>
+        </div>
+        <div className="plugin-drawer-items">
+          <div></div>
+          <div onClick={handleMathEditor}>Math Editor</div>
+        </div>
+        <div className="plugin-drawer-items">
+          <div></div>
+          <div onClick={handleCodeEditor}>Code Editor</div>
         </div>
         <div className="plugin-drawer-items">
           <div>

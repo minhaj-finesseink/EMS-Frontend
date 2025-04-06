@@ -42,8 +42,8 @@ function Calendar({
     end: "",
   });
   const [settings, setSettings] = useState({
-    recording: true,
-    muteOnEntry: true,
+    enableRecording: true,
+    muteParticipantsOnEntry: true,
     waitingRoom: true,
     breakoutRoom: true,
   });
@@ -77,8 +77,12 @@ function Calendar({
   };
 
   const handleScheduleSubmit = (values) => {
-    // console.log("Form Submitted:", values);
-    scheduleMeeting(values);
+    const payload = {
+      ...values,
+      ...settings,
+    };
+    // console.log("Form Submitted:", payload);
+    scheduleMeeting(payload);
   };
 
   useEffect(() => {
@@ -172,7 +176,6 @@ function Calendar({
                   style={{ display: "flex", gap: "8px", alignItems: "center" }}
                 >
                   <Form.Item
-                    // name="startDate"
                     rules={[
                       { required: true, message: "Please select a start date" },
                     ]}
@@ -251,7 +254,6 @@ function Calendar({
                   style={{ display: "flex", gap: "8px", alignItems: "center" }}
                 >
                   <Form.Item
-                    // name="endDate"
                     rules={[
                       { required: true, message: "Please select a end date" },
                     ]}
@@ -313,18 +315,6 @@ function Calendar({
               <Input disabled value="(GMT +05:30) India Standard Time" />
             </Form.Item>
 
-            {/* <Form.Item
-              name="participants"
-              label="Participants"
-              rules={[
-                {
-                  required: true,
-                  message: "Please add at least one participant",
-                },
-              ]}
-            >
-              <Input placeholder="Enter user name or email address" />
-            </Form.Item> */}
             <Form.Item
               name="participants"
               label="Participants"
@@ -396,15 +386,15 @@ function Calendar({
             <ToggleOption
               label="Enable Recording"
               description="This option allows the host to record the meeting automatically or manually"
-              checked={settings.recording}
-              onChange={(val) => setSettings({ ...settings, recording: val })}
+              checked={settings.enableRecording}
+              onChange={(val) => setSettings({ ...settings, enableRecording: val })}
             />
 
             <ToggleOption
               label="Mute participants on entry"
               description="Enabling this option automatically mute all participants when they join the meeting"
-              checked={settings.muteOnEntry}
-              onChange={(val) => setSettings({ ...settings, muteOnEntry: val })}
+              checked={settings.muteParticipantsOnEntry}
+              onChange={(val) => setSettings({ ...settings, muteParticipantsOnEntry: val })}
             />
 
             <ToggleOption

@@ -53,6 +53,8 @@ function RoomFooter({
   const [floatingEmojis, setFloatingEmojis] = useState([]);
   const [isAIEnabled, setIsAIEnabled] = useState(false);
 
+  const [openPopoverIndex, setOpenPopoverIndex] = useState(null);
+
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -178,12 +180,12 @@ function RoomFooter({
             alignItems: "flex-start",
             gap: "5px",
             position: "relative", // Required for Popover positioning
-            cursor: "pointer",
+            // cursor: "pointer",
           }}
           whileHover={{ scale: 1.1 }}
           animate={{ opacity: 1, y: [5, 0] }}
           transition={{ type: "spring", stiffness: 300 }}
-          onClick={item.onClick}
+          // onClick={item.onClick}
         >
           {item.popover ? (
             // Popover for the Reaction button
@@ -202,6 +204,7 @@ function RoomFooter({
                   flexDirection: "column",
                   alignItems: "center",
                   gap: "5px",
+                  cursor: "pointer",
                 }}
               >
                 <div
@@ -229,7 +232,9 @@ function RoomFooter({
                   flexDirection: "column",
                   alignItems: "center",
                   gap: "5px",
+                  cursor: "pointer",
                 }}
+                onClick={item.onClick}
               >
                 <div
                   className="room-button-icon"
@@ -245,8 +250,10 @@ function RoomFooter({
                   {item.text}
                 </span>
               </div>
-              <div style={{ marginTop: "20px" }}>
-                {item.arrow && (
+              <div 
+              // style={{ marginTop: "20px" }}
+              >
+                {/* {item.arrow && (
                   <UpOutlined
                     style={{
                       fontSize: "14px",
@@ -254,6 +261,34 @@ function RoomFooter({
                       strokeWidth: "3",
                     }}
                   />
+                )} */}
+                {item.arrow && (
+                  <Popover
+                    content={<div>Dummy content for {item.text}</div>}
+                    trigger="click"
+                    open={openPopoverIndex === index}
+                    // onOpenChange={(visible) => {
+                    //   setOpenPopoverIndex(visible ? index : null);
+                    // }}
+                    placement="top"
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        marginTop: "20px",
+                      }}
+                    >
+                      <UpOutlined
+                        style={{
+                          fontSize: "14px",
+                          color: "white",
+                          strokeWidth: "3",
+                        }}
+                      />
+                    </div>
+                  </Popover>
                 )}
               </div>
             </>

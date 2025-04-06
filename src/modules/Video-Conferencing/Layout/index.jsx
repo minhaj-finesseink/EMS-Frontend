@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { MathfieldElement } from "mathlive";
 import RoomSideBar from "./RoomSidebar";
 import RoomHeader from "./RoomHeader";
 import RoomFooter from "./RoomFooter";
@@ -10,7 +11,7 @@ import micIcon from "../../../assets/Icons/mic-icon.svg";
 import micMuteIcon from "../../../assets/Icons/mic-mute.svg";
 import socket from "../socket";
 import { useParams } from "react-router-dom";
-import { ArrowsAltOutlined } from "@ant-design/icons";
+import { ArrowsAltOutlined, CloseOutlined } from "@ant-design/icons";
 import ParticipantsDrawer from "./ParticipantsDrawer";
 import InviteDrawer from "./InviteDrawer";
 import Breakout from "./BreakoutModal";
@@ -24,7 +25,7 @@ import ArrowIcon from "../../../assets/NewIcons/arrow-icon.svg";
 import MeetingAgenda from "./MeetingAgenda";
 import useRecordFunctions from "./Recording";
 import "./style.css";
-import { Button, Popover } from "antd";
+import CodeEditor from "./CodeEditor";
 
 const iceServers = {
   iceServers: [
@@ -81,6 +82,19 @@ function Layout(props) {
   const [hostData, setHostData] = useState(null);
   const [showFooter, setShowFooter] = useState(true);
   const [isInvitePopover, setIsInvitePopover] = useState(true);
+
+  // Plugins
+  const [openMathEditor, setOpenMathEditor] = useState(false);
+  const [openCodeEditor, setOpenCodeEditor] = useState(false);
+
+  // math live
+  const mathFieldRef = useRef();
+
+  useEffect(() => {
+    if (!customElements.get("math-field")) {
+      customElements.define("math-field", MathfieldElement);
+    }
+  }, []);
 
   // Screen recording
   const [isRecording, setIsRecording] = useState(false);
@@ -552,7 +566,6 @@ function Layout(props) {
           hostControl={isHostControlOpen}
           hostData={hostData}
         />
-        <button>Test</button>
       </div>
 
       <div className="main-wrapper">
@@ -688,6 +701,189 @@ function Layout(props) {
             </div>
 
             {/* 🔹 Second Div: Show All Remaining Users */}
+            <div>
+              {allUsers
+                .filter((_, index) => index !== movedItem) // ✅ Exclude the pinned user
+                .map((user, index) => {
+                  if (!user) return null;
+                  const {
+                    id,
+                    name,
+                    stream,
+                    isVideoEnabled,
+                    isAudioEnabled,
+                    isHandRaised,
+                  } = user;
+
+                  return (
+                    <div key={id} className="content-box1">
+                      {stream ? (
+                        <video
+                          ref={(video) => {
+                            if (video && video.srcObject !== stream) {
+                              video.srcObject = stream; // ✅ Ensure video keeps playing
+                            }
+                          }}
+                          autoPlay
+                          playsInline
+                          muted={id === "self"} // ✅ Mute only self-video
+                          className="video-preview"
+                          style={{
+                            visibility: isVideoEnabled ? "visible" : "hidden",
+                            opacity: isVideoEnabled ? 1 : 0,
+                            transition: "opacity 0.3s ease-in-out",
+                            position: "absolute",
+                            width: "100%",
+                            height: "100%",
+                            objectFit: isScreenSharing ? "contain" : "cover",
+                          }}
+                        />
+                      ) : id === "self" ? (
+                        <video
+                          ref={localVideoRef}
+                          autoPlay
+                          playsInline
+                          muted
+                          className="video-preview"
+                          style={{
+                            visibility: isVideoEnabled ? "visible" : "hidden",
+                            opacity: isVideoEnabled ? 1 : 0,
+                            transition: "opacity 0.3s ease-in-out",
+                            position: "absolute",
+                            width: "100%",
+                            height: "100%",
+                            objectFit: isScreenSharing ? "contain" : "cover",
+                          }}
+                        />
+                      ) : null}
+
+                      {/* Placeholder when video is OFF */}
+                      {!isVideoEnabled && (
+                        <div
+                          className="room-video-placeholder1"
+                          style={{ width: "55px", height: "55px" }}
+                        >
+                          <div>{name.slice(0, 2).toUpperCase()}</div>
+                        </div>
+                      )}
+
+                      <div
+                        className="participants-name-icon1"
+                        style={{
+                          bottom: "5px",
+                          padding: "0 10px",
+                          width: "calc(100% - 30px)",
+                        }}
+                      >
+                        <p style={{ margin: "10px 0" }}>{name}</p>
+                        <div>
+                          <img
+                            src={isAudioEnabled ? micIcon : micMuteIcon}
+                            alt="mic icon"
+                          />
+                        </div>
+                      </div>
+
+                      {/* ✅ Pin Button */}
+                      {count > 1 &&
+                        isVideoEnabled &&
+                        hoveredIndex === index && (
+                          <button
+                            className="participants-pin-button"
+                            onClick={() => moveToSidebar(index)}
+                          >
+                            <ArrowsAltOutlined />
+                          </button>
+                        )}
+                      {/* Hand raise */}
+                      {isHandRaised && (
+                        <div
+                          className="hand-raised-container"
+                          style={{
+                            padding: "5px",
+                            bottom: "50px",
+                            left: "10px",
+                          }}
+                        >
+                          <img src={handIcon} alt="hand" />
+                        </div>
+                      )}
+                      {/* Reaction */}
+                      {id !== "self"
+                        ? activeReactions[name] &&
+                          activeReactions[name].map(
+                            ({ reaction, id }, index) => (
+                              <motion.div
+                                key={id}
+                                style={{
+                                  bottom: `${50 + index * 25}px`, // 🔹 Lower starting position
+                                  fontSize: "25px",
+                                  position: "absolute",
+                                  right: "10px",
+                                }}
+                                initial={{ opacity: 0, y: 0, scale: 1 }}
+                                animate={{ opacity: 1, y: -10, scale: 1 }} // 🔹 Moves up less (-50 instead of -80)
+                                exit={{ opacity: 0, y: -60, scale: 0.7 }} // 🔹 Shrinks slightly, moves up less
+                                transition={{ duration: 1.5, ease: "easeOut" }} // 🔹 Slower animation (1.5s instead of 1.2s)
+                              >
+                                {reaction}
+                              </motion.div>
+                            )
+                          )
+                        : ""}
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        ) : openMathEditor || openCodeEditor ? (
+          <div className="pinned-screen-container">
+            {openMathEditor && (
+              <div
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: "8px",
+                  margin: "10px",
+                  position: "relative",
+                }}
+              >
+                <math-field
+                  ref={mathFieldRef}
+                  virtualKeyboardMode="manual"
+                  style={{ width: "100%", minHeight: "50px" }}
+                ></math-field>
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    width: "calc(100% - 20px)",
+                    textAlign: "center",
+                  }}
+                >
+                  <CloseOutlined
+                    onClick={() => setOpenMathEditor(false)}
+                    style={{ cursor: "pointer" }}
+                  />
+                </div>
+              </div>
+            )}
+            {openCodeEditor && (
+              <div style={{ position: "relative" }}>
+                <CodeEditor />
+                <div
+                  style={{
+                    position: "absolute",
+                    width: "100%",
+                    textAlign: "center",
+                  }}
+                >
+                  <CloseOutlined
+                    onClick={() => setOpenCodeEditor(false)}
+                    style={{ cursor: "pointer", color: "white" }}
+                  />
+                </div>
+              </div>
+            )}
             <div>
               {allUsers
                 .filter((_, index) => index !== movedItem) // ✅ Exclude the pinned user
@@ -1059,6 +1255,8 @@ function Layout(props) {
         <PluginDrawer
           isOpen={isPluginOpen}
           onClose={() => setIsPluginOpen(false)}
+          openMathEditor={setOpenMathEditor}
+          openCodeEditor={setOpenCodeEditor}
         />
 
         {/* Settings Modal */}
