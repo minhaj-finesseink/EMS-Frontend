@@ -145,11 +145,17 @@
 
 .participants-pin-button {
     position: absolute;
-    bottom: 100px;
+    bottom: 130px;
     color: white;
     background: #1A131878;
     border: 0;
-    font-size: 24px;
+    /* font-size: 24px; */
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
 }
 
 .hand-raised-container {

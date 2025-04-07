@@ -11,7 +11,7 @@ import micIcon from "../../../assets/Icons/mic-icon.svg";
 import micMuteIcon from "../../../assets/Icons/mic-mute.svg";
 import socket from "../socket";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowsAltOutlined, CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined, ExpandAltOutlined } from "@ant-design/icons";
 import ParticipantsDrawer from "./ParticipantsDrawer";
 import InviteDrawer from "./InviteDrawer";
 import Breakout from "./BreakoutModal";
@@ -22,6 +22,7 @@ import HostControl from "./HostControlDrawer";
 import ChatDrawer from "./ChatDrawer";
 import NoteTakerIcon from "../../../assets/NewIcons/note-taker.svg";
 import ArrowIcon from "../../../assets/NewIcons/arrow-icon.svg";
+import ExpandIcon from "../../../assets/NewIcons/expand.svg";
 import MeetingAgenda from "./MeetingAgenda";
 import useRecordFunctions from "./Recording";
 import "./style.css";
@@ -552,27 +553,26 @@ function Layout(props) {
   const handleEndMeeting = () => {
     // 1. Stop camera & mic
     localStreamRef.current?.getTracks().forEach((track) => track.stop());
-  
+
     // 2. Remove yourself so others instantly stop seeing your tile
     socket.emit("manual-leave", {
       meetingId,
       socketId: socket.id,
     });
-  
+
     // 3. Notify everyone: meeting ended
     socket.emit("end-meeting", {
       meetingId,
     });
-  
+
     // 4. Clean up local state (optional)
     Object.values(peerConnectionsRef.current).forEach((pc) => pc.close());
     peerConnectionsRef.current = {};
     localStreamRef.current = null;
-  
+
     // 5. Navigate out
     navigate("/video-dashboard");
   };
-  
 
   return (
     <div id="recordableDiv" className="layout-container">
@@ -814,12 +814,17 @@ function Layout(props) {
                       {count > 1 &&
                         isVideoEnabled &&
                         hoveredIndex === index && (
-                          <button
+                          <div
                             className="participants-pin-button"
                             onClick={() => moveToSidebar(index)}
+                            style={{
+                              bottom: "50px",
+                              width: "30px",
+                              height: "30px",
+                            }}
                           >
-                            <ArrowsAltOutlined />
-                          </button>
+                            <img src={ExpandIcon} alt="icon" />
+                          </div>
                         )}
                       {/* Hand raise */}
                       {isHandRaised && (
@@ -997,12 +1002,12 @@ function Layout(props) {
                       {count > 1 &&
                         isVideoEnabled &&
                         hoveredIndex === index && (
-                          <button
+                          <div
                             className="participants-pin-button"
                             onClick={() => moveToSidebar(index)}
                           >
-                            <ArrowsAltOutlined />
-                          </button>
+                            <img src={ExpandIcon} alt="icon" />
+                          </div>
                         )}
                       {/* Hand raise */}
                       {isHandRaised && (
@@ -1129,12 +1134,12 @@ function Layout(props) {
                   )}
                   {/* ✅ Pin Button */}
                   {count > 1 && isVideoEnabled && hoveredIndex === index && (
-                    <button
+                    <div
                       className="participants-pin-button"
                       onClick={() => moveToSidebar(index)}
                     >
-                      <ArrowsAltOutlined />
-                    </button>
+                      <img src={ExpandIcon} alt="icon" />
+                    </div>
                   )}
 
                   {/* Hand raise */}
