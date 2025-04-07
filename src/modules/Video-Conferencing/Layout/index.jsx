@@ -10,7 +10,7 @@ import RoomFooter from "./RoomFooter";
 import micIcon from "../../../assets/Icons/mic-icon.svg";
 import micMuteIcon from "../../../assets/Icons/mic-mute.svg";
 import socket from "../socket";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowsAltOutlined, CloseOutlined } from "@ant-design/icons";
 import ParticipantsDrawer from "./ParticipantsDrawer";
 import InviteDrawer from "./InviteDrawer";
@@ -41,6 +41,7 @@ const iceServers = {
 
 function Layout(props) {
   const { meetingId } = useParams();
+  const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
   const name = urlParams.get("name") || "Guest";
   const videoOn = urlParams.get("video") === "true";
@@ -547,6 +548,31 @@ function Layout(props) {
       }
     }
   }, [props.videoConferenceData.joinMeetingResponse]);
+
+  const handleEndMeeting = () => {
+    // 1. Stop camera & mic
+    localStreamRef.current?.getTracks().forEach((track) => track.stop());
+  
+    // 2. Remove yourself so others instantly stop seeing your tile
+    socket.emit("manual-leave", {
+      meetingId,
+      socketId: socket.id,
+    });
+  
+    // 3. Notify everyone: meeting ended
+    socket.emit("end-meeting", {
+      meetingId,
+    });
+  
+    // 4. Clean up local state (optional)
+    Object.values(peerConnectionsRef.current).forEach((pc) => pc.close());
+    peerConnectionsRef.current = {};
+    localStreamRef.current = null;
+  
+    // 5. Navigate out
+    navigate("/video-dashboard");
+  };
+  
 
   return (
     <div id="recordableDiv" className="layout-container">
@@ -1202,6 +1228,7 @@ function Layout(props) {
               openChat={() => setChat(true)} // Pass open function
               AIEnable={setIsAIEnabled}
               AI={isAIEnable}
+              onEndMeeting={handleEndMeeting}
             />
           )}
         </div>

@@ -2,11 +2,11 @@ import { ofType } from 'redux-observable';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs';
-import { baseUrl } from '../../../environments/environment.dev';
+// import { baseUrl } from '../../../environments/environment.dev';
 import { ADD_SHIFT, ADD_SHIFT_BULK_USER, ADD_SHIFT_USER_FROM_HR, DELETE_SHIFT_BY_ID, GET_ALL_SHIFT, GET_USER_BY_USITIVE_HR, UPDATE_SHIFT_BY_ID } from './shift.types';
 import { addShiftBulkUserResponse, addShiftResponse, addShiftUserFromHrResponse, deleteShiftByIdResponse, getAllShiftResponse, getUserByUsitiveHrResponse, updateShiftByIdResponse } from './shift.action';
 
-const BaseUrl = baseUrl;
+const BaseUrl = import.meta.env.VITE_BACKEND_URL;
 
 const ShiftEpic = {};
 

@@ -45,6 +45,7 @@ function RoomFooter({
   openChat,
   AIEnable,
   AI,
+  onEndMeeting
 }) {
   const navigate = useNavigate();
   const { currentPage, totalPages, setCurrentPage } = pagination;
@@ -112,10 +113,25 @@ function RoomFooter({
     </div>
   );
 
-  const endMeeting = () => {
-    socket.emit("end-meeting", { meetingId });
-    navigate("/video-dashboard");
-  };
+  // const endMeeting = () => {
+  //   socket.emit("end-meeting", { meetingId });
+  //   navigate("/video-dashboard");
+  // };
+
+  // const endMeeting = () => {
+  //   // 1. Stop camera/mic
+  //   localStream?.getTracks().forEach(track => track.stop());
+  
+  //   // 2. Tell server you are leaving (so others remove your tile)
+  //   socket.emit("manual-leave", { meetingId, socketId: socket.id });
+  
+  //   // 3. End the whole meeting (notify everyone)
+  //   socket.emit("end-meeting", { meetingId });
+  
+  //   // 4. Navigate away
+  //   navigate("/video-dashboard");
+  // };
+  
 
   const meetingAction = [
     {
@@ -165,7 +181,7 @@ function RoomFooter({
       icon: endIcon,
       text: "End",
       background: "#ED1C24",
-      onClick: endMeeting,
+      onClick: onEndMeeting,
     },
   ];
 

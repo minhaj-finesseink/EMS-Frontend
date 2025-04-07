@@ -2,11 +2,11 @@ import { ofType } from 'redux-observable';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs';
-import { baseUrl } from '../../environments/environment.dev';
+// import { baseUrl } from '../../environments/environment.dev';
 import { GET_CALENDAR_MEETING, JOIN_MEETING, SCHEDULE_MEETING, SEND_MEETING_INVITE, START_INSTANT_MEETING, UPDATE_HOST_CONTROL, UPDATE_MEET_SETTINGS } from './video.types';
 import { getCalendarMeetingResponse, joinMeetingResponse, scheduleMeetingResponse, sendMeetingInviteResponse, startInstantMeetingResponse, updateHostControlResponse, updateMeetSettingsResponse } from './video.action';
 
-const BaseUrl = baseUrl;
+const BaseUrl = import.meta.env.VITE_BACKEND_URL;
 
 const VideoConferenceEpic = {};
 

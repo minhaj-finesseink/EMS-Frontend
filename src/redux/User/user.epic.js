@@ -2,11 +2,11 @@ import { ofType } from 'redux-observable';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
-import { baseUrl } from '../../environments/environment.dev';
+// import { baseUrl } from '../../environments/environment.dev';
 import { ADD_USER, GET_USER_BY_COMPANY_ID, GET_USER_BY_ID, USER_PASS, USER_UPDATE } from './user.types';
 import { addUserResponse, getUserByCompanyIdResponse, getUserByIdResponse, userPasswordResponse, userUpdateResponse } from './user.action';
 
-const BaseUrl = baseUrl
+const BaseUrl = import.meta.env.VITE_BACKEND_URL
 
 const UserEpic = {};
 

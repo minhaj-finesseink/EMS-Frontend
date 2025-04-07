@@ -2,11 +2,11 @@ import { ofType } from 'redux-observable';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
-import { baseUrl } from '../../environments/environment.dev';
+// import { baseUrl } from '../../environments/environment.dev';
 import { ADD_EDUCATION, GET_EDUCATION } from './education.type';
 import { addEducationResponse, getEducationResponse } from './education.action';
 
-const BaseUrl = baseUrl
+const BaseUrl = import.meta.env.VITE_BACKEND_URL
 
 const educationEpic = {};
 

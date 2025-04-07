@@ -4,9 +4,9 @@ import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
 import { addCompanyResponse } from './company.action';
 import { ADD_COMPANY } from './company.type';
-import { baseUrl } from '../../environments/environment.dev';
+// import { baseUrl } from '../../environments/environment.dev';
 
-const BaseUrl = baseUrl
+const BaseUrl = import.meta.env.VITE_BACKEND_URL
 
 const AddCompanyEpic = {};
 

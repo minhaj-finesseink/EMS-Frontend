@@ -5,9 +5,9 @@ import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
 import { CREATE_VERIFICATION_CODE, FORGOT_PASSWORD, LOGIN, RESET_PASSWORD, SIGNUP, VERIFY_CODE } from './auth.types';
 import { createVerificationCodeResponse, forgotPasswordResponse, loginResponse, resetPasswordResponse, signUpResponse, verifyCodeResponse } from './auth.action';
-import { baseUrl } from '../../environments/environment.dev';
+// import { baseUrl } from '../../environments/environment.dev';
 
-const BaseUrl = baseUrl
+const BaseUrl = import.meta.env.VITE_BACKEND_URL
 
 const AuthEpic = {};
 

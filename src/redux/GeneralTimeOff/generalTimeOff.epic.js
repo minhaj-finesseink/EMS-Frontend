@@ -2,11 +2,11 @@ import { ofType } from 'redux-observable';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
-import { baseUrl } from '../../environments/environment.dev';
+// import { baseUrl } from '../../environments/environment.dev';
 import { ADD_GENERAL_TIME_OFF, GET_GENERAL_TIME_OFF } from './generalTimeOff.types';
 import { addGeneralTimeOffResponse, getGeneralTimeOffResponse } from './generalTimeOff.action';
 
-const BaseUrl = baseUrl
+const BaseUrl = import.meta.env.VITE_BACKEND_URL
 
 const generalTimeOffEpic = {};
 

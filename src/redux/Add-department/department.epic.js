@@ -4,9 +4,9 @@ import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
 import { ADD_DEPARTMENT, GET_DEPARTMENT } from './department.types';
 import { addDepartmentResponse, getDepartmentResponse } from './department.action';
-import { baseUrl } from '../../environments/environment.dev';
+// import { baseUrl } from '../../environments/environment.dev';
 
-const BaseUrl = baseUrl
+const BaseUrl = import.meta.env.VITE_BACKEND_URL
 
 const AddDepartmentEpic = {};
 

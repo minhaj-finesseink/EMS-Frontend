@@ -4,9 +4,9 @@ import { ajax } from 'rxjs/ajax';
 import { of } from 'rxjs'; // To handle errors gracefully
 import { REGISTER } from './register.types';
 import { registerResponse } from './register.action';
-import { baseUrl } from '../../environments/environment.dev';
+// import { baseUrl } from '../../environments/environment.dev';
 
-const BaseUrl = baseUrl
+const BaseUrl = import.meta.env.VITE_BACKEND_URL
 
 const RegisterEpic = {};
 
