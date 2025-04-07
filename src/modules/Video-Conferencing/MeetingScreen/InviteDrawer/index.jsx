@@ -10,8 +10,8 @@ import copyIcon from "../../../../assets/Icons/copy.svg";
 import QR from "../../../../assets/video-call-test-images/QR.png";
 import "./style.css";
 
-const FRONTEND_URL = "https://ems-frontend-8eqf.onrender.com";
-// const FRONTEND_URL = "http://localhost:5173";
+// const FRONTEND_URL = "https://ems-frontend-8eqf.onrender.com";
+const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
 
 // http://localhost:5173/meeting-room/7874504b-4eb1-443d-83b7-71b8d230dec4
 // http://localhost:5173/lobby?type=join

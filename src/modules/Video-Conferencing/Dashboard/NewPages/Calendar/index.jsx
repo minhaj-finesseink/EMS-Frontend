@@ -6,6 +6,7 @@ import {
   DatePicker,
   Form,
   Input,
+  message,
   Modal,
   Select,
   Switch,
@@ -47,6 +48,7 @@ function Calendar({
     waitingRoom: true,
     breakoutRoom: true,
   });
+  const [loading, setLoading] = useState(false);
 
   const ToggleOption = ({ label, description, checked, onChange }) => {
     return (
@@ -77,6 +79,7 @@ function Calendar({
   };
 
   const handleScheduleSubmit = (values) => {
+    setLoading(true);
     const payload = {
       ...values,
       ...settings,
@@ -84,6 +87,22 @@ function Calendar({
     // console.log("Form Submitted:", payload);
     scheduleMeeting(payload);
   };
+
+  useEffect(() => {
+    const response = videoConferenceData.scheduleMeetingResponse;
+    if (response && response.success) {
+      message.success("Meeting scheduled successfully!");
+      setOpenScheduleMeetingModal(false);
+      if (rangeDates.start && rangeDates.end) {
+        getCalendarMeeting({
+          startDate: rangeDates.start,
+          endDate: rangeDates.end,
+        });
+      }
+    }
+    setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoConferenceData.scheduleMeetingResponse]);
 
   useEffect(() => {
     if (rangeDates.start && rangeDates.end) {
@@ -97,7 +116,6 @@ function Calendar({
 
   useEffect(() => {
     const response = videoConferenceData.getCalendarMeetingResponse;
-
     if (response && response.success && Array.isArray(response.meetings)) {
       const meeting = response.meetings[0]; // take the first meeting
 
@@ -387,14 +405,18 @@ function Calendar({
               label="Enable Recording"
               description="This option allows the host to record the meeting automatically or manually"
               checked={settings.enableRecording}
-              onChange={(val) => setSettings({ ...settings, enableRecording: val })}
+              onChange={(val) =>
+                setSettings({ ...settings, enableRecording: val })
+              }
             />
 
             <ToggleOption
               label="Mute participants on entry"
               description="Enabling this option automatically mute all participants when they join the meeting"
               checked={settings.muteParticipantsOnEntry}
-              onChange={(val) => setSettings({ ...settings, muteParticipantsOnEntry: val })}
+              onChange={(val) =>
+                setSettings({ ...settings, muteParticipantsOnEntry: val })
+              }
             />
 
             <ToggleOption
@@ -434,6 +456,7 @@ function Calendar({
             style={{ width: "100px" }}
             color={"blue"}
             onClick={() => form.submit()}
+            loading={loading}
           >
             Save
           </CustomButton>

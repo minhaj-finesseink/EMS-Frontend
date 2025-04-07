@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
+import { Popover, Typography } from "antd";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarIcon from "../../../../../assets/NewIcons/calendar.svg";
 import "./CalendarStyles.css";
@@ -136,6 +137,30 @@ const CalendarComponent = ({
     );
   };
 
+  const CustomEvent = ({ event }) => {
+    const content = (
+      <div>
+        <p><strong>Meeting:</strong> {event.title}</p>
+        <p><strong>Time:</strong> {moment(event.start).format("hh:mm A")} - {moment(event.end).format("hh:mm A")}</p>
+        <Typography.Link href="https://dummy-meeting-link.com" target="_blank">
+          Join Meeting
+        </Typography.Link>
+      </div>
+    );
+  
+    return (
+      <Popover content={content} title="Meeting Details" trigger="click">
+        <div style={{ cursor: "pointer", padding: "2px" }}>
+          <strong>
+            {moment(event.start).format("h:mm A")} – {moment(event.end).format("h:mm A")}
+          </strong>
+          <br />
+          {event.title}
+        </div>
+      </Popover>
+    );
+  };
+
   return (
     <div className="calendar-container">
       <Calendar
@@ -151,6 +176,7 @@ const CalendarComponent = ({
         timeslots={1} // Ensures correct spacing in week/day views
         onRangeChange={handleRangeChange}
         components={{
+          event: CustomEvent,
           toolbar: (props) => (
             <CustomToolbar {...props} onViewChange={setView} view={view} />
           ),
