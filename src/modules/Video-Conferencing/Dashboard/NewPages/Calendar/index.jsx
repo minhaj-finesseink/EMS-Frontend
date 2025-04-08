@@ -79,18 +79,8 @@ function Calendar({
     );
   };
 
-  // const handleScheduleSubmit = (values) => {
-  //   setLoading(true);
-  //   const payload = {
-  //     ...values,
-  //     ...settings,
-  //   };
-  //   console.log("Form Submitted:", payload);
-  //   // scheduleMeeting(payload);
-  // };
   const handleScheduleSubmit = (values) => {
     setLoading(true);
-
     const startDateTime = dayjs(values.startDate)
       .set("hour", values.startTime.hour())
       .set("minute", values.startTime.minute())
@@ -146,21 +136,6 @@ function Calendar({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rangeDates.start, rangeDates.end]);
-
-  // useEffect(() => {
-  //   const response = videoConferenceData.getCalendarMeetingResponse;
-  //   if (response && response.success && Array.isArray(response.meetings)) {
-  //     const meeting = response.meetings[0]; // take the first meeting
-
-  //     if (meeting?.startTime && meeting?.endTime) {
-  //       setEvents({
-  //         title: meeting.title,
-  //         start: meeting.startTime,
-  //         end: meeting.endTime,
-  //       });
-  //     }
-  //   }
-  // }, [videoConferenceData.getCalendarMeetingResponse]);
 
   useEffect(() => {
     const response = videoConferenceData.getCalendarMeetingResponse;
@@ -364,17 +339,6 @@ function Calendar({
                       }}
                     />
                   </Form.Item>
-                  {/* <div
-                    style={{
-                      fontSize: "16px",
-                      fontFamily: "Inter",
-                      color: "#464454",
-                      display: "flex",
-                      gap: "20px",
-                    }}
-                  >
-                    Recurrence <Checkbox />
-                  </div> */}
                   <Form.Item
                     name="recurrence"
                     valuePropName="checked"
@@ -386,9 +350,6 @@ function Calendar({
               </div>
             </div>
 
-            {/* <Form.Item label="Time zone">
-              <Input disabled value="(GMT +05:30) India Standard Time" />
-            </Form.Item> */}
             <Form.Item label="Time zone">
               <Input
                 disabled

@@ -72,8 +72,9 @@ function InviteDrawer({
       let data = videoConferenceData.sendMeetingInviteResponse;
       if (data.success) {
         message.success(data.message);
+        setLoading(false);
       }
-      setLoading(false);
+      // setLoading(false);
       setMailSend(false);
       setMailId("");
     }

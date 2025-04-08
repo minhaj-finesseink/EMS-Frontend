@@ -415,7 +415,7 @@ function Layout(props) {
 
   const getGridTemplate = () => {
     if (count === 1)
-      return { gridTemplateColumns: "1fr", width: "50%", margin: "0 auto" };
+      return { gridTemplateColumns: "1fr", width: "55%", margin: "0 auto" };
     if (count === 2) return { gridTemplateColumns: "1fr 1fr" };
     if (count === 3)
       return { gridTemplateColumns: "1fr 1fr 1fr", margin: "100px 0" };

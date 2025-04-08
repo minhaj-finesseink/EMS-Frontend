@@ -70,21 +70,21 @@ function ParticipantsDrawer({
     setPopoverVisible(false);
   };
 
-  useEffect(() => {
-    if (videoConferenceData.sendMeetingInviteResponse) {
-      let data = videoConferenceData.sendMeetingInviteResponse;
-      if (data.success) {
-        message.success(data.message);
-      }
-      setLoading(false);
-      setMailId("");
-      setTimeout(() => {
-        setIsModalOpen(false);
-      }, 500);
-    }
-    videoConferenceData.sendMeetingInviteResponse = null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoConferenceData.sendMeetingInviteResponse]);
+  // useEffect(() => {
+  //   if (videoConferenceData.sendMeetingInviteResponse) {
+  //     let data = videoConferenceData.sendMeetingInviteResponse;
+  //     if (data.success) {
+  //       message.success(data.message);
+  //     }
+  //     setLoading(false);
+  //     setMailId("");
+  //     setTimeout(() => {
+  //       setIsModalOpen(false);
+  //     }, 500);
+  //   }
+  //   videoConferenceData.sendMeetingInviteResponse = null;
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [videoConferenceData.sendMeetingInviteResponse]);
 
   return (
     <>
