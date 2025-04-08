@@ -295,3 +295,19 @@
   font-size: 24px;
   font-weight: 600;
 }
+
+.dummy-join-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 16px;
+  background-color: #007DC5;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.dummy-join-btn:hover {
+  background-color: #006bb0;
+}

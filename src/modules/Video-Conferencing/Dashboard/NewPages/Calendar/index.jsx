@@ -12,6 +12,7 @@ import {
   Switch,
   TimePicker,
 } from "antd";
+import dayjs from "dayjs";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { CloseOutlined } from "@ant-design/icons";
@@ -78,12 +79,44 @@ function Calendar({
     );
   };
 
+  // const handleScheduleSubmit = (values) => {
+  //   setLoading(true);
+  //   const payload = {
+  //     ...values,
+  //     ...settings,
+  //   };
+  //   console.log("Form Submitted:", payload);
+  //   // scheduleMeeting(payload);
+  // };
   const handleScheduleSubmit = (values) => {
     setLoading(true);
+
+    const startDateTime = dayjs(values.startDate)
+      .set("hour", values.startTime.hour())
+      .set("minute", values.startTime.minute())
+      .toISOString();
+
+    const endDateTime = dayjs(values.endDate)
+      .set("hour", values.endTime.hour())
+      .set("minute", values.endTime.minute())
+      .toISOString();
+
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
     const payload = {
-      ...values,
+      // ...values,
+      title: values.title,
+      statDate: startDateTime,
+      startTime: startDateTime,
+      endDate: endDateTime,
+      endTime: endDateTime,
+      recurrence: values.recurrence || false, // fallback to false
+      timeZone,
+      participants: values.participants,
+      meetingAgenda: values.meetingAgenda,
       ...settings,
     };
+
     // console.log("Form Submitted:", payload);
     scheduleMeeting(payload);
   };
@@ -114,18 +147,33 @@ function Calendar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rangeDates.start, rangeDates.end]);
 
+  // useEffect(() => {
+  //   const response = videoConferenceData.getCalendarMeetingResponse;
+  //   if (response && response.success && Array.isArray(response.meetings)) {
+  //     const meeting = response.meetings[0]; // take the first meeting
+
+  //     if (meeting?.startTime && meeting?.endTime) {
+  //       setEvents({
+  //         title: meeting.title,
+  //         start: meeting.startTime,
+  //         end: meeting.endTime,
+  //       });
+  //     }
+  //   }
+  // }, [videoConferenceData.getCalendarMeetingResponse]);
+
   useEffect(() => {
     const response = videoConferenceData.getCalendarMeetingResponse;
-    if (response && response.success && Array.isArray(response.meetings)) {
-      const meeting = response.meetings[0]; // take the first meeting
 
-      if (meeting?.startTime && meeting?.endTime) {
-        setEvents({
-          title: meeting.title,
-          start: meeting.startTime,
-          end: meeting.endTime,
-        });
-      }
+    if (response && response.success && Array.isArray(response.meetings)) {
+      const allEvents = response.meetings.map((meeting) => ({
+        title: meeting.title,
+        start: meeting.startTime,
+        end: meeting.endTime,
+        meetingId: meeting.meetingId,
+      }));
+
+      setEvents(allEvents); // 👈 store array of all meetings
     }
   }, [videoConferenceData.getCalendarMeetingResponse]);
 
@@ -194,6 +242,7 @@ function Calendar({
                   style={{ display: "flex", gap: "8px", alignItems: "center" }}
                 >
                   <Form.Item
+                    name="startDate"
                     rules={[
                       { required: true, message: "Please select a start date" },
                     ]}
@@ -272,6 +321,7 @@ function Calendar({
                   style={{ display: "flex", gap: "8px", alignItems: "center" }}
                 >
                   <Form.Item
+                    name="endDate"
                     rules={[
                       { required: true, message: "Please select a end date" },
                     ]}
@@ -314,7 +364,7 @@ function Calendar({
                       }}
                     />
                   </Form.Item>
-                  <div
+                  {/* <div
                     style={{
                       fontSize: "16px",
                       fontFamily: "Inter",
@@ -324,13 +374,26 @@ function Calendar({
                     }}
                   >
                     Recurrence <Checkbox />
-                  </div>
+                  </div> */}
+                  <Form.Item
+                    name="recurrence"
+                    valuePropName="checked"
+                    style={{ marginBottom: 0 }}
+                  >
+                    <Checkbox>Recurrence</Checkbox>
+                  </Form.Item>
                 </div>
               </div>
             </div>
 
-            <Form.Item label="Time zone">
+            {/* <Form.Item label="Time zone">
               <Input disabled value="(GMT +05:30) India Standard Time" />
+            </Form.Item> */}
+            <Form.Item label="Time zone">
+              <Input
+                disabled
+                value={Intl.DateTimeFormat().resolvedOptions().timeZone}
+              />
             </Form.Item>
 
             <Form.Item

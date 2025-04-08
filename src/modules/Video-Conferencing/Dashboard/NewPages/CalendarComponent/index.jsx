@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import { Popover, Typography } from "antd";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import CalendarIcon from "../../../../../assets/NewIcons/calendar.svg";
 import "./CalendarStyles.css";
+import { Modal } from "antd";
 
 const localizer = momentLocalizer(moment);
 
@@ -16,6 +16,9 @@ const CalendarComponent = ({
 }) => {
   const [view, setView] = useState(Views.WEEK); // Default to week view
   const [events, setEvents] = useState([]);
+
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const formatDate = (date) => moment(date).format("YYYY-MM-DD");
 
@@ -55,8 +58,8 @@ const CalendarComponent = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view]);
 
-   // 🔄 Update events when eventsDate changes
-   useEffect(() => {
+  // 🔄 Update events when eventsDate changes
+  useEffect(() => {
     if (eventsDate) {
       if (Array.isArray(eventsDate)) {
         const mapped = eventsDate.map((event) => ({
@@ -137,28 +140,14 @@ const CalendarComponent = ({
     );
   };
 
-  const CustomEvent = ({ event }) => {
-    const content = (
-      <div>
-        <p><strong>Meeting:</strong> {event.title}</p>
-        <p><strong>Time:</strong> {moment(event.start).format("hh:mm A")} - {moment(event.end).format("hh:mm A")}</p>
-        <Typography.Link href="https://dummy-meeting-link.com" target="_blank">
-          Join Meeting
-        </Typography.Link>
-      </div>
-    );
-  
-    return (
-      <Popover content={content} title="Meeting Details" trigger="click">
-        <div style={{ cursor: "pointer", padding: "2px" }}>
-          <strong>
-            {moment(event.start).format("h:mm A")} – {moment(event.end).format("h:mm A")}
-          </strong>
-          <br />
-          {event.title}
-        </div>
-      </Popover>
-    );
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedEvent(null);
   };
 
   return (
@@ -175,8 +164,8 @@ const CalendarComponent = ({
         step={60} // Step interval of 30 minutes
         timeslots={1} // Ensures correct spacing in week/day views
         onRangeChange={handleRangeChange}
+        onSelectEvent={handleSelectEvent}
         components={{
-          event: CustomEvent,
           toolbar: (props) => (
             <CustomToolbar {...props} onViewChange={setView} view={view} />
           ),
@@ -188,6 +177,43 @@ const CalendarComponent = ({
           padding: "10px",
         }}
       />
+      {/* Meeting Details Modal */}
+      <Modal
+        title="Meeting Details"
+        open={isModalVisible}
+        onCancel={handleCloseModal}
+        footer={null}
+      >
+        {selectedEvent ? (
+          <div>
+            <p>
+              <strong>Title:</strong> {selectedEvent.title}
+            </p>
+            <p>
+              <strong>Start:</strong> {selectedEvent.start.toLocaleString()}
+            </p>
+            <p>
+              <strong>End:</strong> {selectedEvent.end.toLocaleString()}
+            </p>
+            {selectedEvent.description && (
+              <p>
+                <strong>Description:</strong> {selectedEvent.description}
+              </p>
+            )}
+            <a
+              href={`${
+                import.meta.env.VITE_FRONTEND_URL
+              }/lobby?type=invite&id=${selectedEvent.meetingId}`}
+              target="_blank"
+              className="dummy-join-btn"
+            >
+              Join Meeting
+            </a>
+          </div>
+        ) : (
+          <p>No event selected.</p>
+        )}
+      </Modal>
     </div>
   );
 };
