@@ -7,13 +7,13 @@ import { Drawer, message, Popover, Spin } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { QRCodeCanvas } from "qrcode.react"; // ✅ correct import
 import mailIcon from "../../../../assets/Icons/mail.svg";
 import linkIcon from "../../../../assets/Icons/link.svg";
 import QR from "../../../../assets/video-call-test-images/QR.png";
 import { sendMeetingInvite } from "../../../../redux/VideoConference/video.action";
 import "./style.css";
 
-// const FRONTEND_URL = "https://ems-frontend-8eqf.onrender.com";
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
 
 function InviteDrawer({
@@ -88,6 +88,8 @@ function InviteDrawer({
       setMailSend(false);
     }, 1000);
   };
+
+  const meetingUrl = "https://your-meeting-link.com/abc123";
 
   return (
     <Drawer
@@ -216,7 +218,7 @@ function InviteDrawer({
             )}
           </div>
         </Spin>
-        <div style={{ padding: "20px" }}>
+        {/* <div style={{ padding: "20px" }}>
           <div
             style={{
               backgroundColor: "#FFF",
@@ -238,6 +240,31 @@ function InviteDrawer({
             </div>
             <img style={{ cursor: "pointer" }} src={QR} alt="QR Code" />
           </div>
+        </div> */}
+        {/* QR Code */}
+        <div
+          style={{
+            backgroundColor: "#FFF",
+            borderRadius: "10px",
+            color: "#000000",
+            padding: "20px",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              color: "#2C2E33",
+              marginBottom: "10px",
+              fontWeight: 600,
+            }}
+          >
+            Scan this QR code to join the meeting
+          </div>
+          <QRCodeCanvas
+            value={`${FRONTEND_URL}/lobby?type=invite&id=${meetingId}`}
+            size={180}
+            includeMargin={true}
+          />
         </div>
       </div>
     </Drawer>
