@@ -18,7 +18,7 @@ import {
   joinMeeting,
   startInstantMeeting,
 } from "../../../../redux/VideoConference/video.action";
-import BackButton from "../../../../assets/NewIcons/back-button.svg";
+import BackButton from "../../../../assets/NewIcons/Back-button.svg";
 import "./SelfVideo.css";
 
 const MeetingLobby = (props) => {
