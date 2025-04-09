@@ -3,16 +3,16 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Popover, Spin, message } from "antd";
 import { connect } from "react-redux";
-import linkIcon from "../../assets/Icons/link.svg";
-import mailIcon from "../../assets/Icons/mail.svg";
-import "./newStyle.css";
-import { sendMeetingInvite } from "../../redux/VideoConference/video.action";
+import linkIcon from "../../../../assets/Icons/link.svg";
+import mailIcon from "../../../../assets/Icons/mail.svg";
+import { sendMeetingInvite } from "../../../../redux/VideoConference/video.action";
+import "./style.css";
 
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
 
 const InviteActions = ({ sendMeetingInvite, videoConferenceData }) => {
-  // const { meetingId } = useParams();
-  const meetingId = "206-e84-3bd";
+  const { meetingId } = useParams();
+  // const meetingId = "206-e84-3bd";
   const [copied, setCopied] = useState(false);
   const [mailSend, setMailSend] = useState(false);
   const [mailId, setMailId] = useState("");

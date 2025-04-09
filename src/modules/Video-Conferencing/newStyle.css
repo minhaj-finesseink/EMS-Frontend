@@ -1,0 +1,72 @@
+/* .copy-box {
+    display: flex;
+    gap: 10px;
+    background-color: #272a32;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    height: 25px;
+    color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-bottom: 10px;
+  }
+  
+  .copy-box.copied {
+    background-color: white;
+    justify-content: center;
+    color: #007dc5;
+  }
+  
+  .copy-text {
+    font-weight: 700;
+    margin-top: 3px;
+  }
+  
+  .icon-wrapper {
+    width: 30px;
+  }
+  
+  .email-box {
+    display: flex;
+    gap: 10px;
+    background-color: #272a32;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    height: 25px;
+  }
+  
+  .email-input-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .email-input {
+    border: none;
+    outline: none;
+    background: none;
+    color: white;
+    font-weight: 700;
+    width: 100%;
+  }
+  
+  .popover-text {
+    color: red;
+  }
+  
+  .send-btn {
+    color: #007dc5;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  
+  .email-text {
+    font-weight: 700;
+    margin-top: 3px;
+    color: white;
+  }
+   */

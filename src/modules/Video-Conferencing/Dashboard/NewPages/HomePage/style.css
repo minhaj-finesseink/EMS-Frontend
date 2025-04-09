@@ -112,11 +112,13 @@
     padding: 14px 20px;
     border-radius: 8px;
     font-weight: 700;
+    cursor: pointer;
 }
 
 .home-meeting-id-container {
     display: flex;
     justify-content: space-between;
+    gap: 20px;
 }
 
 .home-meeting-id-container>div:first-child {
@@ -124,13 +126,15 @@
     border-radius: 14px;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #DEDEDECC;
-    padding: 20px 50px;
-    color: #464454;
+    padding: 20px;
+    color: #5D5669;
     font-size: 14px;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 10px;
+    flex: 1;
+    justify-content: center;
 }
 
 .home-meeting-id-container>div:last-child {
@@ -187,19 +191,20 @@
 .meetings-card-container>div:first-child {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 7px;
 }
 
 .meeting-card-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
 }
 
 .meeting-card-desc {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     display: flex;
     gap: 10px;
+    color: #5D5669;
 }
 
 .meeting-card-icon-container {
@@ -244,10 +249,10 @@
     transition: all 0.3s ease;
 }
 
-.video-grid-content-buttons:hover {
+/* .video-grid-content-buttons:hover {
     background-color: #007bff;
     color: white;
-}
+} */
 
 .upgrade-button {
     font-size: 12px;

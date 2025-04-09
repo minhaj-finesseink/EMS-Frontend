@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, Input, message, Modal, Popover, Spin } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import socket from "../../socket";
 import searchIcon from "../../../../assets/Icons/search.svg";
 import CustomButton from "../../../../components/CustomButton";
@@ -12,26 +10,13 @@ import micIcon from "../../../../assets/Icons/mic-icon.svg";
 import micMuteIcon from "../../../../assets/Icons/mic-mute.svg";
 import videoIcon from "../../../../assets/Icons/camera video.svg";
 import videoOffIcon from "../../../../assets/Icons/camera video-silent.svg";
-import mailIcon from "../../../../assets/Icons/mail.svg";
-import { useParams } from "react-router-dom";
-import { sendMeetingInvite } from "../../../../redux/VideoConference/video.action";
+import InviteEmail from "../../Components/InviteEmail";
 import "./style.css";
 
-function ParticipantsDrawer({
-  isOpen,
-  onClose,
-  sendMeetingInvite,
-  videoConferenceData,
-}) {
+function ParticipantsDrawer({ isOpen, onClose }) {
   const colors = ["#AADDC4", "#F8F3D6", "#CCE5F3"];
-  const { meetingId } = useParams();
   const [participants, setParticipants] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [mailId, setMailId] = useState("");
-  const [popoverContent, setPopoverContent] = useState("");
-  const [popoverVisible, setPopoverVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     socket.on("update-participants", (updatedParticipants) => {
@@ -42,49 +27,6 @@ function ParticipantsDrawer({
       socket.off("update-participants");
     };
   }, []);
-
-  const handleSend = () => {
-    if (!mailId.trim()) {
-      setPopoverContent("Please enter an email");
-      setPopoverVisible(true);
-      setTimeout(() => setPopoverVisible(false), 2000); // Hide popover after 2 sec
-      return;
-    }
-
-    // Simple email validation regex
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(mailId)) {
-      setPopoverContent("Please enter a valid email");
-      setPopoverVisible(true);
-      setTimeout(() => setPopoverVisible(false), 2000);
-      return;
-    }
-
-    // API call"
-    // console.log("Working fine", mailId);
-    setLoading(true);
-    sendMeetingInvite({
-      email: mailId,
-      meetingId: meetingId,
-    });
-    setPopoverVisible(false);
-  };
-
-  // useEffect(() => {
-  //   if (videoConferenceData.sendMeetingInviteResponse) {
-  //     let data = videoConferenceData.sendMeetingInviteResponse;
-  //     if (data.success) {
-  //       message.success(data.message);
-  //     }
-  //     setLoading(false);
-  //     setMailId("");
-  //     setTimeout(() => {
-  //       setIsModalOpen(false);
-  //     }, 500);
-  //   }
-  //   videoConferenceData.sendMeetingInviteResponse = null;
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [videoConferenceData.sendMeetingInviteResponse]);
 
   return (
     <>
@@ -254,88 +196,12 @@ function ParticipantsDrawer({
             onClick={() => setIsModalOpen(false)}
           />
         </div>
-        <div style={{ padding: "15px" }}>
-          <div style={{ margin: "0 0 10px 2px" }}>Invite</div>
-          <Spin spinning={loading}>
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                backgroundColor: "#272A32",
-                padding: "15px",
-                borderRadius: "10px",
-                cursor: "pointer",
-                height: "25px",
-              }}
-            >
-              {" "}
-              <div style={{ width: "30px" }}>
-                <img src={mailIcon} alt="mail icon" />
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Popover
-                  content={
-                    <span style={{ color: "red" }}>{popoverContent}</span>
-                  }
-                  visible={popoverVisible}
-                  placement="bottom"
-                >
-                  <input
-                    type="text"
-                    placeholder="Enter Email"
-                    style={{
-                      border: "none",
-                      outline: "none",
-                      background: "none",
-                      color: "white",
-                      fontWeight: 700,
-                      width: "100%",
-                    }}
-                    value={mailId}
-                    onChange={(e) => setMailId(e.target.value)}
-                  />
-                </Popover>
-                {mailId.length > 0 && (
-                  <button
-                    style={{
-                      color: "#007DC5",
-                      background: "none",
-                      border: "none",
-                      fontSize: "16px",
-                      cursor: "pointer",
-                      fontWeight: 700,
-                    }}
-                    onClick={handleSend}
-                  >
-                    Send
-                  </button>
-                )}
-              </div>
-            </div>
-          </Spin>
+        <div style={{ padding: "20px" }}>
+          <InviteEmail />
         </div>
       </Modal>
     </>
   );
 }
 
-const mapStateToProps = (state) => ({
-  videoConferenceData: state.videoConference,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  sendMeetingInvite: (values) => dispatch(sendMeetingInvite(values)),
-});
-
-ParticipantsDrawer.propTypes = {
-  sendMeetingInvite: PropTypes.func,
-  videoConferenceData: PropTypes.object,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ParticipantsDrawer);
+export default ParticipantsDrawer;

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VideoIcon from "../../../../../assets/Video-Home-Icons/video.svg";
 import UsersIcon from "../../../../../assets/Video-Home-Icons/users.svg";
@@ -15,13 +15,16 @@ import WatchBlackIcon from "../../../../../assets/NewIcons/watch-black.svg";
 import WatchWhiteIcon from "../../../../../assets/NewIcons/watch-white.svg";
 import Image1 from "../../../../../assets/NewIcons/home-image-1.png";
 import Image2 from "../../../../../assets/NewIcons/home-image-2.png";
+import TickMark from "../../../../../assets/NewIcons/tick-mark.svg";
 import CustomButton from "../../../../../components/CustomButton";
 import HubDiagram from "../HubDiagram";
 import VideoFooter from "../../Footer";
+import { message } from "antd";
 import "./style.css";
 
 function HomePage({ setActivePage }) {
   const navigate = useNavigate();
+  const meetingId = "123456799";
 
   const startInstantMeeting = () => {
     navigate("/lobby?type=instant");
@@ -61,18 +64,34 @@ function HomePage({ setActivePage }) {
     watchIcon,
     copyIcon,
     buttonText,
+    descColor,
+    isLive,
   }) => {
     return (
       <div className="meetings-card-container" style={cardStyle}>
         <div>
           <div className="meeting-card-title">{title}</div>
-          <div className="meeting-card-desc">
-            <img width={"15px"} src={calenderIcon} alt="icon" /> {date}
+          <div className="meeting-card-desc" style={{ color: descColor }}>
+            {/* <img width={"15px"} src={calenderIcon} alt="icon" /> {date} */}
+            {isLive ? (
+              <span
+                style={{ color: "red", fontWeight: 600, marginLeft: "-1px" }}
+              >
+                🔴 LIVE -{" "}
+                <span style={{ color: "#5D5669", fontWeight: 500 }}>
+                  meet ends in 25mins
+                </span>
+              </span>
+            ) : (
+              <div className="meeting-card-desc" style={{ color: descColor }}>
+                <img width={"15px"} src={calenderIcon} alt="icon" /> {date}
+              </div>
+            )}
           </div>
-          <div className="meeting-card-desc">
+          <div className="meeting-card-desc" style={{ color: descColor }}>
             <img src={watchIcon} alt="icon" /> {time}
           </div>
-          <div className="meeting-card-desc">
+          <div className="meeting-card-desc" style={{ color: descColor }}>
             Meeting ID : HBCUYBCYC <img src={copyIcon} alt="icon" />
           </div>
         </div>
@@ -118,6 +137,12 @@ function HomePage({ setActivePage }) {
         </div>
       </div>
     );
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(meetingId).then(() => {
+      message.success("Copied!");
+    });
   };
 
   return (
@@ -176,10 +201,16 @@ function HomePage({ setActivePage }) {
                 <button className="home-upgrade-button">Upgrade Plan</button>
               </div>
             </div>
+
             <div className="home-meeting-id-container">
               <div>
-                Personal Meeting ID: 123456799{" "}
-                <img src={CopyGreyIcon} alt="icon" />
+                Personal Meeting ID: {meetingId}
+                <img
+                  src={CopyGreyIcon}
+                  alt="copy icon"
+                  onClick={copyToClipboard}
+                  style={{ cursor: "pointer" }}
+                />
               </div>
               <div>
                 {" "}
@@ -200,6 +231,7 @@ function HomePage({ setActivePage }) {
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
                 <MeetingCard
+                  descColor="white"
                   cardStyle={{ backgroundColor: "#007DC5", color: "white" }}
                   title="Maclaren's Meeting"
                   date="January 29, 2025"
@@ -210,6 +242,7 @@ function HomePage({ setActivePage }) {
                   copyIcon={CopyWhiteIcon}
                 />
                 <MeetingCard
+                  descColor="white"
                   cardStyle={{ backgroundColor: "#007DC5", color: "white" }}
                   title="Config - Designer's Meet"
                   date="January 29, 2025"
@@ -232,13 +265,14 @@ function HomePage({ setActivePage }) {
                 <MeetingCard
                   cardStyle={{ border: "1px solid #A2A2A2" }}
                   title="Future of UX - Webinar"
-                  date="January 29, 2025"
+                  // date="January 29, 2025"
                   time="04:30 PM - 05:30 PM"
                   showPrimaryButton={true}
                   buttonText={"Re-join"}
                   calenderIcon={CalenderBlackIcon}
                   watchIcon={WatchBlackIcon}
                   copyIcon={CopyBlackIcon}
+                  isLive={true}
                 />
                 <MeetingCard
                   cardStyle={{ border: "1px solid #A2A2A2" }}
@@ -310,7 +344,7 @@ function HomePage({ setActivePage }) {
                     padding: "20px 0 0 20px",
                     display: "flex",
                     flexDirection: "column",
-                    gap: "20px",
+                    gap: "10px",
                   }}
                 >
                   <div style={{ fontSize: "20px", fontWeight: 700 }}>
@@ -321,6 +355,7 @@ function HomePage({ setActivePage }) {
                       fontSize: "12px",
                       fontWeight: 500,
                       color: "#5D5669",
+                      margin: "15px 0",
                     }}
                   >
                     Get the Usitive Meet app and stay connected with
@@ -331,27 +366,43 @@ function HomePage({ setActivePage }) {
                       fontSize: "12px",
                       fontWeight: 500,
                       color: "#5D5669",
+                      display: "flex",
+                      gap: "10px",
+                      alignItems: "center",
                     }}
                   >
-                    Hello
+                    {" "}
+                    <img src={TickMark} alt="tick icon" />
+                    Fast & secure video calls
                   </div>
                   <div
                     style={{
                       fontSize: "12px",
                       fontWeight: 500,
                       color: "#5D5669",
+                      display: "flex",
+                      gap: "10px",
+                      alignItems: "center",
                     }}
                   >
-                    Hello
+                    {" "}
+                    <img src={TickMark} alt="tick icon" />
+                    Easy meeting scheduling
                   </div>
                   <div
                     style={{
                       fontSize: "12px",
                       fontWeight: 500,
                       color: "#5D5669",
+                      display: "flex",
+                      gap: "10px",
+                      alignItems: "center",
+                      marginBottom: "20px",
                     }}
                   >
-                    Hello
+                    {" "}
+                    <img src={TickMark} alt="tick icon" />
+                    AI summary & notes
                   </div>
                   <button className="upgrade-button">Download Now</button>
                 </div>

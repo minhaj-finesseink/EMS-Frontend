@@ -2,7 +2,7 @@
     background: #000;
     color: white;
     height: 86px;
-    padding: 10px;
+    /* padding: 10px; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,3 +65,17 @@
     pointer-events: none;
     /* Prevent click */
 }
+
+.custom-tooltip .ant-tooltip-inner {
+    background-color: #272a32 !important;
+    color: white;
+    font-size: 12px;
+    border-radius: 3px;
+    padding: 5px;
+    font-family: 'Inter';
+  }
+  
+  .custom-tooltip .ant-tooltip-arrow::before {
+    background-color: #272a32 !important;
+  }
+  

@@ -18,6 +18,7 @@ import {
   joinMeeting,
   startInstantMeeting,
 } from "../../../../redux/VideoConference/video.action";
+import BackButton from "../../../../assets/NewIcons/back-button.svg";
 import "./SelfVideo.css";
 
 const MeetingLobby = (props) => {
@@ -116,8 +117,15 @@ const MeetingLobby = (props) => {
     }
   }, [props.videoConferenceData.joinMeetingResponse]);
 
+  const handleBack = () => {
+    navigate("/video-dashboard", { replace: true });
+  };
+
   return (
     <div className="video-lobby-container">
+      <div className="video-lobby-back-button-container">
+        <img onClick={handleBack} src={BackButton} alt="back icon" />
+      </div>
       <div className="video-lobby-logo-container">
         <img src={logo} alt="logo" /> <div>usitive meet</div>
       </div>
@@ -210,8 +218,12 @@ const MeetingLobby = (props) => {
               />
             </Form.Item>
             <Form.Item>
-              <CustomButton color={"blue"} block>
-                Join
+              <CustomButton
+                color={"blue"}
+                block
+                style={{ fontSize: "18px", fontWeight: 800 }}
+              >
+                {type === "invite" ? "Join" : "Start"}
               </CustomButton>
             </Form.Item>
           </Form>

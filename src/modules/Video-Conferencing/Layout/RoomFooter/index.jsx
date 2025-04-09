@@ -7,7 +7,7 @@ import {
   ArrowRightOutlined,
   UpOutlined,
 } from "@ant-design/icons";
-import { Button, Popover } from "antd";
+import { Button, Popover, Tooltip } from "antd";
 import socket from "../../socket";
 import micIcon from "../../../../assets/NewIcons/mic-1.svg";
 import micMuteIcon from "../../../../assets/Icons/mic-mute.svg";
@@ -45,7 +45,7 @@ function RoomFooter({
   openChat,
   AIEnable,
   AI,
-  onEndMeeting
+  onEndMeeting,
 }) {
   const navigate = useNavigate();
   const { currentPage, totalPages, setCurrentPage } = pagination;
@@ -55,6 +55,7 @@ function RoomFooter({
   const [isAIEnabled, setIsAIEnabled] = useState(false);
 
   const [openPopoverIndex, setOpenPopoverIndex] = useState(null);
+  const [tooltipVisible, setTooltipVisible] = useState(true);
 
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -113,42 +114,22 @@ function RoomFooter({
     </div>
   );
 
-  // const endMeeting = () => {
-  //   socket.emit("end-meeting", { meetingId });
-  //   navigate("/video-dashboard");
-  // };
-
-  // const endMeeting = () => {
-  //   // 1. Stop camera/mic
-  //   localStream?.getTracks().forEach(track => track.stop());
-  
-  //   // 2. Tell server you are leaving (so others remove your tile)
-  //   socket.emit("manual-leave", { meetingId, socketId: socket.id });
-  
-  //   // 3. End the whole meeting (notify everyone)
-  //   socket.emit("end-meeting", { meetingId });
-  
-  //   // 4. Navigate away
-  //   navigate("/video-dashboard");
-  // };
-  
-
   const meetingAction = [
     {
       icon: isAudioEnabled ? micIcon : micMuteIcon,
-      text: isAudioEnabled ? "Mute" : "Unmute",
+      text: isAudioEnabled ? "Turn off microphone" : "Turn on microphone",
       onClick: toggleAudio,
       arrow: true,
     },
     {
       icon: isVideoEnabled ? videoIcon : videoOffIcon,
-      text: isVideoEnabled ? "Stop" : "Start",
+      text: isVideoEnabled ? "Turn off camera" : "Turn on camera",
       onClick: toggleVideo,
       arrow: true,
     },
     {
       icon: isScreenSharing ? share2Icon : shareIcon,
-      text: isScreenSharing ? "Stop" : "Share",
+      text: isScreenSharing ? "Turn off screen share" : "Turn on screen share",
       onClick: toggleScreenShare,
     },
     {
@@ -158,28 +139,28 @@ function RoomFooter({
     },
     {
       icon: isPopoverOpen ? emoji2Icon : emojiIcon,
-      text: "Reaction",
+      text: "Send a reaction",
       popover: true,
     },
     {
       icon: chat ? chat2Icon : chatIcon,
-      text: "Chats",
+      text: "Chat with participants",
       onClick: openChat,
     },
     {
       icon: AI ? AI2Icon : AIIcon,
-      text: "AI Assistant",
+      text: "Enable AI Assistant",
       onClick: handleEnableAI,
       arrow: true,
     },
     {
       icon: caption ? caption2Icon : captionIcon,
-      text: "Caption",
+      text: caption ? "Turn off caption" : "Turn on caption",
       onClick: handleCaption,
     },
     {
       icon: endIcon,
-      text: "End",
+      text: "End meeting",
       background: "#ED1C24",
       onClick: onEndMeeting,
     },
@@ -188,88 +169,92 @@ function RoomFooter({
   return (
     <div className="room-button-container">
       {meetingAction.map((item, index) => (
-        <motion.div
+        <Tooltip
           key={index}
-          style={{
-            display: "flex",
-            // flexDirection: "column",
-            alignItems: "flex-start",
-            gap: "5px",
-            position: "relative", // Required for Popover positioning
-            // cursor: "pointer",
-          }}
-          whileHover={{ scale: 1.1 }}
-          animate={{ opacity: 1, y: [5, 0] }}
-          transition={{ type: "spring", stiffness: 300 }}
-          // onClick={item.onClick}
+          title={item.text}
+          placement="top"
+          overlayClassName="custom-tooltip"
+          arrow={false}
         >
-          {item.popover ? (
-            // Popover for the Reaction button
-            <Popover
-              content={reactionContent}
-              // title="Select a Reaction"
-              trigger="click"
-              open={isPopoverOpen}
-              onOpenChange={handleReaction} // Handle popover visibility
-              placement="top"
-              overlayClassName="custom-reaction-popover"
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "5px",
-                  cursor: "pointer",
-                }}
+          <motion.div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "5px",
+              position: "relative", // Required for Popover positioning
+            }}
+            whileHover={{ scale: 1.1 }}
+            animate={{ opacity: 1, y: [5, 0] }}
+            transition={{ type: "spring", stiffness: 300 }}
+            // onClick={item.onClick}
+          >
+            {item.popover ? (
+              // Popover for the Reaction button
+              <Popover
+                content={reactionContent}
+                // title="Select a Reaction"
+                trigger="click"
+                open={isPopoverOpen}
+                onOpenChange={handleReaction} // Handle popover visibility
+                placement="top"
+                overlayClassName="custom-reaction-popover"
               >
                 <div
-                  className="room-button-icon"
                   style={{
-                    background: item.background
-                      ? item.background
-                      : "transparent",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "5px",
                     cursor: "pointer",
                   }}
                 >
-                  <img src={item.icon} alt={`${item.text} icon`} />
-                </div>
-                <span style={{ fontSize: "12px", fontWeight: 600 }}>
+                  <div
+                    className="room-button-icon"
+                    style={{
+                      background: item.background
+                        ? item.background
+                        : "transparent",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <img src={item.icon} alt={`${item.text} icon`} />
+                  </div>
+                  {/* <span style={{ fontSize: "12px", fontWeight: 600 }}>
                   {item.text}
-                </span>
-              </div>
-            </Popover>
-          ) : (
-            // Normal buttons
-            <>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "5px",
-                  cursor: "pointer",
-                }}
-                onClick={item.onClick}
-              >
+                </span> */}
+                </div>
+              </Popover>
+            ) : (
+              // Normal buttons
+              <>
                 <div
-                  className="room-button-icon"
                   style={{
-                    background: item.background
-                      ? item.background
-                      : "transparent",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "5px",
+                    cursor: "pointer",
                   }}
+                  onClick={item.onClick}
                 >
-                  <img src={item.icon} alt={`${item.text} icon`} />
-                </div>
-                <span style={{ fontSize: "12px", fontWeight: 600 }}>
+                  <div
+                    className="room-button-icon"
+                    style={{
+                      background: item.background
+                        ? item.background
+                        : "transparent",
+                    }}
+                  >
+                    <img src={item.icon} alt={`${item.text} icon`} />
+                  </div>
+                  {/* <span style={{ fontSize: "12px", fontWeight: 600 }}>
                   {item.text}
-                </span>
-              </div>
-              <div 
-              // style={{ marginTop: "20px" }}
-              >
-                {/* {item.arrow && (
+                </span> */}
+                </div>
+                <div
+                // style={{ marginTop: "20px" }}
+                >
+                  {/* {item.arrow && (
                   <UpOutlined
                     style={{
                       fontSize: "14px",
@@ -278,38 +263,39 @@ function RoomFooter({
                     }}
                   />
                 )} */}
-                {item.arrow && (
-                  <Popover
-                    content={<div>Dummy content for {item.text}</div>}
-                    trigger="click"
-                    open={openPopoverIndex === index}
-                    // onOpenChange={(visible) => {
-                    //   setOpenPopoverIndex(visible ? index : null);
-                    // }}
-                    placement="top"
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        cursor: "pointer",
-                        marginTop: "20px",
-                      }}
+                  {item.arrow && (
+                    <Popover
+                      content={<div>Dummy content for {item.text}</div>}
+                      trigger="click"
+                      open={openPopoverIndex === index}
+                      // onOpenChange={(visible) => {
+                      //   setOpenPopoverIndex(visible ? index : null);
+                      // }}
+                      placement="top"
                     >
-                      <UpOutlined
+                      <div
                         style={{
-                          fontSize: "14px",
-                          color: "white",
-                          strokeWidth: "3",
+                          display: "flex",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          marginTop: "20px",
                         }}
-                      />
-                    </div>
-                  </Popover>
-                )}
-              </div>
-            </>
-          )}
-        </motion.div>
+                      >
+                        <UpOutlined
+                          style={{
+                            fontSize: "14px",
+                            color: "white",
+                            strokeWidth: "3",
+                          }}
+                        />
+                      </div>
+                    </Popover>
+                  )}
+                </div>
+              </>
+            )}
+          </motion.div>
+        </Tooltip>
       ))}
       {/* Floating Emoji Animation */}
       <AnimatePresence>

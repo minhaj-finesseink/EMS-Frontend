@@ -11,7 +11,7 @@ import micIcon from "../../../assets/Icons/mic-icon.svg";
 import micMuteIcon from "../../../assets/Icons/mic-mute.svg";
 import socket from "../socket";
 import { useNavigate, useParams } from "react-router-dom";
-import { CloseOutlined, ExpandAltOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import ParticipantsDrawer from "./ParticipantsDrawer";
 import InviteDrawer from "./InviteDrawer";
 import Breakout from "./BreakoutModal";
@@ -25,8 +25,9 @@ import ArrowIcon from "../../../assets/NewIcons/arrow-icon.svg";
 import ExpandIcon from "../../../assets/NewIcons/expand.svg";
 import MeetingAgenda from "./MeetingAgenda";
 import useRecordFunctions from "./Recording";
-import "./style.css";
 import CodeEditor from "./CodeEditor";
+import InviteEmail from "../Components/InviteEmail";
+import "./style.css";
 
 const iceServers = {
   iceServers: [
@@ -83,7 +84,7 @@ function Layout(props) {
   const [isManuallyUnpinned, setIsManuallyUnpinned] = useState(false);
   const [hostData, setHostData] = useState(null);
   const [showFooter, setShowFooter] = useState(true);
-  const [isInvitePopover, setIsInvitePopover] = useState(true);
+  const [isInvitePopover, setIsInvitePopover] = useState(false);
 
   // Plugins
   const [openMathEditor, setOpenMathEditor] = useState(false);
@@ -573,6 +574,16 @@ function Layout(props) {
     // 5. Navigate out
     navigate("/video-dashboard");
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (count === 1) {
+        setIsInvitePopover(true);
+      } else {
+        setIsInvitePopover(false);
+      }
+    }, 1000);
+  }, [count]);
 
   return (
     <div id="recordableDiv" className="layout-container">
@@ -1237,34 +1248,47 @@ function Layout(props) {
             />
           )}
         </div>
-        {/* <div style={{ color: "white", position: "absolute", bottom: 0 }}>
-          <Popover
-            content={
-              <p>
-                Invite Link:{" "}
-                <a
-                  href="https://meet.example.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Join Meeting
-                </a>
-              </p>
-            }
-            title="Invite People"
-            trigger="click"
-            open={isInvitePopover} // Controlled visibility
-            onOpenChange={(visible) => setIsInvitePopover(visible)} // Sync state with popover
-            destroyTooltipOnHide={true} // Remove empty popovers
+        {isInvitePopover && (
+          <div
+            style={{
+              color: "white",
+              position: "absolute",
+              bottom: "92px",
+              left: "118px",
+              zIndex: 999,
+              background: "#181A1D",
+              padding: "20px",
+              borderRadius: "8px",
+              boxShadow: "0px 2px 6px rgba(0,0,0,0.3)",
+              width: "285px",
+            }}
           >
-            <Button
-              type="primary"
-              onClick={() => setIsInvitePopover(!isInvitePopover)}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
-              {isInvitePopover ? "Close Invite" : "Open Invite"}
-            </Button>
-          </Popover>
-        </div> */}
+              <div></div>
+              <div style={{ fontSize: "18px", fontWeight: 700 }}>
+                Invite others
+              </div>
+              <div>
+                <CloseOutlined
+                  onClick={() => setIsInvitePopover(false)}
+                  style={{
+                    cursor: "pointer",
+                  }}
+                />
+              </div>
+            </div>
+            <div style={{ margin: "30px 0 50px 0" }}>
+              <InviteEmail />
+            </div>
+          </div>
+        )}
+
         {/* Participants Side Panel */}
         <ParticipantsDrawer
           isOpen={isParticipantsOpen}

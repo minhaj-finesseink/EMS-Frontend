@@ -1,5 +1,13 @@
 .video-lobby-container {
-  margin-top: 100px;
+  margin-top: 50px;
+}
+
+.video-lobby-back-button-container {
+  margin: 0 0 50px 30px;
+}
+
+.video-lobby-back-button-container img {
+  cursor: pointer;
 }
 
 .lobby-video-and-form-container {
@@ -31,8 +39,8 @@
 }
 
 .lobby-form-container>div:first-child {
-  color: #464454;
-  font-size: 22px;
+  color: #110B1D;
+  font-size: 24px;
   font-weight: 700;
 }
 
