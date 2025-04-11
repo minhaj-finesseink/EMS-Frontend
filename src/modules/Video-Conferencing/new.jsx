@@ -189,151 +189,103 @@ import { useEffect, useRef, useState } from "react";
 import socket from "./socket";
 import "./newStyle.css";
 
-const CaptionProvider = ({ meetingId, captionEnabled, audioEnabled }) => {
+const CaptionProvider = ({ meetingId, captionEnabled, audioEnabled, localStream }) => {
   const [captions, setCaptions] = useState([]);
   const audioContextRef = useRef(null);
-  const mediaStreamRef = useRef(null);
   const workletNodeRef = useRef(null);
   const silentIntervalRef = useRef(null);
 
-  // 🔄 Convert Float32 to Int16 PCM
   const convertFloat32ToInt16 = (buffer) => {
-    const len = buffer.length;
-    const int16Buffer = new Int16Array(len);
-    for (let i = 0; i < len; i++) {
+    const int16Buffer = new Int16Array(buffer.length);
+    for (let i = 0; i < buffer.length; i++) {
       int16Buffer[i] = Math.max(-1, Math.min(1, buffer[i])) * 0x7fff;
     }
     return int16Buffer.buffer;
   };
 
-  // 🎙️ Manage microphone + silence fallback
   useEffect(() => {
     const stopAudioStream = () => {
       if (audioContextRef.current) {
         audioContextRef.current.close();
         audioContextRef.current = null;
       }
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-        mediaStreamRef.current = null;
-      }
       workletNodeRef.current = null;
-
       if (silentIntervalRef.current) {
         clearInterval(silentIntervalRef.current);
         silentIntervalRef.current = null;
       }
     };
 
-    if (captionEnabled) {
-      // ✅ If audio is ON, use real mic stream
-      if (!audioContextRef.current && audioEnabled) {
-        const initAudio = async () => {
-          try {
-            // const stream = await navigator.mediaDevices.getUserMedia({
-            //   audio: true,
-            // });
-            // mediaStreamRef.current = stream;
-            const mainStream = window.localStream; // 👈 your WebRTC main stream should be stored here
-            const stream = mainStream
-              ? mainStream.clone()
-              : await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaStreamRef.current = stream;
+    const initAudio = async () => {
+      try {
+        const stream = localStream.clone();
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 48000 });
+        audioContextRef.current = audioContext;
 
-            const audioContext = new (window.AudioContext ||
-              window.webkitAudioContext)({ sampleRate: 48000 });
-            audioContextRef.current = audioContext;
-
-            await audioContext.audioWorklet.addModule(
-              URL.createObjectURL(
-                new Blob(
-                  [
-                    `
-                  class PCMProcessor extends AudioWorkletProcessor {
-                    process(inputs) {
-                      const input = inputs[0];
-                      if (input.length > 0) {
-                        this.port.postMessage(input[0]);
-                      }
-                      return true;
-                    }
-                  }
-                  registerProcessor('pcm-processor', PCMProcessor);
-                `,
-                  ],
-                  { type: "application/javascript" }
-                )
-              )
-            );
-
-            const source = audioContext.createMediaStreamSource(stream);
-            const workletNode = new AudioWorkletNode(
-              audioContext,
-              "pcm-processor"
-            );
-
-            workletNode.port.onmessage = (e) => {
-              const float32 = e.data;
-              const hasSound = float32.some(
-                (sample) => Math.abs(sample) > 0.001
-              );
-
-              if (hasSound) {
-                const int16 = convertFloat32ToInt16(float32);
-                socket.emit("audio-data", int16);
-              } else {
-                const silentBuffer = new Int16Array(480);
-                socket.emit("audio-data", silentBuffer.buffer);
+        await audioContext.audioWorklet.addModule(
+          URL.createObjectURL(new Blob([`
+            class PCMProcessor extends AudioWorkletProcessor {
+              process(inputs) {
+                const input = inputs[0];
+                if (input.length > 0) {
+                  this.port.postMessage(input[0]);
+                }
+                return true;
               }
-            };
+            }
+            registerProcessor('pcm-processor', PCMProcessor);
+          `], { type: "application/javascript" }))
+        );
 
-            source.connect(workletNode).connect(audioContext.destination);
-            workletNodeRef.current = workletNode;
-          } catch (error) {
-            console.error("Error accessing mic for captioning:", error);
-          }
+        const source = audioContext.createMediaStreamSource(stream);
+        const workletNode = new AudioWorkletNode(audioContext, "pcm-processor");
+        workletNode.port.onmessage = (e) => {
+          const float32 = e.data;
+          const hasSound = float32.some((sample) => Math.abs(sample) > 0.001);
+          const int16 = hasSound
+            ? convertFloat32ToInt16(float32)
+            : new Int16Array(480).buffer;
+          socket.emit("audio-data", int16);
         };
 
-        initAudio();
+        source.connect(workletNode).connect(audioContext.destination);
+        workletNodeRef.current = workletNode;
+      } catch (error) {
+        console.error("Audio init error:", error);
       }
+    };
 
-      // 🔇 If mic is OFF, send silence every 100ms
-      if (!audioEnabled && !silentIntervalRef.current) {
-        silentIntervalRef.current = setInterval(() => {
-          const silentBuffer = new Int16Array(480);
-          socket.emit("audio-data", silentBuffer.buffer);
-        }, 100);
-      }
-    } else {
-      // 🔴 Captions OFF: cleanup everything
-      stopAudioStream();
-      setCaptions([]);
+    // Always send audio
+    if (!audioContextRef.current && audioEnabled && localStream) {
+      initAudio();
+    }
+
+    if (!audioEnabled && !silentIntervalRef.current) {
+      silentIntervalRef.current = setInterval(() => {
+        const silentBuffer = new Int16Array(480);
+        socket.emit("audio-data", silentBuffer.buffer);
+      }, 100);
     }
 
     return () => {
       stopAudioStream();
     };
-  }, [captionEnabled, audioEnabled]);
+  }, [audioEnabled, localStream]);
 
-  // 🧠 Add punctuation to text
   const punctuate = (text) => {
     const trimmed = text.trim();
     if (!trimmed) return "";
     const lastChar = trimmed.slice(-1);
     if ([".", "!", "?"].includes(lastChar)) return trimmed;
-    if (trimmed.split(" ").length < 5) return trimmed + ",";
     return trimmed + ".";
   };
 
-  // 📥 Listen to transcription updates
   useEffect(() => {
     const handleTranscription = ({ speaker, transcription, isFinal }) => {
       const text = punctuate(transcription);
-      const label = speaker;
-
       setCaptions((prev) => {
         const last = prev[prev.length - 1];
-        if (last && last.speaker === label) {
+        if (last && last.speaker === speaker) {
           return [
             ...prev.slice(0, -1),
             {
@@ -343,7 +295,7 @@ const CaptionProvider = ({ meetingId, captionEnabled, audioEnabled }) => {
             },
           ];
         } else {
-          return [...prev, { speaker: label, text, isFinal }];
+          return [...prev, { speaker, text, isFinal }];
         }
       });
     };
@@ -354,7 +306,6 @@ const CaptionProvider = ({ meetingId, captionEnabled, audioEnabled }) => {
     };
   }, []);
 
-  // 📡 Emit caption status to backend
   useEffect(() => {
     socket.emit("caption-status", { meetingId, isEnabled: captionEnabled });
     return () => {

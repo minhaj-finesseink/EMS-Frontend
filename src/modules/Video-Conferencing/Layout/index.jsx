@@ -113,7 +113,7 @@ function Layout(props) {
           video: true,
           audio: true,
         });
-        window.localStream = stream; // 🔐 global access for caption clone
+
         localStreamRef.current = stream;
 
         if (localVideoRef.current) {
@@ -1169,11 +1169,7 @@ function Layout(props) {
           </div>
         )}
 
-        <CaptionProvider
-          meetingId={meetingId}
-          captionEnabled={caption}
-          audioEnabled={isAudioEnabled}
-        />
+        <CaptionProvider meetingId={meetingId} captionEnabled={caption} audioEnabled={isAudioEnabled} localStream={localStreamRef.current}/>
 
         <div>
           <div
