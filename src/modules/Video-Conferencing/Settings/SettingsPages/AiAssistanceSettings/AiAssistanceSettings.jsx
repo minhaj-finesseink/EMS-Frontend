@@ -1,6 +1,7 @@
 import React from "react";
 import ToggleWithOptions from "../../SettingsComponents/ToggleWithOptions";
 import ToggleComponent from "../../SettingsComponents/ToggleComponents";
+import { Input } from "antd";
 
 function AiAssistanceSettings({ isActive, updatedValue }) {
   return (
@@ -50,6 +51,19 @@ function AiAssistanceSettings({ isActive, updatedValue }) {
         isActive={isActive}
         updatedValue={updatedValue}
       />
+      <div className="ai-custom-name-field">
+        <div
+          style={{
+            margin: 0,
+            color: "#2D2D2D",
+            fontWeight: "bold",
+            marginBottom: "10px",
+          }}
+        >
+          Custom AI feature name
+        </div>
+        <Input placeholder="Enter name" style={{ width: "250px" }} />
+      </div>
     </div>
   );
 }
