@@ -311,3 +311,7 @@
 .dummy-join-btn:hover {
   background-color: #006bb0;
 }
+
+.rbc-day-slot .rbc-events-container {
+  cursor: pointer;
+}

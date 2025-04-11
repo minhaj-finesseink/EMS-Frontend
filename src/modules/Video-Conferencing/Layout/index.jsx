@@ -106,28 +106,6 @@ function Layout(props) {
   const { startRecording, stopRecording, startTimer, stopTimer } =
     useRecordFunctions();
 
-  // const startTranscriptionStream = async () => {
-  //   try {
-  //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  //     const recorder = new MediaRecorder(stream, {
-  //       mimeType: "audio/webm",
-  //     });
-
-  //     recorder.ondataavailable = async (event) => {
-  //       if (event.data.size > 0) {
-  //         const arrayBuffer = await event.data.arrayBuffer();
-  //         socket.emit("audio-data", arrayBuffer);
-  //       }
-  //     };
-
-  //     recorder.start(300); // Chunk every 300ms
-
-  //     // Save to ref if you want to stop it later
-  //   } catch (err) {
-  //     console.error("Mic access for transcription failed", err);
-  //   }
-  // };
-
   useEffect(() => {
     const startMedia = async () => {
       try {
@@ -135,7 +113,7 @@ function Layout(props) {
           video: true,
           audio: true,
         });
-
+        window.localStream = stream; // 🔐 global access for caption clone
         localStreamRef.current = stream;
 
         if (localVideoRef.current) {
@@ -511,37 +489,6 @@ function Layout(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allUsers]); // Runs when users update
-
-  // Caption socket code
-  // useEffect(() => {
-  //   socket.on("transcription", ({ speaker, transcription, isFinal }) => {
-  //     console.log(`[${speaker}]: ${transcription}`);
-
-  //     setCaptions((prevCaptions) => [
-  //       ...prevCaptions,
-  //       { speaker, text: transcription, isFinal },
-  //     ]);
-  //   });
-
-  //   // Cleanup listener on component unmount
-  //   return () => {
-  //     socket.off("transcription");
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setCaptions((prevCaptions) => {
-  //       // Keep only the last 5 captions to avoid clutter
-  //       if (prevCaptions.length > 5) {
-  //         return prevCaptions.slice(prevCaptions.length - 5);
-  //       }
-  //       return prevCaptions;
-  //     });
-  //   }, 5000); // Run every 5 seconds to clean up old captions
-
-  //   return () => clearInterval(interval);
-  // }, []);
 
   // Recording
   const handleStartStop = () => {
@@ -1221,24 +1168,12 @@ function Layout(props) {
             })}
           </div>
         )}
-        {console.log("caption", caption)}
-        <CaptionProvider meetingId={meetingId} captionEnabled={caption} />
 
-        {/* {caption && (
-          <div className="caption-box">
-            {captions.map((caption, index) => (
-              <div
-                key={index}
-                className={`caption ${caption.isFinal ? "final" : "interim"}`}
-                style={{
-                  animationDelay: `${index * 0.5}s`,
-                }} 
-              >
-                <strong>{caption.speaker}:</strong> {caption.text}
-              </div>
-            ))}
-          </div>
-        )} */}
+        <CaptionProvider
+          meetingId={meetingId}
+          captionEnabled={caption}
+          audioEnabled={isAudioEnabled}
+        />
 
         <div>
           <div

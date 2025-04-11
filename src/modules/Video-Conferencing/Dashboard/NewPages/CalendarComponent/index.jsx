@@ -13,6 +13,7 @@ const CalendarComponent = ({
   openScheduleMeetingModal,
   eventsDate,
   setRangeDates,
+  setSelectedSlot,
 }) => {
   const [view, setView] = useState(Views.WEEK); // Default to week view
   const [events, setEvents] = useState([]);
@@ -150,6 +151,11 @@ const CalendarComponent = ({
     setSelectedEvent(null);
   };
 
+  const handleSelectSlot = ({ start, end }) => {
+    setSelectedSlot({ start, end });
+    openScheduleMeetingModal(true);
+  };
+
   return (
     <div className="calendar-container">
       <Calendar
@@ -165,6 +171,8 @@ const CalendarComponent = ({
         timeslots={1} // Ensures correct spacing in week/day views
         onRangeChange={handleRangeChange}
         onSelectEvent={handleSelectEvent}
+        selectable={true}
+        onSelectSlot={handleSelectSlot}
         components={{
           toolbar: (props) => (
             <CustomToolbar {...props} onViewChange={setView} view={view} />

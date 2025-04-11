@@ -50,6 +50,7 @@ function Calendar({
     breakoutRoom: true,
   });
   const [loading, setLoading] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
   const ToggleOption = ({ label, description, checked, onChange }) => {
     return (
@@ -152,12 +153,25 @@ function Calendar({
     }
   }, [videoConferenceData.getCalendarMeetingResponse]);
 
+  useEffect(() => {
+    if (openScheduleMeetingModal && selectedSlot) {
+      form.setFieldsValue({
+        startDate: dayjs(selectedSlot.start),
+        endDate: dayjs(selectedSlot.end),
+        startTime: dayjs(selectedSlot.start),
+        endTime: dayjs(selectedSlot.end),
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openScheduleMeetingModal, selectedSlot]);
+  
   return (
     <div>
       <CalendarComponent
         openScheduleMeetingModal={setOpenScheduleMeetingModal}
         eventsDate={events}
         setRangeDates={setRangeDates}
+        setSelectedSlot={setSelectedSlot}
       />
       <Modal
         className="schedule-meeting-modal"

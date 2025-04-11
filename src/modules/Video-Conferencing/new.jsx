@@ -1,14 +1,15 @@
 // /* eslint-disable react/prop-types */
 // import { useEffect, useRef, useState } from "react";
 // import socket from "./socket";
-// import './newStyle.css';
+// import "./newStyle.css";
 
-// const CaptionProvider = ({ meetingId, captionEnabled }) => {
+// const CaptionProvider = ({ meetingId, captionEnabled, audioEnabled }) => {
 //   const [captions, setCaptions] = useState([]);
 //   const audioContextRef = useRef(null);
 //   const mediaStreamRef = useRef(null);
 //   const workletNodeRef = useRef(null);
 
+//   // 🔄 Convert Float32 to Int16 PCM
 //   const convertFloat32ToInt16 = (buffer) => {
 //     const len = buffer.length;
 //     const int16Buffer = new Int16Array(len);
@@ -18,72 +19,106 @@
 //     return int16Buffer.buffer;
 //   };
 
+//   // 🎙️ Handle audio stream when captionEnabled changes
 //   useEffect(() => {
-//     if (captionEnabled) {
-//       const initAudio = async () => {
-//         try {
-//           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//           mediaStreamRef.current = stream;
-
-//           const audioContext = new (window.AudioContext || window.webkitAudioContext)({
-//             sampleRate: 48000
-//           });
-//           audioContextRef.current = audioContext;
-
-//           await audioContext.audioWorklet.addModule(URL.createObjectURL(new Blob([`
-//             class PCMProcessor extends AudioWorkletProcessor {
-//               process(inputs) {
-//                 const input = inputs[0];
-//                 if (input.length > 0) {
-//                   this.port.postMessage(input[0]);
-//                 }
-//                 return true;
-//               }
-//             }
-//             registerProcessor('pcm-processor', PCMProcessor);
-//           `], { type: "application/javascript" })));
-
-//           const source = audioContext.createMediaStreamSource(stream);
-//           const workletNode = new AudioWorkletNode(audioContext, 'pcm-processor');
-//           workletNode.port.onmessage = (e) => {
-//             const float32 = e.data;
-//             const int16 = convertFloat32ToInt16(float32);
-//             socket.emit("audio-data", int16);
-//           };
-
-//           source.connect(workletNode).connect(audioContext.destination);
-//           workletNodeRef.current = workletNode;
-//         } catch (error) {
-//           console.error("Error accessing mic for captioning:", error);
-//         }
-//       };
-
-//       initAudio();
-//     } else {
+//     const stopAudioStream = () => {
 //       if (audioContextRef.current) {
 //         audioContextRef.current.close();
 //         audioContextRef.current = null;
 //       }
 //       if (mediaStreamRef.current) {
-//         mediaStreamRef.current.getTracks().forEach(track => track.stop());
-//         mediaStreamRef.current = null;
-//       }
-//       workletNodeRef.current = null;
-//     }
-
-//     return () => {
-//       if (audioContextRef.current) {
-//         audioContextRef.current.close();
-//         audioContextRef.current = null;
-//       }
-//       if (mediaStreamRef.current) {
-//         mediaStreamRef.current.getTracks().forEach(track => track.stop());
+//         mediaStreamRef.current.getTracks().forEach((track) => track.stop());
 //         mediaStreamRef.current = null;
 //       }
 //       workletNodeRef.current = null;
 //     };
-//   }, [captionEnabled]);
 
+//     if (captionEnabled) {
+//       // ❌ Do NOT clear captions when just toggling audio
+//       // ✅ Only clear on fresh captionEnabled true
+//       if (!audioContextRef.current && audioEnabled) {
+//         const initAudio = async () => {
+//           try {
+//             const stream = await navigator.mediaDevices.getUserMedia({
+//               audio: true,
+//             });
+//             mediaStreamRef.current = stream;
+
+//             const audioContext = new (window.AudioContext ||
+//               window.webkitAudioContext)({
+//               sampleRate: 48000,
+//             });
+//             audioContextRef.current = audioContext;
+
+//             await audioContext.audioWorklet.addModule(
+//               URL.createObjectURL(
+//                 new Blob(
+//                   [
+//                     `
+//                   class PCMProcessor extends AudioWorkletProcessor {
+//                     process(inputs) {
+//                       const input = inputs[0];
+//                       if (input.length > 0) {
+//                         this.port.postMessage(input[0]);
+//                       }
+//                       return true;
+//                     }
+//                   }
+//                   registerProcessor('pcm-processor', PCMProcessor);
+//                 `,
+//                   ],
+//                   { type: "application/javascript" }
+//                 )
+//               )
+//             );
+
+//             const source = audioContext.createMediaStreamSource(stream);
+//             const workletNode = new AudioWorkletNode(
+//               audioContext,
+//               "pcm-processor"
+//             );
+
+//             workletNode.port.onmessage = (e) => {
+//               const float32 = e.data;
+//               const hasSound = float32.some(
+//                 (sample) => Math.abs(sample) > 0.001
+//               );
+
+//               if (hasSound) {
+//                 const int16 = convertFloat32ToInt16(float32);
+//                 socket.emit("audio-data", int16);
+//               } else {
+//                 const silentBuffer = new Int16Array(480);
+//                 socket.emit("audio-data", silentBuffer.buffer);
+//               }
+//             };
+
+//             source.connect(workletNode).connect(audioContext.destination);
+//             workletNodeRef.current = workletNode;
+//           } catch (error) {
+//             console.error("Error accessing mic for captioning:", error);
+//           }
+//         };
+
+//         initAudio();
+//       }
+
+//       // 🧠 If audioEnabled becomes false, stop mic stream but keep captions & listeners
+//       if (!audioEnabled) {
+//         stopAudioStream(); // ❌ Only stop mic, keep captions visible
+//       }
+//     } else {
+//       // 🔴 Captions disabled => stop everything and clear UI
+//       stopAudioStream();
+//       setCaptions([]);
+//     }
+
+//     return () => {
+//       stopAudioStream();
+//     };
+//   }, [captionEnabled, audioEnabled]);
+
+//   // 🧠 Add punctuation
 //   const punctuate = (text) => {
 //     const trimmed = text.trim();
 //     if (!trimmed) return "";
@@ -93,15 +128,14 @@
 //     return trimmed + ".";
 //   };
 
+//   // 📥 Listen to transcription
 //   useEffect(() => {
-//     socket.on("transcription", ({ speaker, transcription, isFinal }) => {
+//     const handleTranscription = ({ speaker, transcription, isFinal }) => {
 //       const text = punctuate(transcription);
-//       const label = speaker?.toLowerCase() === "minhaj" ? "You" : speaker;
+//       const label = speaker;
 
 //       setCaptions((prev) => {
 //         const last = prev[prev.length - 1];
-
-//         // 🧠 If same speaker, group the text
 //         if (last && last.speaker === label) {
 //           return [
 //             ...prev.slice(0, -1),
@@ -115,12 +149,25 @@
 //           return [...prev, { speaker: label, text, isFinal }];
 //         }
 //       });
-//     });
+//     };
 
+//     socket.on("transcription", handleTranscription);
 //     return () => {
-//       socket.off("transcription");
+//       socket.off("transcription", handleTranscription);
 //     };
 //   }, []);
+
+//   useEffect(() => {
+//     if (captionEnabled) {
+//       socket.emit("caption-status", { meetingId, isEnabled: true });
+//     } else {
+//       socket.emit("caption-status", { meetingId, isEnabled: false });
+//     }
+
+//     return () => {
+//       socket.emit("caption-status", { meetingId, isEnabled: false });
+//     };
+//   }, [captionEnabled, meetingId]);
 
 //   if (!captionEnabled) return null;
 
@@ -142,13 +189,12 @@ import { useEffect, useRef, useState } from "react";
 import socket from "./socket";
 import "./newStyle.css";
 
-const CaptionProvider = ({ meetingId, captionEnabled }) => {
+const CaptionProvider = ({ meetingId, captionEnabled, audioEnabled }) => {
   const [captions, setCaptions] = useState([]);
-  const [socketId, setSocketId] = useState(null);
-
   const audioContextRef = useRef(null);
   const mediaStreamRef = useRef(null);
   const workletNodeRef = useRef(null);
+  const silentIntervalRef = useRef(null);
 
   // 🔄 Convert Float32 to Int16 PCM
   const convertFloat32ToInt16 = (buffer) => {
@@ -160,69 +206,9 @@ const CaptionProvider = ({ meetingId, captionEnabled }) => {
     return int16Buffer.buffer;
   };
 
-  // 🎙️ Handle audio stream when captionEnabled changes
+  // 🎙️ Manage microphone + silence fallback
   useEffect(() => {
-    if (captionEnabled) {
-      setCaptions([]); // 🔁 Clear previous captions when enabling again
-
-      const initAudio = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-          });
-          mediaStreamRef.current = stream;
-
-          const audioContext = new (window.AudioContext ||
-            window.webkitAudioContext)({
-            sampleRate: 48000,
-          });
-          audioContextRef.current = audioContext;
-
-          await audioContext.audioWorklet.addModule(
-            URL.createObjectURL(
-              new Blob(
-                [
-                  `
-            class PCMProcessor extends AudioWorkletProcessor {
-              process(inputs) {
-                const input = inputs[0];
-                if (input.length > 0) {
-                  this.port.postMessage(input[0]);
-                }
-                return true;
-              }
-            }
-            registerProcessor('pcm-processor', PCMProcessor);
-          `,
-                ],
-                { type: "application/javascript" }
-              )
-            )
-          );
-
-          const source = audioContext.createMediaStreamSource(stream);
-          const workletNode = new AudioWorkletNode(
-            audioContext,
-            "pcm-processor"
-          );
-          workletNode.port.onmessage = (e) => {
-            const float32 = e.data;
-            const int16 = convertFloat32ToInt16(float32);
-            socket.emit("audio-data", int16);
-          };
-
-          source.connect(workletNode).connect(audioContext.destination);
-          workletNodeRef.current = workletNode;
-        } catch (error) {
-          console.error("Error accessing mic for captioning:", error);
-        }
-      };
-
-      initAudio();
-    } else {
-      // 🔁 Stop and clear everything when disabled
-      setCaptions([]);
-
+    const stopAudioStream = () => {
       if (audioContextRef.current) {
         audioContextRef.current.close();
         audioContextRef.current = null;
@@ -232,22 +218,104 @@ const CaptionProvider = ({ meetingId, captionEnabled }) => {
         mediaStreamRef.current = null;
       }
       workletNodeRef.current = null;
+
+      if (silentIntervalRef.current) {
+        clearInterval(silentIntervalRef.current);
+        silentIntervalRef.current = null;
+      }
+    };
+
+    if (captionEnabled) {
+      // ✅ If audio is ON, use real mic stream
+      if (!audioContextRef.current && audioEnabled) {
+        const initAudio = async () => {
+          try {
+            // const stream = await navigator.mediaDevices.getUserMedia({
+            //   audio: true,
+            // });
+            // mediaStreamRef.current = stream;
+            const mainStream = window.localStream; // 👈 your WebRTC main stream should be stored here
+            const stream = mainStream
+              ? mainStream.clone()
+              : await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaStreamRef.current = stream;
+
+            const audioContext = new (window.AudioContext ||
+              window.webkitAudioContext)({ sampleRate: 48000 });
+            audioContextRef.current = audioContext;
+
+            await audioContext.audioWorklet.addModule(
+              URL.createObjectURL(
+                new Blob(
+                  [
+                    `
+                  class PCMProcessor extends AudioWorkletProcessor {
+                    process(inputs) {
+                      const input = inputs[0];
+                      if (input.length > 0) {
+                        this.port.postMessage(input[0]);
+                      }
+                      return true;
+                    }
+                  }
+                  registerProcessor('pcm-processor', PCMProcessor);
+                `,
+                  ],
+                  { type: "application/javascript" }
+                )
+              )
+            );
+
+            const source = audioContext.createMediaStreamSource(stream);
+            const workletNode = new AudioWorkletNode(
+              audioContext,
+              "pcm-processor"
+            );
+
+            workletNode.port.onmessage = (e) => {
+              const float32 = e.data;
+              const hasSound = float32.some(
+                (sample) => Math.abs(sample) > 0.001
+              );
+
+              if (hasSound) {
+                const int16 = convertFloat32ToInt16(float32);
+                socket.emit("audio-data", int16);
+              } else {
+                const silentBuffer = new Int16Array(480);
+                socket.emit("audio-data", silentBuffer.buffer);
+              }
+            };
+
+            source.connect(workletNode).connect(audioContext.destination);
+            workletNodeRef.current = workletNode;
+          } catch (error) {
+            console.error("Error accessing mic for captioning:", error);
+          }
+        };
+
+        initAudio();
+      }
+
+      // 🔇 If mic is OFF, send silence every 100ms
+      if (!audioEnabled && !silentIntervalRef.current) {
+        silentIntervalRef.current = setInterval(() => {
+          const silentBuffer = new Int16Array(480);
+          socket.emit("audio-data", silentBuffer.buffer);
+        }, 100);
+      }
+    } else {
+      // 🔴 Captions OFF: cleanup everything
+      stopAudioStream();
+      setCaptions([]);
     }
 
     return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-        audioContextRef.current = null;
-      }
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-        mediaStreamRef.current = null;
-      }
-      workletNodeRef.current = null;
+      stopAudioStream();
     };
-  }, [captionEnabled]);
+  }, [captionEnabled, audioEnabled]);
 
-  // 🧠 Add punctuation
+  // 🧠 Add punctuation to text
   const punctuate = (text) => {
     const trimmed = text.trim();
     if (!trimmed) return "";
@@ -257,17 +325,11 @@ const CaptionProvider = ({ meetingId, captionEnabled }) => {
     return trimmed + ".";
   };
 
-  // 📥 Listen to transcription
+  // 📥 Listen to transcription updates
   useEffect(() => {
-    const handleTranscription = ({
-      socketId,
-      speaker,
-      transcription,
-      isFinal,
-    }) => {
-      console.log("socketId", socketId);
+    const handleTranscription = ({ speaker, transcription, isFinal }) => {
       const text = punctuate(transcription);
-      const label = socketId === socketId ? "You" : speaker;
+      const label = speaker;
 
       setCaptions((prev) => {
         const last = prev[prev.length - 1];
@@ -292,16 +354,13 @@ const CaptionProvider = ({ meetingId, captionEnabled }) => {
     };
   }, []);
 
+  // 📡 Emit caption status to backend
   useEffect(() => {
-    socket.on("connect", () => {
-      // console.log("My socket ID:", socket.id);
-      setSocketId(socket.id);
-    });
-
+    socket.emit("caption-status", { meetingId, isEnabled: captionEnabled });
     return () => {
-      socket.off("connect");
+      socket.emit("caption-status", { meetingId, isEnabled: false });
     };
-  }, []);
+  }, [captionEnabled, meetingId]);
 
   if (!captionEnabled) return null;
 
