@@ -28,6 +28,7 @@ import useRecordFunctions from "./Recording";
 import CodeEditor from "./CodeEditor";
 import InviteEmail from "../Components/InviteEmail";
 import "./style.css";
+import CaptionProvider from "../new";
 
 const iceServers = {
   iceServers: [
@@ -104,6 +105,28 @@ function Layout(props) {
   const [timer, setTimer] = useState(0);
   const { startRecording, stopRecording, startTimer, stopTimer } =
     useRecordFunctions();
+
+  // const startTranscriptionStream = async () => {
+  //   try {
+  //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //     const recorder = new MediaRecorder(stream, {
+  //       mimeType: "audio/webm",
+  //     });
+
+  //     recorder.ondataavailable = async (event) => {
+  //       if (event.data.size > 0) {
+  //         const arrayBuffer = await event.data.arrayBuffer();
+  //         socket.emit("audio-data", arrayBuffer);
+  //       }
+  //     };
+
+  //     recorder.start(300); // Chunk every 300ms
+
+  //     // Save to ref if you want to stop it later
+  //   } catch (err) {
+  //     console.error("Mic access for transcription failed", err);
+  //   }
+  // };
 
   useEffect(() => {
     const startMedia = async () => {
@@ -222,6 +245,8 @@ function Layout(props) {
             return updatedStreams;
           });
         });
+
+        // startTranscriptionStream(); // Start streaming your mic audio
       } catch (error) {
         console.error("Error accessing media devices:", error);
       }
@@ -370,7 +395,6 @@ function Layout(props) {
 
   useEffect(() => {
     socket.on("update-participants", (updatedParticipants) => {
-      // console.log("Updated Participants Info:", updatedParticipants);
       setParticipantsInfo(updatedParticipants);
     });
 
@@ -489,35 +513,35 @@ function Layout(props) {
   }, [allUsers]); // Runs when users update
 
   // Caption socket code
-  useEffect(() => {
-    socket.on("transcription", ({ speaker, transcription, isFinal }) => {
-      console.log(`[${speaker}]: ${transcription}`);
+  // useEffect(() => {
+  //   socket.on("transcription", ({ speaker, transcription, isFinal }) => {
+  //     console.log(`[${speaker}]: ${transcription}`);
 
-      setCaptions((prevCaptions) => [
-        ...prevCaptions,
-        { speaker, text: transcription, isFinal },
-      ]);
-    });
+  //     setCaptions((prevCaptions) => [
+  //       ...prevCaptions,
+  //       { speaker, text: transcription, isFinal },
+  //     ]);
+  //   });
 
-    // Cleanup listener on component unmount
-    return () => {
-      socket.off("transcription");
-    };
-  }, []);
+  //   // Cleanup listener on component unmount
+  //   return () => {
+  //     socket.off("transcription");
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCaptions((prevCaptions) => {
-        // Keep only the last 5 captions to avoid clutter
-        if (prevCaptions.length > 5) {
-          return prevCaptions.slice(prevCaptions.length - 5);
-        }
-        return prevCaptions;
-      });
-    }, 5000); // Run every 5 seconds to clean up old captions
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCaptions((prevCaptions) => {
+  //       // Keep only the last 5 captions to avoid clutter
+  //       if (prevCaptions.length > 5) {
+  //         return prevCaptions.slice(prevCaptions.length - 5);
+  //       }
+  //       return prevCaptions;
+  //     });
+  //   }, 5000); // Run every 5 seconds to clean up old captions
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   // Recording
   const handleStartStop = () => {
@@ -1197,8 +1221,10 @@ function Layout(props) {
             })}
           </div>
         )}
+        {console.log("caption", caption)}
+        <CaptionProvider meetingId={meetingId} captionEnabled={caption} />
 
-        {caption && (
+        {/* {caption && (
           <div className="caption-box">
             {captions.map((caption, index) => (
               <div
@@ -1206,13 +1232,13 @@ function Layout(props) {
                 className={`caption ${caption.isFinal ? "final" : "interim"}`}
                 style={{
                   animationDelay: `${index * 0.5}s`,
-                }} /* Staggered fade-in */
+                }} 
               >
                 <strong>{caption.speaker}:</strong> {caption.text}
               </div>
             ))}
           </div>
-        )}
+        )} */}
 
         <div>
           <div

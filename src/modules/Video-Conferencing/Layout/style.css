@@ -74,14 +74,12 @@
 }
 
 /* Caption Box */
-.caption-box {
+/* .caption-box {
     text-align: center;
-    /* background: #ffcc80; */
-    /* Light Orange */
     padding: 10px;
     font-weight: bold;
     color: white;
-}
+} */
 
 .sidebar-box {
     width: 100%;

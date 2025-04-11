@@ -1,129 +1,319 @@
+// /* eslint-disable react/prop-types */
+// import { useEffect, useRef, useState } from "react";
+// import socket from "./socket";
+// import './newStyle.css';
+
+// const CaptionProvider = ({ meetingId, captionEnabled }) => {
+//   const [captions, setCaptions] = useState([]);
+//   const audioContextRef = useRef(null);
+//   const mediaStreamRef = useRef(null);
+//   const workletNodeRef = useRef(null);
+
+//   const convertFloat32ToInt16 = (buffer) => {
+//     const len = buffer.length;
+//     const int16Buffer = new Int16Array(len);
+//     for (let i = 0; i < len; i++) {
+//       int16Buffer[i] = Math.max(-1, Math.min(1, buffer[i])) * 0x7fff;
+//     }
+//     return int16Buffer.buffer;
+//   };
+
+//   useEffect(() => {
+//     if (captionEnabled) {
+//       const initAudio = async () => {
+//         try {
+//           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+//           mediaStreamRef.current = stream;
+
+//           const audioContext = new (window.AudioContext || window.webkitAudioContext)({
+//             sampleRate: 48000
+//           });
+//           audioContextRef.current = audioContext;
+
+//           await audioContext.audioWorklet.addModule(URL.createObjectURL(new Blob([`
+//             class PCMProcessor extends AudioWorkletProcessor {
+//               process(inputs) {
+//                 const input = inputs[0];
+//                 if (input.length > 0) {
+//                   this.port.postMessage(input[0]);
+//                 }
+//                 return true;
+//               }
+//             }
+//             registerProcessor('pcm-processor', PCMProcessor);
+//           `], { type: "application/javascript" })));
+
+//           const source = audioContext.createMediaStreamSource(stream);
+//           const workletNode = new AudioWorkletNode(audioContext, 'pcm-processor');
+//           workletNode.port.onmessage = (e) => {
+//             const float32 = e.data;
+//             const int16 = convertFloat32ToInt16(float32);
+//             socket.emit("audio-data", int16);
+//           };
+
+//           source.connect(workletNode).connect(audioContext.destination);
+//           workletNodeRef.current = workletNode;
+//         } catch (error) {
+//           console.error("Error accessing mic for captioning:", error);
+//         }
+//       };
+
+//       initAudio();
+//     } else {
+//       if (audioContextRef.current) {
+//         audioContextRef.current.close();
+//         audioContextRef.current = null;
+//       }
+//       if (mediaStreamRef.current) {
+//         mediaStreamRef.current.getTracks().forEach(track => track.stop());
+//         mediaStreamRef.current = null;
+//       }
+//       workletNodeRef.current = null;
+//     }
+
+//     return () => {
+//       if (audioContextRef.current) {
+//         audioContextRef.current.close();
+//         audioContextRef.current = null;
+//       }
+//       if (mediaStreamRef.current) {
+//         mediaStreamRef.current.getTracks().forEach(track => track.stop());
+//         mediaStreamRef.current = null;
+//       }
+//       workletNodeRef.current = null;
+//     };
+//   }, [captionEnabled]);
+
+//   const punctuate = (text) => {
+//     const trimmed = text.trim();
+//     if (!trimmed) return "";
+//     const lastChar = trimmed.slice(-1);
+//     if ([".", "!", "?"].includes(lastChar)) return trimmed;
+//     if (trimmed.split(" ").length < 5) return trimmed + ",";
+//     return trimmed + ".";
+//   };
+
+//   useEffect(() => {
+//     socket.on("transcription", ({ speaker, transcription, isFinal }) => {
+//       const text = punctuate(transcription);
+//       const label = speaker?.toLowerCase() === "minhaj" ? "You" : speaker;
+
+//       setCaptions((prev) => {
+//         const last = prev[prev.length - 1];
+
+//         // 🧠 If same speaker, group the text
+//         if (last && last.speaker === label) {
+//           return [
+//             ...prev.slice(0, -1),
+//             {
+//               ...last,
+//               text: last.text + " " + text,
+//               isFinal: isFinal || last.isFinal,
+//             },
+//           ];
+//         } else {
+//           return [...prev, { speaker: label, text, isFinal }];
+//         }
+//       });
+//     });
+
+//     return () => {
+//       socket.off("transcription");
+//     };
+//   }, []);
+
+//   if (!captionEnabled) return null;
+
+//   return (
+//     <div className="caption-box scrollable-captions">
+//       {captions.map((c, i) => (
+//         <div key={i} className={`caption ${c.isFinal ? "final" : "interim"}`}>
+//           <strong>{c.speaker}:</strong> {c.text}
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default CaptionProvider;
+
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { Popover, Spin, message } from "antd";
-import { connect } from "react-redux";
-import linkIcon from "../../assets/Icons/link.svg";
-import mailIcon from "../../assets/Icons/mail.svg";
+import { useEffect, useRef, useState } from "react";
+import socket from "./socket";
 import "./newStyle.css";
-import { sendMeetingInvite } from "../../redux/VideoConference/video.action";
 
-const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
+const CaptionProvider = ({ meetingId, captionEnabled }) => {
+  const [captions, setCaptions] = useState([]);
+  const [socketId, setSocketId] = useState(null);
 
-const InviteActions = ({ sendMeetingInvite, videoConferenceData }) => {
-  // const { meetingId } = useParams();
-  const meetingId = "206-e84-3bd";
-  const [copied, setCopied] = useState(false);
-  const [mailSend, setMailSend] = useState(false);
-  const [mailId, setMailId] = useState("");
-  const [popoverVisible, setPopoverVisible] = useState(false);
-  const [popoverContent, setPopoverContent] = useState("");
-  const [loading, setLoading] = useState(false);
+  const audioContextRef = useRef(null);
+  const mediaStreamRef = useRef(null);
+  const workletNodeRef = useRef(null);
 
-  const copyToClipboard = async () => {
-    setCopied(!copied);
-    if (!copied) {
-      await navigator.clipboard.writeText(
-        `${FRONTEND_URL}/lobby?type=invite&id=${meetingId}`
-      );
-      message.success("Copied!");
+  // 🔄 Convert Float32 to Int16 PCM
+  const convertFloat32ToInt16 = (buffer) => {
+    const len = buffer.length;
+    const int16Buffer = new Int16Array(len);
+    for (let i = 0; i < len; i++) {
+      int16Buffer[i] = Math.max(-1, Math.min(1, buffer[i])) * 0x7fff;
     }
+    return int16Buffer.buffer;
   };
 
-  const handleSend = () => {
-    if (!mailId.trim()) {
-      setPopoverContent("Please enter an email");
-      setPopoverVisible(true);
-      setTimeout(() => setPopoverVisible(false), 2000);
-      return;
+  // 🎙️ Handle audio stream when captionEnabled changes
+  useEffect(() => {
+    if (captionEnabled) {
+      setCaptions([]); // 🔁 Clear previous captions when enabling again
+
+      const initAudio = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          mediaStreamRef.current = stream;
+
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)({
+            sampleRate: 48000,
+          });
+          audioContextRef.current = audioContext;
+
+          await audioContext.audioWorklet.addModule(
+            URL.createObjectURL(
+              new Blob(
+                [
+                  `
+            class PCMProcessor extends AudioWorkletProcessor {
+              process(inputs) {
+                const input = inputs[0];
+                if (input.length > 0) {
+                  this.port.postMessage(input[0]);
+                }
+                return true;
+              }
+            }
+            registerProcessor('pcm-processor', PCMProcessor);
+          `,
+                ],
+                { type: "application/javascript" }
+              )
+            )
+          );
+
+          const source = audioContext.createMediaStreamSource(stream);
+          const workletNode = new AudioWorkletNode(
+            audioContext,
+            "pcm-processor"
+          );
+          workletNode.port.onmessage = (e) => {
+            const float32 = e.data;
+            const int16 = convertFloat32ToInt16(float32);
+            socket.emit("audio-data", int16);
+          };
+
+          source.connect(workletNode).connect(audioContext.destination);
+          workletNodeRef.current = workletNode;
+        } catch (error) {
+          console.error("Error accessing mic for captioning:", error);
+        }
+      };
+
+      initAudio();
+    } else {
+      // 🔁 Stop and clear everything when disabled
+      setCaptions([]);
+
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        mediaStreamRef.current = null;
+      }
+      workletNodeRef.current = null;
     }
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-    if (!emailRegex.test(mailId)) {
-      setPopoverContent("Please enter a valid email");
-      setPopoverVisible(true);
-      setTimeout(() => setPopoverVisible(false), 2000);
-      return;
-    }
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        mediaStreamRef.current = null;
+      }
+      workletNodeRef.current = null;
+    };
+  }, [captionEnabled]);
 
-    setLoading(true);
-    sendMeetingInvite({ email: mailId, meetingId });
-    setPopoverVisible(false);
+  // 🧠 Add punctuation
+  const punctuate = (text) => {
+    const trimmed = text.trim();
+    if (!trimmed) return "";
+    const lastChar = trimmed.slice(-1);
+    if ([".", "!", "?"].includes(lastChar)) return trimmed;
+    if (trimmed.split(" ").length < 5) return trimmed + ",";
+    return trimmed + ".";
   };
+
+  // 📥 Listen to transcription
+  useEffect(() => {
+    const handleTranscription = ({
+      socketId,
+      speaker,
+      transcription,
+      isFinal,
+    }) => {
+      console.log("socketId", socketId);
+      const text = punctuate(transcription);
+      const label = socketId === socketId ? "You" : speaker;
+
+      setCaptions((prev) => {
+        const last = prev[prev.length - 1];
+        if (last && last.speaker === label) {
+          return [
+            ...prev.slice(0, -1),
+            {
+              ...last,
+              text: last.text + " " + text,
+              isFinal: isFinal || last.isFinal,
+            },
+          ];
+        } else {
+          return [...prev, { speaker: label, text, isFinal }];
+        }
+      });
+    };
+
+    socket.on("transcription", handleTranscription);
+    return () => {
+      socket.off("transcription", handleTranscription);
+    };
+  }, []);
 
   useEffect(() => {
-    if (videoConferenceData.sendMeetingInviteResponse) {
-      const data = videoConferenceData.sendMeetingInviteResponse;
-      if (data.success) {
-        message.success(data.message);
-        setLoading(false);
-      }
-      setMailSend(false);
-      setMailId("");
-      videoConferenceData.sendMeetingInviteResponse = null;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoConferenceData.sendMeetingInviteResponse]);
+    socket.on("connect", () => {
+      // console.log("My socket ID:", socket.id);
+      setSocketId(socket.id);
+    });
+
+    return () => {
+      socket.off("connect");
+    };
+  }, []);
+
+  if (!captionEnabled) return null;
 
   return (
-    <>
-      <div
-        className={`copy-box ${copied ? "copied" : ""}`}
-        onClick={copyToClipboard}
-      >
-        {!copied && (
-          <div className="icon-wrapper">
-            <img src={linkIcon} alt="copy icon" />
-          </div>
-        )}
-        <div className="copy-text">
-          {copied ? "Copied!" : "Copy invite link"}
+    <div className="caption-box scrollable-captions">
+      {captions.map((c, i) => (
+        <div key={i} className={`caption ${c.isFinal ? "final" : "interim"}`}>
+          <strong>{c.speaker}:</strong> {c.text}
         </div>
-      </div>
-
-      <Spin spinning={loading}>
-        <div className="email-box" onClick={() => setMailSend(true)}>
-          <div className="icon-wrapper">
-            <img src={mailIcon} alt="mail icon" />
-          </div>
-
-          {mailSend ? (
-            <div className="email-input-wrapper">
-              <Popover
-                content={<span className="popover-text">{popoverContent}</span>}
-                visible={popoverVisible}
-                placement="bottom"
-              >
-                <input
-                  type="text"
-                  placeholder="Enter mail address here"
-                  className="email-input"
-                  value={mailId}
-                  onChange={(e) => setMailId(e.target.value)}
-                />
-              </Popover>
-
-              {mailId.length > 0 && (
-                <button className="send-btn" onClick={handleSend}>
-                  Send
-                </button>
-              )}
-            </div>
-          ) : (
-            <div className="email-text">Email invite</div>
-          )}
-        </div>
-      </Spin>
-    </>
+      ))}
+    </div>
   );
 };
 
-const mapStateToProps = (state) => ({
-  videoConferenceData: state.videoConference,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  sendMeetingInvite: (values) => dispatch(sendMeetingInvite(values)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(InviteActions);
+export default CaptionProvider;

@@ -97,7 +97,7 @@ function RoomFooter({
     // Socket call
     socket.emit("reaction", { meetingId, reaction: emoji });
   };
-
+  
   // Reaction Content inside Popover
   const reactionContent = (
     <div style={{ display: "flex", gap: "10px", padding: "10px" }}>
